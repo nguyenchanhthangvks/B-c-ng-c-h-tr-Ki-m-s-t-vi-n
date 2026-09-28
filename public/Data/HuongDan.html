@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng dẫn - Tạo sơ đồ tư duy tự động</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #7b2d42;
+            --plum-dark: #5a1f30;
+            --plum-light: #a84560;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a1a3e 50%, #0f172a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border-bottom: 3px solid var(--bronze);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--bronze), #e8a830);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(201, 149, 46, 0.3);
+        }
+
+        .header-title {
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header-title span {
+            color: var(--bronze-light);
+        }
+
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: rgba(0,0,0,0.25);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--bronze), #d4a040);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(201, 149, 46, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Video Section */
+        .video-container {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .video-wrapper {
+            position: relative;
+            background: #000;
+            aspect-ratio: 16 / 9;
+            max-height: 70vh;
+            cursor: pointer;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .video-play-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .video-play-overlay.hidden {
+            opacity: 0;
+        }
+
+        .video-play-overlay i {
+            font-size: 80px;
+            color: rgba(255,255,255,0.85);
+            filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
+        }
+
+        .video-controls-info {
+            padding: 16px 24px;
+            background: rgba(30, 41, 59, 0.9);
+            border-top: 1px solid rgba(51, 65, 85, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .video-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .video-info i {
+            color: var(--bronze);
+            font-size: 18px;
+        }
+
+        .video-info span {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .video-badge {
+            padding: 6px 16px;
+            background: rgba(201, 149, 46, 0.15);
+            border: 1px solid rgba(201, 149, 46, 0.3);
+            border-radius: 20px;
+            color: var(--bronze-light);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Slides Section */
+        .slides-frame {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            min-height: 500px;
+        }
+
+        .slides-frame iframe {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            display: block;
+        }
+
+        .slides-frame-header {
+            padding: 14px 20px;
+            background: rgba(30, 41, 59, 0.9);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slides-frame-header i {
+            color: var(--bronze);
+            font-size: 16px;
+        }
+
+        .slides-frame-header span {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Welcome Tab */
+        .welcome-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 960px) {
+            .welcome-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .welcome-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.6);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .welcome-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .welcome-card .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 18px;
+        }
+
+        .welcome-card .card-icon.video-icon {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
+        }
+
+        .welcome-card .card-icon.slides-icon {
+            background: linear-gradient(135deg, var(--sky), var(--sky-dark));
+            box-shadow: 0 4px 16px rgba(93, 169, 217, 0.3);
+        }
+
+        .welcome-card h3 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .welcome-card p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.7;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-card .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+        }
+
+        .welcome-card .btn-action.video-btn {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
+        }
+
+        .welcome-card .btn-action.video-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+        }
+
+        .welcome-card .btn-action.slides-btn {
+            background: linear-gradient(135deg, var(--sky), var(--sky-dark));
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(93, 169, 217, 0.3);
+        }
+
+        .welcome-card .btn-action.slides-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(93, 169, 217, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255,255,255,0.4);
+            font-size: 12px;
+            font-weight: 600;
+            border-top: 1px solid rgba(51, 65, 85, 0.4);
+            margin-top: 24px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 14px 16px;
+            }
+            .tab-btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+            .main-content {
+                padding: 16px 12px;
+            }
+            .welcome-card {
+                padding: 24px;
+            }
+            .slides-frame iframe {
+                height: 60vh;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../static/tool-page-theme.css">
+</head>
+<body class="ks-tool-page ks-guide-page">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <img class="ks-header-logo" src="../static/logo_moi.png" alt="Logo ngành Kiểm sát nhân dân">
+            <div>
+                <div class="header-title">HƯỚNG DẪN - <span>Tạo sơ đồ tư duy tự động</span></div>
+                <div class="header-sub"><i class="fa-regular fa-circle-play"></i> AI Mindmap Automation Workflow</div>
+            </div>
+        </div>
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('welcome')" id="tab-welcome">
+                <i class="fa-solid fa-house"></i> Tổng quan
+            </button>
+            <button class="tab-btn" onclick="switchTab('video')" id="tab-video">
+                <i class="fa-solid fa-video"></i> Video hướng dẫn
+            </button>
+            <button class="tab-btn" onclick="switchTab('slides')" id="tab-slides">
+                <i class="fa-solid fa-file-powerpoint"></i> Slide hướng dẫn
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <!-- TAB: WELCOME -->
+        <div class="tab-content active" id="content-welcome">
+            <div class="welcome-grid">
+                <div class="welcome-card">
+                    <div class="card-icon video-icon">
+                        <i class="fa-solid fa-video"></i>
+                    </div>
+                    <h3>Video hướng dẫn chi tiết</h3>
+                    <p>Xem video minh hoạ trực quan quy trình tạo sơ đồ tư duy tự động từ hồ sơ vụ án bằng AI. Video trình bày từng bước cụ thể, dễ làm theo.</p>
+                    <button class="btn-action video-btn" onclick="switchTab('video')">
+                        <i class="fa-solid fa-play"></i> Xem video ngay
+                    </button>
+                </div>
+                <div class="welcome-card">
+                    <div class="card-icon slides-icon">
+                        <i class="fa-solid fa-file-powerpoint"></i>
+                    </div>
+                    <h3>Slide hướng dẫn từng bước</h3>
+                    <p>Trình chiếu slide hướng dẫn chi tiết 4 bước: Tải file lên Gemini → Dùng Prompt → Lưu file .md → Import vào Xmind. Kèm phòng thực hành để thử ngay.</p>
+                    <button class="btn-action slides-btn" onclick="switchTab('slides')">
+                        <i class="fa-solid fa-arrow-right"></i> Xem slide
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: VIDEO -->
+        <div class="tab-content" id="content-video">
+            <div class="video-container">
+                <div class="video-wrapper" onclick="toggleVideo()">
+                    <video id="main-video" preload="metadata" playsinline>
+                        <source src="Recording.mp4" type="video/mp4">
+                        Trình duyệt của bạn không hỗ trợ video.
+                    </video>
+                    <div class="video-play-overlay" id="video-play-overlay">
+                        <i class="fa-solid fa-circle-play"></i>
+                    </div>
+                </div>
+                <div class="video-controls-info">
+                    <div class="video-info">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>Video hướng dẫn tạo sơ đồ tư duy tự động</span>
+                    </div>
+                    <span class="video-badge">
+                        <i class="fa-regular fa-clock"></i> Toàn màn hình để xem rõ hơn
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: SLIDES -->
+        <div class="tab-content" id="content-slides">
+            <div class="slides-frame">
+                <div class="slides-frame-header">
+                    <i class="fa-solid fa-presentation-screen"></i>
+                    <span>Slide hướng dẫn - Tạo sơ đồ tư duy tự động</span>
+                </div>
+                <iframe src="Slide.html" title="Slide hướng dẫn"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // Show selected
+            document.getElementById('content-' + tabId).classList.add('active');
+            
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            // Reset video when switching to video tab
+            if (tabId === 'video') {
+                const video = document.getElementById('main-video');
+                const overlay = document.getElementById('video-play-overlay');
+                // Reset video to beginning, show overlay
+                video.pause();
+                video.currentTime = 0;
+                video.removeAttribute('controls');
+                overlay.classList.remove('hidden');
+            }
+        }
+
+        function toggleVideo() {
+            const video = document.getElementById('main-video');
+            const overlay = document.getElementById('video-play-overlay');
+
+            if (video.paused) {
+                video.play().then(() => {
+                    video.setAttribute('controls', 'controls');
+                    overlay.classList.add('hidden');
+                }).catch(() => {});
+            } else {
+                video.pause();
+                overlay.classList.remove('hidden');
+                video.removeAttribute('controls');
+            }
+        }
+
+        // Khi video kết thúc
+        document.addEventListener('DOMContentLoaded', function () {
+            const video = document.getElementById('main-video');
+            video.addEventListener('ended', function () {
+                const overlay = document.getElementById('video-play-overlay');
+                overlay.classList.remove('hidden');
+                video.removeAttribute('controls');
+            });
+        });
+    </script>
+
+</body>
+</html>

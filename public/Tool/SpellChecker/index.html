@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ rà soát chính tả tiếng Việt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+
+        .spellchecker-page .main-content { max-width: 1000px; }
+
+        .status-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+            padding: 10px 13px;
+            color: #16568c;
+            background: #eaf3fa;
+            border: 1px solid #bad5f0;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+        }
+
+        .feature-item > i {
+            width: 22px;
+            margin-top: 3px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .feature-item strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #2c3e50;
+        }
+
+        .feature-item span {
+            color: #5a6f82;
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        .launch-section { padding: 8px 0 28px; text-align: center; }
+
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 15px 28px;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .btn-launch .sub-text {
+            display: block;
+            margin-top: 3px;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: .9;
+        }
+
+        .steps-list { margin: 0; padding-left: 22px; }
+        .steps-list li { margin-bottom: 10px; padding-left: 5px; }
+        .steps-list li:last-child { margin-bottom: 0; }
+
+        @media (max-width: 680px) {
+            .feature-grid { grid-template-columns: 1fr; }
+            .btn-launch { width: 100%; padding: 14px 16px; font-size: 15px; }
+        }
+    
+        .btn-launch.guide {
+            margin-top: 14px;
+            text-decoration: none;
+            background: linear-gradient(135deg, #b45309, #c9952e);
+            box-shadow: 0 6px 20px rgba(201, 149, 46, 0.35);
+        }
+    </style>
+    <link rel="stylesheet" href="../../static/tool-page-theme.css">
+</head>
+<body class="ks-tool-page spellchecker-page">
+    <header class="header">
+        <img class="ks-header-logo" src="../../static/logo_moi.png" alt="Logo ngành Kiểm sát nhân dân">
+        <div>
+            <div class="header-title">CÔNG CỤ RÀ SOÁT CHÍNH TẢ TIẾNG VIỆT</div>
+            <div class="header-sub"><i class="fa-solid fa-shield-halved"></i> Xử lý ngoại tuyến — Không AI — Không gửi văn bản lên mạng</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="info-card">
+            <div class="status-line"><i class="fa-brands fa-windows"></i> BẢN PORTABLE DÀNH CHO WINDOWS</div>
+            <h2><i class="fa-solid fa-spell-check"></i> Giới thiệu</h2>
+            <p>
+                Công cụ hỗ trợ rà soát chính tả tiếng Việt trong văn bản Word <strong>.doc và .docx</strong>,
+                hiển thị lỗi theo đúng vị trí và cho phép xuất bản có đánh dấu hoặc bản đã chấp nhận sửa.
+                Tệp gốc luôn được giữ nguyên.
+            </p>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <span><strong>Từ vựng nghiệp vụ</strong>Kiểm tra các cụm từ pháp lý, âm tiết tiếng Việt và lỗi dấu câu thường gặp.</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fa-solid fa-ruler-combined"></i>
+                    <span><strong>Hiểu đơn vị đo lường</strong>Nhận biết ký hiệu như cm, mm, kg khi đi cùng số liệu; vẫn kiểm tra khi dùng sai ngữ cảnh.</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span><strong>Phê duyệt hàng loạt</strong>Lọc theo nhóm lỗi rồi phê duyệt hoặc bỏ phê duyệt toàn bộ nhóm đang hiển thị.</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fa-solid fa-file-shield"></i>
+                    <span><strong>Riêng tư và an toàn</strong>Xử lý tại máy người dùng, không AI, không API và không kết nối dịch vụ đám mây.</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fa-solid fa-file-export"></i>
+                    <span><strong>Hỗ trợ Word định dạng cũ</strong>Tự động chuyển .doc sang .docx tạm bằng Microsoft Word rồi mới rà soát.</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="launch-section">
+            <a class="btn-launch" href="RaSoatChinhTa.zip?v=20260917-1" download>
+                <i class="fa-solid fa-download"></i>
+                <span>TẢI CÔNG CỤ RÀ SOÁT CHÍNH TẢ
+                    <span class="sub-text">RaSoatChinhTa.zip — Giải nén và chạy RaSoatChinhTa.exe</span>
+                </span>
+            </a>
+            <br>
+            <a class="btn-launch guide" href="huong_dan/index.html">
+                <i class="fas fa-circle-play"></i>
+                <span>
+                    XEM VIDEO &amp; SLIDE HƯỚNG DẪN
+                    <span class="sub-text">Video có lời bình, thao tác thực tế trên văn bản mô phỏng · slide từng bước</span>
+                </span>
+            </a>
+        </div>
+
+        <section class="info-card">
+            <h2><i class="fa-solid fa-list-ol"></i> Cách sử dụng</h2>
+            <ol class="steps-list">
+                <li>Tải <strong>RaSoatChinhTa.zip</strong> và giải nén vào một thư mục trên máy.</li>
+                <li>Mở <strong>RaSoatChinhTa.exe</strong>; giao diện sử dụng sẽ tự mở trong trình duyệt.</li>
+                <li>Chọn tệp Word <strong>.doc hoặc .docx</strong> cần rà soát và xem lỗi theo từng nhóm.</li>
+                <li>Phê duyệt từng lỗi hoặc phê duyệt hàng loạt nhóm đang hiển thị.</li>
+                <li>Tải bản có đánh dấu, bản đã sửa hoặc cả hai bản kết quả.</li>
+            </ol>
+            <div class="note-box">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p><strong>Lưu ý:</strong> Công cụ hỗ trợ rà soát và đề xuất. Người dùng cần kiểm tra lại các mục nghi vấn trước khi xuất bản đã sửa.</p>
+            </div>
+        </section>
+
+        <section class="info-card">
+            <h2><i class="fa-solid fa-circle-info"></i> Thông tin kỹ thuật</h2>
+            <div class="dev-info">
+                <p><i class="fa-solid fa-wifi-slash"></i> Hoạt động hoàn toàn ngoại tuyến tại <strong>127.0.0.1</strong>.</p>
+                <p><i class="fa-solid fa-file-word"></i> Hỗ trợ tệp <strong>.docx</strong>; không yêu cầu cài Microsoft Word.</p>
+                <p><i class="fa-solid fa-file-export"></i> Với tệp <strong>.doc</strong>, máy cần cài Microsoft Word để chuyển đổi tự động; kết quả xuất ở định dạng .docx.</p>
+                <p><i class="fa-solid fa-box"></i> Gói ZIP gồm <strong>RaSoatChinhTa.exe</strong> và tệp hướng dẫn sử dụng.</p>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

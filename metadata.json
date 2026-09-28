@@ -1,0 +1,6 @@
+{
+  "name": "Bộ Công Cụ Nghiệp Vụ - VKSND",
+  "description": "Bộ công cụ hỗ trợ nghiệp vụ Kiểm sát nhân dân: Tự động tính lãi suất, án phí, tuổi - thời hạn, bồi thường thiệt hại, thời hiệu truy cứu TNHS, ẩn danh thông tin, rà soát chính tả, OCR và trợ lý pháp lý.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

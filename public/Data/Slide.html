@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HƯỚNG DẪN & THỰC HÀNH - AI Mindmap Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+        }
+        .heading-font { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover { border-color: rgba(255, 255, 255, 0.15); }
+        .glass-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+        
+        /* Animations & Glows */
+        .glow-cyan { box-shadow: 0 0 40px rgba(6, 182, 212, 0.15); }
+        .glow-emerald { box-shadow: 0 0 40px rgba(16, 185, 129, 0.15); }
+        
+        /* HIỆU ỨNG ẨN HIỆN TUYỆT ĐỐI KHẮC PHỤC LỖI TRÙNG LẶP */
+        .view-content:not(.active) { display: none !important; }
+        .slide-content:not(.active) { display: none !important; }
+        
+        .view-content.active, .slide-content.active {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Toast */
+        .toast-enter { transform: translateY(0) translateX(-50%); opacity: 1; }
+        .toast-exit { transform: translateY(20px) translateX(-50%); opacity: 0; pointer-events: none; }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen flex flex-col justify-between overflow-x-hidden antialiased selection:bg-cyan-500 selection:text-white">
+
+    <div class="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-cyan-500/10 blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none"></div>
+
+    <header class="w-full max-w-7xl mx-auto px-4 pt-6 pb-2 z-10">
+        <div class="glass-panel rounded-2xl px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <h1 class="heading-font text-sm font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 uppercase">AI Mindmap Guide</h1>
+                    <p class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mt-0.5">Automation Workflow</p>
+                </div>
+            </div>
+            
+            <div class="flex bg-slate-900/60 p-1 rounded-xl border border-white/10">
+                <button onclick="switchView('slides')" id="nav-slides" class="px-5 py-2 text-xs font-bold rounded-lg transition-all bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg flex items-center gap-2">
+                    <i class="fa-solid fa-person-chalkboard"></i> Slide Hướng Dẫn
+                </button>
+                <button onclick="switchView('lab')" id="nav-lab" class="px-5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-flask text-emerald-400"></i> Phòng Thực Hành
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-7xl mx-auto px-4 py-6 flex-grow flex items-center justify-center z-10">
+        
+        <div id="view-slides" class="view-content active w-full glass-panel rounded-3xl p-6 md:p-10 relative overflow-hidden min-h-[600px] flex flex-col justify-between">
+            
+            <div class="flex flex-wrap justify-center gap-1.5 mb-6 border-b border-white/5 pb-4">
+                <button onclick="goToSlide(1)" id="tab-1" class="px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 uppercase tracking-wide">Tổng Quan</button>
+                <button onclick="goToSlide(2)" id="tab-2" class="px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 uppercase tracking-wide">B1: Tải File</button>
+                <button onclick="goToSlide(3)" id="tab-3" class="px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 uppercase tracking-wide">B2: Prompt</button>
+                <button onclick="goToSlide(4)" id="tab-4" class="px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 uppercase tracking-wide">B3: Lưu Tệp</button>
+                <button onclick="goToSlide(5)" id="tab-5" class="px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 uppercase tracking-wide">B4: Hoàn Tất</button>
+            </div>
+
+            <!-- SLIDE 1: TỔNG QUAN -->
+            <div id="slide-1" class="slide-content active h-full">
+                <div class="text-center max-w-3xl mx-auto mt-8">
+                    <span class="px-3 py-1 text-xs font-semibold text-cyan-400 bg-cyan-400/10 border border-cyan-400/20 rounded-full uppercase tracking-widest">Quy Trình Tối Ưu</span>
+                    <h2 class="heading-font text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 mt-4 leading-tight">
+                        Hướng Dẫn Quy Trình 4 Bước Sử Dụng AI Để Tóm Tắt Nội Dung Vụ Án / Vụ Việc Thành Sơ Đồ Tư Duy, Định Dạng Xmind Trực Quan Chỉ Trong 2 Phút
+                    </h2>
+                    <p class="text-slate-400 mt-4 leading-relaxed">Giải pháp ứng dụng Trí tuệ nhân tạo (AI) giúp tóm tắt toàn bộ tình tiết phức tạp thành cấu trúc hình ảnh trực quan trên phần mềm Xmind.</p>
+                </div>
+                <div class="flex justify-center mt-12 text-6xl text-cyan-500/20">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: B1 - TẢI FILE -->
+            <div id="slide-2" class="slide-content h-full">
+                <div class="max-w-4xl mx-auto mt-4 text-center">
+                    <span class="px-3 py-1 text-[10px] font-bold text-blue-400 bg-blue-400/10 border border-blue-400/20 rounded-full tracking-wider uppercase">BƯỚC 1</span>
+                    <h2 class="heading-font text-3xl font-extrabold text-white mt-4">Tải Nội Dung Lên <span class="text-blue-400">Gemini</span> (hoặc <span class="text-purple-400">Claude</span> hoặc <span class="text-emerald-400">ChatGPT</span> ...)</h2>
+                    <p class="text-slate-300 mt-4">Truy cập AI, nhấn biểu tượng <i class="fa-solid fa-paperclip text-blue-400 mx-1"></i> <strong>kẹp giấy</strong> để tải file hồ sơ (Word/PDF).</p>
+                    <p class="text-slate-400 mt-2 text-sm">Hoặc copy-paste nội dung vụ án/vụ việc đã che thông tin cá nhân hoặc các thông tin liên quan đến bảo mật của tài liệu.</p>
+                </div>
+                <div class="mt-8 glass-input rounded-2xl p-8 max-w-2xl mx-auto border-dashed border-2 border-slate-600 text-center flex flex-col items-center justify-center">
+                    <i class="fa-solid fa-cloud-arrow-up text-5xl text-blue-400/50 mb-4"></i>
+                    <p class="text-sm font-bold text-slate-300">Kéo thả Cáo trạng/Hồ sơ vụ việc vào đây</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: B2 - YÊU CẦU TẠO MÃ MARKDOWN -->
+            <div id="slide-3" class="slide-content h-full">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="px-3 py-1 text-[10px] font-bold text-purple-400 bg-purple-400/10 border border-purple-400/20 rounded-full tracking-wider uppercase">BƯỚC 2</span>
+                        <h2 class="heading-font text-2xl font-extrabold text-white mt-2">Yêu Cầu Tạo Mã Markdown</h2>
+                    </div>
+                    <select id="caseTypeSelect" onchange="switchPromptCase(this.value)" class="bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-purple-500 max-w-[320px]">
+                        <option value="hinhsu_cttp">Hình sự - Cấu thành tội phạm</option>
+                        <option value="hinhsu_dienbien">Hình sự - Diễn biến phức tạp</option>
+                        <option value="hinhsu_dongpham">Hình sự - Đồng phạm</option>
+                        <option value="hinhsu_kinhte">Hình sự - Kinh tế / Chức vụ</option>
+                        <option value="dansu">Dân sự</option>
+                        <option value="hanhchinh">Hành chính</option>
+                        <option value="kinhdoanh">Kinh doanh Thương mại</option>
+                        <option value="laodong">Lao động</option>
+                        <option value="hongnhan">Hôn nhân & Gia đình</option>
+                        <option value="sohuutritue">Sở hữu Trí tuệ</option>
+                        <option value="phasan">Phá sản doanh nghiệp</option>
+                        <option value="dautu">Đầu tư / Dự án (Due Diligence)</option>
+                        <option value="tonghop">File Tổng hợp (Tiến trình tố tụng)</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[300px]">
+                    <div class="col-span-1 glass-card p-4 rounded-xl flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-xs font-bold text-purple-400 mb-2"><i class="fa-solid fa-circle-info"></i> Lời khuyên</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">Hãy yêu cầu AI chỉ trả về từ khóa ngắn gọn và dùng các thẻ Markdown (#, ##, -) để phân cấp nhánh hợp lý cho Xmind.</p>
+                            <p class="text-xs text-slate-500 leading-relaxed mt-2">Lưu ý: Chỉ viết nội dung tóm tắt, ngắn gọn bằng từ khóa để Xmind hiển thị đẹp mắt, không viết đoạn văn dài.</p>
+                        </div>
+                        <button onclick="copyCurrentPrompt()" class="w-full py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-bold transition-all"><i class="fa-solid fa-copy mr-1"></i> Sao chép lệnh</button>
+                    </div>
+                    <div class="col-span-2 relative">
+                        <textarea id="prompt-content-box" class="w-full h-full p-4 bg-slate-950/70 border border-white/10 rounded-xl text-slate-300 text-xs font-mono resize-none custom-scrollbar focus:outline-none" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: B3 - LƯU TỆP -->
+            <div id="slide-4" class="slide-content h-full">
+                <div class="max-w-4xl mx-auto mt-4 text-center">
+                    <span class="px-3 py-1 text-[10px] font-bold text-pink-400 bg-pink-400/10 border border-pink-400/20 rounded-full tracking-wider uppercase">BƯỚC 3</span>
+                    <h2 class="heading-font text-3xl font-extrabold text-white mt-4">Lưu Tệp Đuôi <span class="text-pink-400">.md</span> Với Notepad</h2>
+                    <p class="text-slate-300 mt-4 text-sm max-w-2xl mx-auto leading-relaxed">Dán mã AI vừa trả về vào Notepad. Nhấn <kbd class="px-2 py-1 bg-slate-800 rounded mx-1 text-xs">Ctrl + S</kbd>. Tại ô <em>Save as type</em> chọn <strong>All Files (*.*)</strong> và đặt tên file là <strong class="text-pink-400">sodo.md</strong>. Nhớ chọn Encoding <strong>UTF-8</strong> để không bị lỗi phông chữ tiếng Việt.</p>
+                </div>
+                <div class="mt-8 max-w-xl mx-auto bg-[#1e1e1e] rounded-lg border border-white/10 overflow-hidden text-xs">
+                    <div class="bg-[#2d2d2d] px-3 py-1.5 flex items-center text-slate-300"><i class="fa-regular fa-file-lines text-pink-400 mr-2"></i> sodo.md - Notepad</div>
+                    <div class="p-4 bg-[#252526] grid grid-cols-4 gap-2 border-t border-white/5 items-center">
+                        <div class="text-right text-slate-400">File name:</div>
+                        <div class="col-span-3 bg-[#3c3c3c] text-white px-2 py-1 border border-cyan-500/40 rounded">sodo.md</div>
+                        <div class="text-right text-slate-400">Save as type:</div>
+                        <div class="col-span-3 bg-[#3c3c3c] text-white px-2 py-1 border border-white/10 rounded">All Files (*.*)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: B4 - HOÀN TẤT -->
+            <div id="slide-5" class="slide-content h-full">
+                <div class="max-w-4xl mx-auto mt-4 text-center">
+                    <span class="px-3 py-1 text-[10px] font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-full tracking-wider uppercase">BƯỚC 4</span>
+                    <h2 class="heading-font text-3xl font-extrabold text-white mt-4">Nhập Tệp Vào <span class="text-emerald-400">Xmind</span></h2>
+                    <p class="text-slate-300 mt-4 text-sm">Mở phần mềm Xmind, chọn <strong class="text-white">File &rarr; Import &rarr; Markdown</strong>. Chọn file .md vừa lưu, sơ đồ sẽ tự động bung nở với đầy đủ cấu trúc logic đã phân tích.</p>
+                </div>
+                <div class="mt-10 flex justify-center text-8xl text-emerald-500/20 animate-pulse">
+                    <i class="fa-solid fa-sitemap"></i>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center border-t border-white/10 pt-4 mt-auto">
+                <button id="prevBtn" onclick="moveSlide(-1)" class="px-4 py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 disabled:opacity-40 transition-colors"><i class="fa-solid fa-chevron-left mr-1"></i> TRƯỚC</button>
+                <div class="text-xs font-bold text-slate-500 font-mono tracking-widest uppercase">Slide <span id="currentSlideNum" class="text-cyan-400">1</span> / 5</div>
+                <button id="nextBtn" onclick="moveSlide(1)" class="px-4 py-2 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-md transition-colors">TIẾP THEO <i class="fa-solid fa-chevron-right ml-1"></i></button>
+            </div>
+        </div>
+
+        <div id="view-lab" class="view-content w-full min-h-[600px] flex flex-col lg:flex-row gap-6">
+            
+            <div class="flex-1 glass-card p-6 rounded-2xl flex flex-col gap-4 border-t-2 border-t-cyan-500/50 glow-cyan relative">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <h3 class="heading-font font-bold text-white flex items-center gap-2 text-sm uppercase tracking-wider">
+                        <i class="fa-solid fa-file-import text-cyan-400"></i> Dữ Liệu Đầu Vào
+                    </h3>
+                    <div class="flex gap-2">
+                        <button onclick="loadPreset(1)" class="text-[10px] font-bold uppercase bg-slate-800 hover:bg-slate-700 border border-slate-600 px-2.5 py-1 rounded-lg transition-colors text-slate-300">Vụ án 01</button>
+                        <button onclick="loadPreset(2)" class="text-[10px] font-bold uppercase bg-slate-800 hover:bg-slate-700 border border-slate-600 px-2.5 py-1 rounded-lg transition-colors text-slate-300">Vụ án 02</button>
+                    </div>
+                </div>
+                
+                <textarea id="lab-input" class="flex-grow glass-input rounded-xl p-4 text-sm text-slate-300 focus:outline-none focus:border-cyan-500 font-mono resize-none custom-scrollbar" placeholder="Dán văn bản cáo trạng, nội dung vụ việc thô của bạn vào đây..."></textarea>
+                
+                <button id="btn-generate" onclick="simulateAI()" class="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-cyan-900/50 text-sm">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> PHÂN TÍCH & TẠO MÃ MARKDOWN
+                </button>
+            </div>
+
+            <div class="flex-1 glass-card p-6 rounded-2xl flex flex-col gap-4 border-t-2 border-t-emerald-500/50 glow-emerald relative overflow-hidden">
+                <div class="flex justify-between items-center">
+                    <h3 class="heading-font font-bold text-white flex items-center gap-2 text-sm uppercase tracking-wider">
+                        <i class="fa-solid fa-rectangle-list text-emerald-400"></i> Kết Quả Từ AI
+                    </h3>
+                    <span id="lab-status" class="text-[10px] px-2.5 py-1 bg-slate-800 text-slate-400 rounded-full font-bold uppercase border border-slate-700">Sẵn Sàng</span>
+                </div>
+
+                <div class="flex-grow relative border border-slate-700 rounded-xl overflow-hidden bg-slate-900/50">
+                    <div id="lab-loader" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm z-10 flex flex-col items-center justify-center hidden">
+                        <div class="w-10 h-10 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin mb-4"></div>
+                        <p class="text-xs font-bold text-emerald-400 tracking-wider uppercase animate-pulse">Hệ thống đang cấu trúc dữ liệu...</p>
+                    </div>
+                    
+                    <textarea id="lab-output" readonly class="w-full h-full bg-transparent p-4 text-[13px] text-emerald-400 font-mono resize-none focus:outline-none custom-scrollbar whitespace-pre-wrap" placeholder="Mã Markdown Xmind sẽ được sinh ra tại đây..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="copyLabOutput()" class="py-3 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl border border-slate-600 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-copy text-slate-400"></i> Sao Chép
+                    </button>
+                    <button onclick="downloadLabFile()" class="py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-900/50 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-arrow-down"></i> Tải File .md
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 toast-exit transition-all duration-300 glass-card border border-cyan-500/50 px-6 py-3 rounded-full flex items-center gap-3 z-[100] shadow-2xl">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-cyan-400 text-lg"></i>
+        <span id="toast-msg" class="text-sm font-bold text-white">Thành công!</span>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. CHUYỂN ĐỔI CHẾ ĐỘ VIEW (SLIDE / LAB)
+        // ==========================================
+        function switchView(viewName) {
+            const vSlides = document.getElementById('view-slides');
+            const vLab = document.getElementById('view-lab');
+            const btnSlides = document.getElementById('nav-slides');
+            const btnLab = document.getElementById('nav-lab');
+
+            if(viewName === 'slides') {
+                vSlides.classList.add('active');
+                vLab.classList.remove('active');
+                
+                btnSlides.className = "px-5 py-2 text-xs font-bold rounded-lg transition-all bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg flex items-center gap-2";
+                btnLab.className = "px-5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2";
+            } else {
+                vLab.classList.add('active');
+                vSlides.classList.remove('active');
+                
+                btnLab.className = "px-5 py-2 text-xs font-bold rounded-lg transition-all bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg flex items-center gap-2";
+                btnSlides.className = "px-5 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 flex items-center gap-2";
+            }
+        }
+
+        // ==========================================
+        // 2. ĐIỀU KHIỂN HỆ THỐNG SLIDE
+        // ==========================================
+        let currentSlide = 1;
+        const totalSlides = 5;
+
+        function updateSlideUI() {
+            for (let i = 1; i <= totalSlides; i++) {
+                const el = document.getElementById(`slide-${i}`);
+                const tab = document.getElementById(`tab-${i}`);
+                if (el) el.classList.toggle('active', i === currentSlide);
+                if (tab) {
+                    tab.className = i === currentSlide 
+                        ? "px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 uppercase tracking-wide" 
+                        : "px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200 uppercase tracking-wide border border-transparent";
+                }
+            }
+            document.getElementById('currentSlideNum').innerText = currentSlide;
+            document.getElementById('prevBtn').disabled = (currentSlide === 1);
+        }
+
+        function moveSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 1) currentSlide = 1;
+            if (currentSlide > totalSlides) currentSlide = totalSlides;
+            updateSlideUI();
+        }
+
+        function goToSlide(num) {
+            currentSlide = num;
+            updateSlideUI();
+        }
+
+        // ==========================================
+        // 3. THƯ VIỆN PROMPT (BƯỚC 2 SLIDE) - ĐẦY ĐỦ 13 LOẠI
+        // ==========================================
+        const promptsDatabase = {
+
+            // 1. Hình sự - Cấu thành tội phạm
+            "hinhsu_cttp": `Hãy đóng vai là một Kiểm sát viên ngành Kiểm sát nhân dân, phân tích vụ án hình sự mà tôi tải lên và xuất ra kết quả dưới dạng mã Markdown (Markdown code block) để tôi import thẳng vào Xmind. Cấu trúc cây thư mục cần phân cấp rõ ràng bằng các tiêu đề (#, ##, ###): Tên vụ án; 1. Diễn biến tóm tắt; 2. Bốn yếu tố cấu thành tội phạm (Khách thể, Mặt khách quan, Chủ thể, Mặt chủ quan); 3. Định khung hình phạt và Tình tiết tăng nặng/giảm nhẹ; 4. Hướng giải quyết/ đề xuất. Lưu ý: Chỉ viết nội dung tóm tắt, ngắn gọn bằng từ khóa để Xmind hiển thị đẹp mắt, không viết đoạn văn dài.`,
+
+            // 2. Hình sự - Diễn biến phức tạp (dành cho vụ án có diễn biến phức tạp, nhiều mốc thời gian - Trộm cắp, Giết người, Cướp tài sản...)
+            "hinhsu_dienbien": `Hãy đóng vai là một Kiểm sát viên ngành Kiểm sát nhân dân. Tôi có một vụ án hình sự với các dữ liệu thô từ file tải lên. Hãy sắp xếp và mô tả lại diễn biến sự việc này dưới dạng mã Markdown (Markdown code block) để tôi import vào Xmind làm sơ đồ tư duy. Cấu trúc cây thư mục yêu cầu phân cấp như sau: DIỄN BIẾN VỤ ÁN: [Tên vụ án]; 1. Giai đoạn chuẩn bị phạm tội (Thời gian, địa điểm, bàn bạc, chuẩn bị công cụ/phương tiện); 2. Giai đoạn thực hiện hành vi (Chuỗi hành động theo mốc thời gian chi tiết hh:mm - ngày/tháng); 3. Giai đoạn sau khi phạm tội (Che giấu dấu vết, tẩu tán tài sản, bỏ trốn); 4. Thời điểm bị phát hiện/bắt giữ. Lưu ý: Nội dung trong các nhánh phải cực kỳ ngắn gọn, sử dụng từ khóa hành động (ví dụ: "23:00 - Cậy cửa sau", "23:15 - Lấy 2 laptop"), không viết thành đoạn văn dài.`,
+
+            // 3. Hình sự - Đồng phạm (nhiều bị can, cần bóc tách hành vi từng người)
+            "hinhsu_dongpham": `Tôi cần lập sơ đồ tư duy Xmind để làm rõ diễn biến hành vi của từng đồng phạm trong vụ án: [Tên vụ án, ví dụ: Vụ án Cố ý gây thương tích tại quán karaoke X].
+
+Hãy tạo một file Markdown tương thích với Xmind, sử dụng các dấu gạch đầu dòng - và thụt lề để phân nhánh. Sơ đồ cần tập trung vào việc tái hiện diễn biến theo vai trò:
+
+- Nguyên nhân/Ngòi nổ sự việc: (Ai mâu thuẫn với ai? Vì lý do gì? Ở đâu?)
+- Diễn biến hành vi của Bị can A (Chủ mưu): (Hô hào, kích động, cung cấp hung khí thế nào?)
+- Diễn biến hành vi của Bị can B (Thực hành): (Trực tiếp tấn công ai? Gây thương tích vùng nào?)
+- Diễn biến hành vi của các Đối tượng liên quan: (Can ngăn hay giúp sức bỏ trốn?)
+- Hậu quả sự việc: (Tỷ lệ thương tích, thiệt hại tài sản)
+
+Xuất kết quả duy nhất trong khối mã Markdown để tôi copy-paste.`,
+
+            // 4. Hình sự - Kinh tế / Chức vụ (diễn biến là một chuỗi các giao dịch, thủ đoạn tinh vi)
+            "hinhsu_kinhte": `Hãy đóng vai Kiểm sát viên lập cáo trạng. Hãy chuyển hóa diễn biến hành vi phạm tội của vụ án kinh tế [Ví dụ: Vụ án Lừa đảo chiếm đoạt tài sản qua mạng của Nguyễn Văn A] thành mã Markdown chuẩn Xmind. Tập trung mô tả diễn biến theo Thủ đoạn và Dòng tiền:
+
+- Diễn biến hành vi phạm tội - Bị can [Tên]
+  - Bước 1: Tiếp cận & Tạo lòng tin (Lập tài khoản ảo, đưa thông tin giả, hứa hẹn lợi nhuận...)
+  - Bước 2: Thao túng & Nhận tiền (Cách thức yêu cầu chuyển tiền, số tiền các mốc thời gian...)
+  - Bước 3: Xóa dấu vết & Chiếm đoạt (Cắt liên lạc, chuyển tiền qua nhiều tài khoản rác...)
+  - Bước 4: Chuỗi chứng cứ chứng minh hành vi (Dữ liệu điện tử, sao kê ngân hàng, lời khai người làm chứng...)
+
+Hãy tóm tắt thật cô đọng dưới dạng từ khóa trực quan để Xmind hiển thị đẹp nhất.`,
+
+            // 5. Dân sự
+            "dansu": `Hãy đóng vai là một trợ lý ảo cho Kiểm sát viên ngành Kiểm sát nhân dân. Tôi cần lập sơ đồ tư duy cho một vụ án dân sự về [Tranh chấp ……………]. Hãy tạo một file Markdown tương thích hoàn toàn với Xmind. Sử dụng dấu gạch đầu dòng - và thụt lề (Tab) để phân cấp các nhánh:
+
+- Nhánh chính: "Thông tin chung"
+- "Yêu cầu của nguyên đơn"
+- "Ý kiến của bị đơn"
+- "Tài liệu chứng cứ hiện có"
+- "Phương án hòa giải/Khởi kiện"
+
+Hãy tóm tắt các luận điểm cốt lõi dưới dạng từ khóa. Trả kết quả trong khối mã Markdown.`,
+
+            // 6. Hành chính (Khiếu kiện quyết định xử phạt)
+            "hanhchinh": `Hãy viết một bản phân tích vụ án hành chính dưới dạng mã Markdown để nhập vào Xmind. Vụ việc: [Khiếu kiện Quyết định xử phạt vi phạm hành chính về …………….. của ……………………]. Sơ đồ tư duy cần có các nhánh chính:
+
+- Đối tượng khởi kiện (Số quyết định, ngày ban hành, cơ quan ban hành)
+- Thời hiệu khởi kiện
+- Tính hợp pháp về thẩm quyền và thủ tục ban hành
+- Tính hợp pháp về nội dung xử phạt
+- Đánh giá rủi ro và Đề xuất giải pháp
+
+Xuất câu trả lời duy nhất trong khối mã Markdown.`,
+
+            // 7. Kinh doanh Thương mại (Tranh chấp hợp đồng mua bán)
+            "kinhdoanh": `Tạo cấu trúc Markdown để làm bản đồ tư duy Xmind phân tích vụ tranh chấp kinh doanh thương mại: [Tranh chấp hợp đồng cung ứng linh kiện giữa công ty A và công ty B]. Yêu cầu phân cấp bằng tiêu đề Markdown:
+
+# Tranh chấp HĐTM [Tên vụ việc]
+- Tình trạng hợp đồng & Nghĩa vụ các bên
+- Vi phạm được viện dẫn (Bên A vi phạm gì, Bên B vi phạm gì)
+- Giá trị tranh chấp & Cơ sở phạt vi phạm, bồi thường thiệt hại
+- Thẩm quyền giải quyết (Tòa án hay Trọng tài thương mại)
+- Tài liệu cần bổ sung
+
+Giữ các nội dung ở dạng gạch đầu dòng ngắn gọn.`,
+
+            // 8. Lao động (Sa thải trái pháp luật)
+            "laodong": `Bạn là một chuyên gia Pháp lý lao động. Hãy tạo file Markdown (tương thích Xmind) tóm tắt vụ án lao động: [Người lao động khiếu kiện Công ty X vì sa thải trái pháp luật]. Sơ đồ cần làm rõ:
+
+- Quy trình xử lý kỷ luật của công ty có đúng luật không?
+- Nghĩa vụ chứng minh của người sử dụng lao động?
+- Các khoản bồi thường yêu cầu (Lương trong những ngày không được làm việc, trợ cấp, bồi thường tổn thất...)
+
+Viết ngắn gọn, trực quan, đặt trong khối mã để dễ sao chép.`,
+
+            // 9. Hôn nhân & Gia đình (Ly hôn, chia tài sản, giành quyền nuôi con)
+            "hongnhan": `Hãy soạn một đoạn mã Markdown chuẩn Xmind để lập bản đồ tư duy cho vụ việc Hôn nhân gia đình: [Ly hôn và tranh chấp tài sản, quyền nuôi con giữa ông M và bà N]. Cấu trúc phân nhánh gồm:
+
+- Quan hệ hôn nhân (Thời gian kết hôn, mâu thuẫn cốt lõi)
+- Quyền nuôi con (Số lượng con, độ tuổi, nguyện vọng của con, điều kiện nuôi dưỡng của bố/mẹ)
+- Tài sản chung & Nợ chung (Danh mục tài sản, nguồn gốc, đề xuất phân chia).`,
+
+            // 10. Sở hữu Trí tuệ (Tranh chấp nhãn hiệu/bản quyền)
+            "sohuutritue": `Hãy phân tích vụ việc [Tranh chấp hành vi xâm phạm nhãn hiệu độc quyền giữa thương hiệu X và Y] dưới dạng sơ đồ tư duy Markdown cho Xmind. Các nhánh lớn bao gồm:
+
+- Chứng cứ chứng minh quyền sở hữu của nguyên đơn
+- Hành vi cấu thành xâm phạm của bị đơn (Yếu tố trùng/tương tự gây nhầm lẫn)
+- Biện pháp xử lý đề xuất (Dân sự, hành chính hay hình sự)
+- Yêu cầu bồi thường thiệt hại.`,
+
+            // 11. Phá sản doanh nghiệp (Đánh giá tình trạng và thủ tục)
+            "phasan": `Tạo một file Markdown tương thích với Xmind để quản lý quy trình [Tư vấn thủ tục phá sản cho Công ty Cổ phần X]. Phân cấp sơ đồ tư duy thành các bước:
+
+- Đánh giá dấu hiệu mất khả năng thanh toán
+- Xác định các chủ nợ (Nợ có bảo đảm, nợ bảo đảm một phần, nợ không bảo đảm)
+- Người có quyền nộp đơn
+- Các bước xử lý tại Tòa án
+
+Sử dụng cấu trúc # và ## rõ ràng.`,
+
+            // 12. Đầu tư / Dự án (Rà soát pháp lý - Legal Due Diligence)
+            "dautu": `Hãy đóng vai chuyên gia tư vấn M&A. Tạo file Markdown dùng cho Xmind để phác thảo sơ đồ rà soát pháp lý rủi ro cho [Dự án bất động sản của Công ty Z]. Sơ đồ tư duy cần các nhánh:
+
+- Tư cách pháp lý doanh nghiệp
+- Tình trạng pháp lý của đất dự án
+- Giấy phép xây dựng và quy hoạch
+- Các cam kết tài chính/thế chấp ngân hàng
+- Kết luận (Mua/Không mua/Điều kiện kèm theo).`,
+
+            // 13. File Tổng hợp (Theo dõi tiến trình tố tụng của mọi vụ án)
+            "tonghop": `Hãy tạo một template Markdown đa dụng tương thích Xmind để theo dõi tiến trình tố tụng của một vụ án bất kỳ từ giai đoạn chuẩn bị đến thi hành án. Cấu trúc gồm:
+
+- Giai đoạn 1: Tiếp nhận & Đánh giá hồ sơ (Thời hiệu, thẩm quyền, chứng cứ).
+- Giai đoạn 2: Giai đoạn Sơ thẩm (Thủ tục thụ lý, hòa giải/giao nộp chứng cứ, phiên tòa).
+- Giai đoạn 3: Giai đoạn Phúc thẩm (nếu có).
+- Giai đoạn 4: Thi hành án.
+
+Trả kết quả dưới dạng khối mã Markdown từ khóa.`
+        };
+
+        function switchPromptCase(val) {
+            document.getElementById('prompt-content-box').value = promptsDatabase[val];
+        }
+
+        function copyCurrentPrompt() {
+            const txt = document.getElementById('prompt-content-box').value;
+            navigator.clipboard.writeText(txt).then(() => showToast("Đã sao chép câu lệnh Prompt!", "fa-copy", "cyan"));
+        }
+
+        // ==========================================
+        // 4. PHÒNG THỰC HÀNH (GIẢ LẬP AI)
+        // ==========================================
+        const PRESETS = {
+            1: "Cáo trạng số 03/2026: Lương Trung Kiên cùng đồng bọn gây rối trật tự công cộng ngày 29/01/2026 tại Bắc Ninh. Nhóm dùng dao phớ, đinh ba dài 2m đuổi đánh nhóm Nguyễn Minh Quân do mâu thuẫn tại đập Hắng.",
+            2: "Vụ án Nguyễn Huy Toàn: Chuyên đột nhập các trường THPT tại Chũ để cắt trộm ống đồng điều hòa. Tổng cộng 5 lần thực hiện, gây thiệt hại 86.655.000 đồng trước khi bị truy nã."
+        };
+
+        function loadPreset(id) {
+            document.getElementById('lab-input').value = PRESETS[id];
+            showToast(`Đã tải Dữ liệu vụ án ${id}`, "fa-file-import", "cyan");
+        }
+
+        function simulateAI() {
+            const input = document.getElementById('lab-input').value.trim();
+            if(!input) {
+                showToast("Vui lòng nhập văn bản hoặc chọn Vụ án mẫu!", "fa-triangle-exclamation", "orange");
+                return;
+            }
+
+            const loader = document.getElementById('lab-loader');
+            const output = document.getElementById('lab-output');
+            const tag = document.getElementById('lab-status');
+            const btn = document.getElementById('btn-generate');
+
+            // Bật hiệu ứng xử lý
+            loader.classList.remove('hidden');
+            output.value = "";
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> ĐANG XỬ LÝ...`;
+            tag.innerText = "Analyzing...";
+            tag.className = "text-[10px] px-2.5 py-1 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-full font-bold uppercase animate-pulse";
+
+            // Giả lập thời gian AI phản hồi (2 giây)
+            setTimeout(() => {
+                const titleSnippet = input.substring(0, 30).replace(/[:\n]/g, '') + "...";
+                const mockMarkdown = `# PHÂN TÍCH VỤ ÁN:
+## 1. Tóm tắt nội dung
+- ${titleSnippet}
+- Xảy ra tại địa bàn cơ sở
+## 2. Các đối tượng liên quan
+- Bị can chính (Vai trò chủ mưu)
+- Các đối tượng đồng phạm giúp sức
+## 3. Tang vật & Công cụ phạm tội
+- Công cụ trực tiếp gây án
+- Phương tiện di chuyển tẩu thoát
+## 4. Thiệt hại & Hậu quả
+- Thiệt hại về tài sản / tính mạng
+- Ảnh hưởng an ninh trật tự xã hội
+## 5. Căn cứ pháp lý truy tố
+- Áp dụng các điều khoản BLHS hiện hành`;
+
+                output.value = mockMarkdown;
+                loader.classList.add('hidden');
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> PHÂN TÍCH & TẠO MÃ MARKDOWN`;
+                
+                tag.innerText = "Hoàn Tất";
+                tag.className = "text-[10px] px-2.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full font-bold uppercase";
+                showToast("AI đã sinh cấu trúc Markdown thành công!", "fa-check-double", "emerald");
+            }, 2000);
+        }
+
+        function copyLabOutput() {
+            const txt = document.getElementById('lab-output').value;
+            if(!txt) return showToast("Chưa có kết quả để sao chép!", "fa-triangle-exclamation", "orange");
+            navigator.clipboard.writeText(txt).then(() => showToast("Đã chép mã Markdown vào khay nhớ tạm!", "fa-copy", "emerald"));
+        }
+
+        function downloadLabFile() {
+            const content = document.getElementById('lab-output').value;
+            if(!content) return showToast("Không có dữ liệu để tạo tệp!", "fa-triangle-exclamation", "orange");
+            
+            const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "sodo_tuduy_xmind.md";
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showToast("Đã tải xuống file sodo.md thành công!", "fa-file-arrow-down", "emerald");
+        }
+
+        // ==========================================
+        // 5. TIỆN ÍCH THÔNG BÁO (TOAST)
+        // ==========================================
+        let toastTimeout;
+        function showToast(msg, icon, colorClass = "cyan") {
+            const toast = document.getElementById('toast');
+            const iconEl = document.getElementById('toast-icon');
+            
+            document.getElementById('toast-msg').innerText = msg;
+            iconEl.className = `fa-solid ${icon} text-${colorClass}-400 text-lg`;
+            toast.style.borderColor = colorClass === 'cyan' ? 'rgba(6, 182, 212, 0.5)' : (colorClass === 'emerald' ? 'rgba(16, 185, 129, 0.5)' : 'rgba(249, 115, 22, 0.5)');
+
+            toast.classList.remove('toast-exit');
+            toast.classList.add('toast-enter');
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-exit');
+            }, 3000);
+        }
+
+        // Khởi chạy khi load trang
+        window.onload = () => {
+            switchPromptCase('hinhsu_cttp');
+            updateSlideUI();
+        };
+    </script>
+</body>
+</html>

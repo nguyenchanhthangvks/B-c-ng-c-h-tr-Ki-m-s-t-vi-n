@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính tuổi - Tính thời hạn - Đếm tạm giữ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #315d7d;
+            --plum-dark: #244b69;
+            --plum-light: #6fa6c8;
+            --green-dark: #1a7a4c;
+            --green-light: #a8e6c1;
+            --red-warning: #dc2626;
+            --red-light: #fca5a5;
+            --yellow-warning: #d97706;
+            --yellow-light: #fde68a;
+            --indigo: #5b4b9c;
+            --indigo-light: #b3a8de;
+            --indigo-dark: #3d2f70;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f7fc 0%, #faf5f0 50%, #fefcf5 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border-bottom: 3px solid var(--bronze);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--bronze), #e8a830);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(201, 149, 46, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header-title span {
+            color: var(--bronze-light);
+        }
+
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .professional-advisory {
+            margin-bottom: 24px;
+            padding: 12px 16px;
+            border-left: 4px solid var(--bronze);
+            border-radius: 10px;
+            background: #fff8e1;
+            color: #665203;
+            font-size: 13.5px;
+            line-height: 1.55;
+            box-shadow: 0 2px 10px rgba(201, 149, 46, 0.08);
+        }
+
+        /* FIELDSET STYLES */
+        .fieldset-section {
+            margin-bottom: 36px;
+            border-radius: 16px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .fieldset-section fieldset {
+            border: 2px solid;
+            border-radius: 16px;
+            padding: 24px 24px 28px;
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            backdrop-filter: blur(8px);
+        }
+
+        .fieldset-section fieldset legend {
+            font-size: 18px;
+            font-weight: 800;
+            padding: 6px 18px;
+            border-radius: 30px;
+            color: #fff;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fieldset-section fieldset legend i {
+            font-size: 16px;
+        }
+
+        /* Fieldset 1 - Xanh (Tạm giữ) */
+        .fieldset-tamgiu {
+            border-color: var(--sky) !important;
+        }
+        .fieldset-tamgiu legend {
+            background: linear-gradient(135deg, var(--sky-dark), #2a7ab5);
+            border: 1px solid var(--sky-light);
+        }
+
+        /* Fieldset 2 - Nâu/Plum (Tuổi & Thời hạn) */
+        .fieldset-thoihan {
+            border-color: var(--plum-light) !important;
+        }
+        .fieldset-thoihan legend {
+            background: linear-gradient(135deg, var(--plum-dark), var(--plum-light));
+            border: 1px solid var(--plum-light);
+        }
+
+        /* LEGAL NOTE */
+        .legal-note {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+        .legal-note.collapsed > :not(.legal-toggle) { display: none !important; }
+        .legal-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; border:0; background:transparent; color:inherit; font:inherit; font-weight:700; cursor:pointer; padding:2px 0; }
+        .legal-toggle::after { content:"Mở ▾"; font-size:12px; }
+        .legal-note:not(.collapsed) .legal-toggle::after { content:"Thu gọn ▴"; }
+
+        .legal-note i {
+            font-size: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .legal-note-tamgiu {
+            background: rgba(30, 90, 138, 0.07);
+            border: 1px solid rgba(30, 90, 138, 0.2);
+            color: var(--sky-dark);
+        }
+
+        .legal-note-tamgiu i {
+            color: var(--sky-dark);
+        }
+
+        .legal-note-thoihan {
+            background: rgba(49, 93, 125, 0.07);
+            border: 1px solid rgba(49, 93, 125, 0.2);
+            color: var(--plum-dark);
+        }
+
+        .legal-note-thoihan i {
+            color: var(--plum-dark);
+        }
+
+        /* FORM SECTION (2 columns) */
+        .form-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 900px) {
+            .form-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-card {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+            backdrop-filter: none;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--sky-dark);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--sky-light);
+            padding-bottom: 10px;
+        }
+
+        .card-title i {
+            color: var(--bronze);
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label .optional {
+            font-weight: 400;
+            color: #999;
+            font-size: 11px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row-5 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row-5 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .form-row-3, .form-row-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid rgba(30, 90, 138, 0.2);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            background: #fff;
+            transition: all 0.25s ease;
+            outline: none;
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--sky);
+            box-shadow: 0 0 0 3px rgba(93, 169, 217, 0.15);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        /* Buttons */
+        .btn-calculate {
+            width: 100%;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 17px;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            box-shadow: 0 4px 16px rgba(30, 90, 138, 0.3);
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(30, 90, 138, 0.4);
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+
+        .btn-calculate i {
+            margin-right: 8px;
+        }
+
+        /* Tạm giữ button */
+        .btn-tamgiu {
+            background: linear-gradient(135deg, var(--sky-dark), #2a7ab5);
+            box-shadow: 0 4px 16px rgba(30, 90, 138, 0.3);
+        }
+        .btn-tamgiu:hover {
+            box-shadow: 0 8px 24px rgba(30, 90, 138, 0.4);
+        }
+
+        /* RESULT SECTION */
+        .result-section {
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .result-section.visible {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, rgba(30, 90, 138, 0.06), rgba(49, 93, 125, 0.06));
+            border: 2px solid var(--bronze-light);
+            border-radius: 16px;
+            padding: 32px 28px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .result-header h2 {
+            font-size: 20px;
+            color: var(--sky-dark);
+            font-weight: 800;
+        }
+
+        .result-header h2 i {
+            color: var(--bronze);
+            margin-right: 8px;
+        }
+
+        .result-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .result-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px 14px;
+            text-align: center;
+            border: 1px solid rgba(30, 90, 138, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .result-item .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .result-item .value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--plum-dark);
+        }
+
+        .result-item .value.highlight {
+            color: var(--bronze);
+        }
+
+        .result-item .value.time-value {
+            font-size: 22px;
+        }
+
+        /* Summary */
+        .result-summary {
+            text-align: center;
+            background: rgba(255,255,255,0.7);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(201, 149, 46, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .result-summary p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .result-summary .big-date {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--plum-dark);
+        }
+
+        .result-summary .arrow-icon {
+            color: var(--bronze);
+            font-size: 20px;
+            margin: 0 8px;
+        }
+
+        /* HOLIDAY WARNINGS */
+        .holiday-warning {
+            background: rgba(220, 38, 38, 0.06);
+            border: 1.5px solid rgba(220, 38, 38, 0.25);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-top: 16px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .holiday-warning .warning-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #b91c1c;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .holiday-warning .warning-title i {
+            font-size: 18px;
+        }
+
+        .holiday-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .holiday-tag {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            color: #991b1b;
+        }
+
+        .holiday-tag i {
+            margin-right: 5px;
+            font-size: 11px;
+        }
+
+        /* TẠM GIỮ RESULT */
+        .tamgiu-result {
+            margin-top: 20px;
+        }
+
+        .tamgiu-result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .tamgiu-result-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 14px;
+            text-align: center;
+            border: 1px solid rgba(30, 90, 138, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .tamgiu-result-item .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .tamgiu-result-item .value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--sky-dark);
+        }
+
+        .tamgiu-result-item .value.warning-red {
+            color: var(--red-warning);
+        }
+
+        .tamgiu-result-item .value.warning-yellow {
+            color: var(--yellow-warning);
+        }
+
+        .tamgiu-result-item .value.normal {
+            color: var(--green-dark);
+        }
+
+        /* TẠM GIỮ WARNING BANNER */
+        .tamgiu-warning {
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .tamgiu-warning i {
+            font-size: 20px;
+        }
+
+        .tamgiu-warning.danger {
+            background: rgba(220, 38, 38, 0.1);
+            border: 2px solid var(--red-warning);
+            color: var(--red-warning);
+        }
+
+        .tamgiu-warning.caution {
+            background: rgba(217, 119, 6, 0.1);
+            border: 2px solid var(--yellow-warning);
+            color: var(--yellow-warning);
+        }
+
+        .tamgiu-warning.safe {
+            background: rgba(26, 122, 76, 0.08);
+            border: 2px solid var(--green-dark);
+            color: var(--green-dark);
+        }
+
+        /* INFO SECTION */
+        .info-section {
+            margin-top: 30px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .info-item {
+            background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(30, 90, 138, 0.1);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .info-item i {
+            font-size: 20px;
+            color: var(--bronze);
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .info-item p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .info-item p strong {
+            color: var(--sky-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 14px 16px;
+            }
+            .main-content {
+                padding: 20px 14px;
+            }
+            .fieldset-section fieldset {
+                padding: 16px 14px;
+            }
+            .result-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .result-item .value {
+                font-size: 22px;
+            }
+            .tamgiu-result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* TABS FOR CALCULATION TYPE */
+        .calc-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: rgba(30, 90, 138, 0.06);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid rgba(30, 90, 138, 0.1);
+        }
+
+        .calc-tab {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            color: #777;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .calc-tab:hover {
+            color: var(--sky-dark);
+            background: rgba(255,255,255,0.5);
+        }
+
+        .calc-tab.active {
+            background: #fff;
+            color: var(--plum-dark);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .calc-tab i {
+            font-size: 16px;
+        }
+
+        @media (max-width: 500px) {
+            .calc-tab {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+        }
+
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(93, 169, 217, 0.12);
+            color: var(--sky-dark);
+        }
+
+        .info-badge i {
+            font-size: 11px;
+        }
+
+        .holiday-note-positive {
+            background: rgba(201, 149, 46, 0.08);
+            border: 1.5px solid rgba(201, 149, 46, 0.25);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 12px;
+        }
+
+        .holiday-note-positive p {
+            font-size: 13px;
+            color: #7a6a30;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .holiday-note-positive p i {
+            color: var(--bronze);
+        }
+
+        /* Tùy chọn giờ tạm giữ */
+        .tamgiu-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .tamgiu-option-btn {
+            padding: 8px 18px;
+            border: 2px solid rgba(30, 90, 138, 0.2);
+            border-radius: 10px;
+            background: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--sky-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .tamgiu-option-btn:hover {
+            border-color: var(--sky);
+            background: rgba(93, 169, 217, 0.06);
+        }
+
+        .tamgiu-option-btn.active {
+            border-color: var(--sky-dark);
+            background: rgba(30, 90, 138, 0.1);
+            box-shadow: 0 0 0 2px rgba(30, 90, 138, 0.15);
+        }
+
+        .tamgiu-custom-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 500px) {
+            .tamgiu-custom-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============ TẠM GIAM STYLES ============ */
+        .fieldset-tamgiam {
+            border-color: var(--green-dark) !important;
+        }
+        .fieldset-tamgiam legend {
+            background: linear-gradient(135deg, #0d5e3a, #1a8a54);
+            border: 1px solid var(--green-light);
+            color: #fff;
+        }
+        .legal-note-tamgiam {
+            background: rgba(26, 122, 76, 0.07);
+            border: 1px solid rgba(26, 122, 76, 0.2);
+            color: #0d5e3a;
+        }
+        .legal-note-tamgiam i {
+            color: var(--green-dark);
+        }
+        .btn-tamgiam {
+            background: linear-gradient(135deg, #0d5e3a, #1a8a54) !important;
+            box-shadow: 0 4px 16px rgba(26, 122, 76, 0.3) !important;
+        }
+        .btn-tamgiam:hover {
+            box-shadow: 0 8px 24px rgba(26, 122, 76, 0.4) !important;
+        }
+        .tamgiam-result {
+            margin-top: 20px;
+        }
+        .tamgiam-result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .tamgiam-result-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 14px;
+            text-align: center;
+            border: 1px solid rgba(26, 122, 76, 0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .tamgiam-result-item .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .tamgiam-result-item .value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--green-dark);
+        }
+        .tamgiam-result-item .sub {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-top: 4px;
+        }
+        .tamgiam-result-item .sub-small {
+            font-size: 11px;
+            color: #999;
+            margin-top: 2px;
+        }
+        .tamgiam-warning {
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .tamgiam-warning i { font-size: 20px; }
+        .tamgiam-warning.danger {
+            background: rgba(220, 38, 38, 0.1);
+            border: 2px solid var(--red-warning);
+            color: var(--red-warning);
+        }
+        .tamgiam-warning.caution {
+            background: rgba(217, 119, 6, 0.1);
+            border: 2px solid var(--yellow-warning);
+            color: var(--yellow-warning);
+        }
+        .tamgiam-warning.safe {
+            background: rgba(26, 122, 76, 0.08);
+            border: 2px solid var(--green-dark);
+            color: var(--green-dark);
+        }
+        #tgiam-result-section .result-card {
+            border-color: var(--green-light) !important;
+        }
+
+        /* ============ ĐẾM TUỔI / KHOẢNG CÁCH THỜI GIAN STYLES ============ */
+        .fieldset-demtuoi {
+            border-color: var(--indigo-light) !important;
+        }
+        .fieldset-demtuoi legend {
+            background: linear-gradient(135deg, var(--indigo-dark), var(--indigo));
+            border: 1px solid var(--indigo-light);
+            color: #fff;
+        }
+        .legal-note-demtuoi {
+            background: rgba(91, 75, 156, 0.07);
+            border: 1px solid rgba(91, 75, 156, 0.2);
+            color: var(--indigo-dark);
+        }
+        .legal-note-demtuoi i {
+            color: var(--indigo);
+        }
+        .btn-demtuoi {
+            background: linear-gradient(135deg, var(--indigo-dark), var(--indigo)) !important;
+            box-shadow: 0 4px 16px rgba(91, 75, 156, 0.3) !important;
+        }
+        .btn-demtuoi:hover {
+            box-shadow: 0 8px 24px rgba(91, 75, 156, 0.4) !important;
+        }
+        #dt-result-section .result-card {
+            border-color: var(--indigo-light) !important;
+        }
+        .dt-result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .dt-result-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 14px;
+            text-align: center;
+            border: 1px solid rgba(91, 75, 156, 0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .dt-result-item .label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .dt-result-item .value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--indigo-dark);
+        }
+        .dt-milestone-section {
+            margin-top: 18px;
+        }
+        .dt-milestone-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--indigo-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dt-milestone-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .dt-milestone-tag {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dt-milestone-tag.reached {
+            background: rgba(26, 122, 76, 0.08);
+            border: 1px solid rgba(26, 122, 76, 0.25);
+            color: var(--green-dark);
+        }
+        .dt-milestone-tag.not-reached {
+            background: rgba(153, 153, 153, 0.08);
+            border: 1px solid rgba(153, 153, 153, 0.25);
+            color: #777;
+        }
+        .dt-milestone-next {
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(217, 119, 6, 0.08);
+            border: 1.5px solid rgba(217, 119, 6, 0.25);
+            color: #8a5a05;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+        .dt-milestone-next.close {
+            background: rgba(220, 38, 38, 0.08);
+            border-color: rgba(220, 38, 38, 0.3);
+            color: #991b1b;
+        }
+    </style>
+    <link rel="stylesheet" href="../static/tool-page-theme.css">
+</head>
+<body class="ks-tool-page ks-calculator-page">
+
+    <!-- HEADER -->
+    <header class="header">
+        <img class="ks-header-logo" src="../static/logo_moi.png" alt="Logo ngành Kiểm sát nhân dân">
+        <div>
+            <div class="header-title">TÍNH TUỔI - <span>TÍNH THỜI HẠN - TẠM GIỮ</span></div>
+            <div class="header-sub"><i class="fa-regular fa-clock"></i> Công cụ tính toán thời gian tố tụng</div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <div class="professional-advisory" role="note">
+            ⚠️ <strong>Khuyến cáo:</strong> Kết quả tính toán trên phần mềm chỉ mang tính chất tham khảo nghiệp vụ, không thay thế cho các quyết định tố tụng chính thức của cơ quan có thẩm quyền.
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PHẦN 1: ĐẾM THỜI GIAN TẠM GIỮ (Điều 117 BLTTHS) -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset class="fieldset-tamgiu">
+                <legend><i class="fa-solid fa-clock"></i> ĐẾM THỜI GIAN TẠM GIỮ</legend>
+
+                <div class="form-section">
+                    <!-- CỘT TRÁI: Thời điểm bắt đầu tạm giữ -->
+                    <div class="form-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-play-circle"></i>
+                            Thời điểm bắt đầu tạm giữ
+                        </div>
+
+                        <div class="form-group">
+                            <label>Giờ - Phút</label>
+                            <div class="form-row">
+                                <div>
+                                    <input type="number" id="tg-hour" min="0" max="23" placeholder="Giờ (0-23)" value="8">
+                                </div>
+                                <div>
+                                    <input type="number" id="tg-minute" min="0" max="59" placeholder="Phút (0-59)" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ngày - Tháng - Năm</label>
+                            <div class="form-row-3">
+                                <div>
+                                    <input type="number" id="tg-day" min="1" max="31" placeholder="Ngày" value="1">
+                                </div>
+                                <div>
+                                    <input type="number" id="tg-month" min="1" max="12" placeholder="Tháng" value="1">
+                                </div>
+                                <div>
+                                    <input type="number" id="tg-year" min="1" max="9999" placeholder="Năm" value="2026">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 8px; text-align: right;">
+                            <button onclick="fillCurrentTimeTG()" style="padding:6px 14px;border:1px solid rgba(30,90,138,0.2);border-radius:8px;background:transparent;font-family:inherit;font-size:12px;font-weight:600;color:var(--sky-dark);cursor:pointer;transition:all 0.2s;">
+                                <i class="fa-regular fa-clock"></i> Lấy thời gian hiện tại
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CỘT PHẢI: Thời hạn tạm giữ -->
+                    <div class="form-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-hourglass-start"></i>
+                            Thời hạn tạm giữ
+                        </div>
+
+                        <div class="form-group">
+                            <label>Chọn thời hạn</label>
+                            <div class="tamgiu-options" id="tg-options">
+                                <button class="tamgiu-option-btn active" data-hours="24" onclick="selectTGHours(24)">24h</button>
+                                <button class="tamgiu-option-btn" data-hours="48" onclick="selectTGHours(48)">48h</button>
+                                <button class="tamgiu-option-btn" data-hours="72" onclick="selectTGHours(72)">72h</button>
+                                <button class="tamgiu-option-btn" data-hours="0" onclick="selectTGHours(0)">Tùy chọn</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="tg-custom-group" style="display:none;">
+                            <label>Nhập số giờ tùy chọn</label>
+                            <div class="tamgiu-custom-row">
+                                <div>
+                                    <input type="number" id="tg-custom-hours" min="1" max="999" placeholder="Số giờ" value="12">
+                                </div>
+                                <div style="display:flex;align-items:center;font-size:13px;font-weight:600;color:#666;">
+                                    <i class="fa-regular fa-clock" style="margin-right:6px;"></i> giờ
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-calculate btn-tamgiu" onclick="calculateTamGiu()">
+                            <i class="fa-solid fa-calculator"></i> TÍNH THỜI HẠN TẠM GIỮ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kết quả tạm giữ -->
+                <div class="result-section" id="tg-result-section">
+                    <div class="result-card" style="margin-top:20px;">
+                        <div class="result-header">
+                            <h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ THỜI HẠN TẠM GIỮ</h2>
+                        </div>
+
+                        <div id="tg-result-content">
+                            <!-- Dynamically filled -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ghi chú pháp lý Điều 117, 118 BLTTHS -->
+                <div class="legal-note legal-note-tamgiu collapsed" style="max-height: 320px; overflow-y: auto; font-size: 13px; line-height: 1.7;"><button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
+                    <i class="fa-solid fa-scale-balanced" style="margin-top: 2px;"></i>
+                    <div>
+                        <strong style="font-size: 15px; display: block; margin-bottom: 8px;">Căn cứ pháp lý</strong>
+
+                        <p><strong>Điều 117. Tạm giữ</strong></p>
+                        <p>1. Tạm giữ có thể áp dụng đối với người bị giữ trong trường hợp khẩn cấp, người bị bắt trong trường hợp phạm tội quả tang, người phạm tội tự thú, đầu thú hoặc đối với người bị bắt theo quyết định truy nã.</p>
+                        <p>2. Những người có thẩm quyền ra lệnh giữ người quy định tại khoản 2 Điều 110 của Bộ luật này có quyền ra quyết định tạm giữ. Quyết định tạm giữ phải ghi rõ họ tên, địa chỉ của người bị tạm giữ, lý do tạm giữ, giờ, ngày bắt đầu và giờ, ngày hết thời hạn tạm giữ và các nội dung quy định tại khoản 2 Điều 132 của Bộ luật này. Quyết định tạm giữ phải giao cho người bị tạm giữ.</p>
+                        <p>3. Người thi hành quyết định tạm giữ phải thông báo, giải thích quyền và nghĩa vụ của người bị tạm giữ quy định tại Điều 59 của Bộ luật này.</p>
+                        <p>4. Trong thời hạn 12 giờ kể từ khi ra quyết định tạm giữ, người ra quyết định tạm giữ phải gửi quyết định tạm giữ kèm theo các tài liệu làm căn cứ tạm giữ cho Viện kiểm sát cùng cấp hoặc Viện kiểm sát có thẩm quyền. Nếu xét thấy việc tạm giữ không có căn cứ hoặc không cần thiết thì Viện kiểm sát ra quyết định hủy bỏ quyết định tạm giữ và người ra quyết định tạm giữ phải trả tự do ngay cho người bị tạm giữ.</p>
+
+                        <p style="margin-top: 12px;"><strong>Điều 118. Thời hạn tạm giữ</strong></p>
+                        <p>1. Thời hạn tạm giữ không quá 03 ngày kể từ khi Cơ quan điều tra, cơ quan được giao nhiệm vụ tiến hành một số hoạt động điều tra nhận người bị giữ, người bị bắt hoặc áp giải người bị giữ, người bị bắt về trụ sở của mình hoặc kể từ khi Cơ quan điều tra ra quyết định tạm giữ người phạm tội tự thú, đầu thú.</p>
+                        <p>2. Trường hợp cần thiết, người ra quyết định tạm giữ có thể gia hạn tạm giữ nhưng không quá 03 ngày. Trường hợp đặc biệt, người ra quyết định tạm giữ có thể gia hạn tạm giữ lần thứ hai nhưng không quá 03 ngày. Mọi trường hợp gia hạn tạm giữ đều phải được Viện kiểm sát cùng cấp hoặc Viện kiểm sát có thẩm quyền phê chuẩn. Trong thời hạn 12 giờ kể từ khi nhận hồ sơ đề nghị gia hạn tạm giữ, Viện kiểm sát phải ra quyết định phê chuẩn hoặc quyết định không phê chuẩn.</p>
+                        <p>3. Trong khi tạm giữ, nếu không đủ căn cứ khởi tố bị can thì Cơ quan điều tra, cơ quan được giao nhiệm vụ tiến hành một số hoạt động điều tra phải trả tự do ngay cho người bị tạm giữ; trường hợp đã gia hạn tạm giữ thì Viện kiểm sát phải trả tự do ngay cho người bị tạm giữ.</p>
+                        <p>4. Thời gian tạm giữ được trừ vào thời hạn tạm giam. Một ngày tạm giữ được tính bằng một ngày tạm giam.</p>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PHẦN 2: TÍNH THỜI HẠN TẠM GIAM (Điều 17 TT 01/2026) -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset class="fieldset-tamgiam">
+                <legend><i class="fa-solid fa-gavel"></i> TÍNH THỜI HẠN TẠM GIAM</legend>
+
+                <div class="form-section">
+                    <!-- CỘT TRÁI: Ngày bắt đầu -->
+                    <div class="form-card">
+                        <div class="card-title" style="color:var(--green-dark);border-bottom-color:var(--green-light);">
+                            <i class="fa-solid fa-play-circle"></i>
+                            Ngày bắt đầu tạm giam
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ngày - Tháng - Năm</label>
+                            <div class="form-row-3">
+                                <div><input type="number" id="tgiam-day" min="1" max="31" placeholder="Ngày" value="1"></div>
+                                <div><input type="number" id="tgiam-month" min="1" max="12" placeholder="Tháng" value="1"></div>
+                                <div><input type="number" id="tgiam-year" min="1" max="9999" placeholder="Năm" value="2026"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                <input type="checkbox" id="tgiam-lientuc" onchange="toggleTamGiamContinuous()" style="width:18px;height:18px;cursor:pointer;">
+                                Tạm giam liên tục với tạm giữ (tự động lấy ngày hết hạn tạm giữ làm ngày bắt đầu)
+                            </label>
+                        </div>
+
+                        <div class="form-group" id="tgiam-ngaybatdau-group">
+                            <label>Số ngày đã tạm giữ (để trừ vào thời hạn tạm giam)</label>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <input type="number" id="tgiam-da-tamgiu" min="0" placeholder="0" value="0" style="flex:1;">
+                                <span style="font-size:13px;font-weight:600;color:#666;">ngày</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:8px;text-align:right;">
+                            <button onclick="fillCurrentTimeTGIAM()" style="padding:6px 14px;border:1px solid rgba(26,122,76,0.25);border-radius:8px;background:transparent;font-family:inherit;font-size:12px;font-weight:600;color:var(--green-dark);cursor:pointer;">
+                                <i class="fa-regular fa-clock"></i> Lấy ngày hiện tại
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CỘT PHẢI: Thời hạn tạm giam -->
+                    <div class="form-card">
+                        <div class="card-title" style="color:var(--green-dark);border-bottom-color:var(--green-light);">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                            Thời hạn tạm giam (ghi trong lệnh)
+                        </div>
+
+                        <div class="form-group">
+                            <label>Thời hạn gốc</label>
+                            <div class="form-row">
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Tháng</label>
+                                    <input type="number" id="tgiam-thang" min="0" placeholder="0" value="0">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Ngày</label>
+                                    <input type="number" id="tgiam-ngay" min="0" placeholder="0" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ví dụ nhanh</label>
+                            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                                <button class="quick-example" style="border-color:rgba(26,122,76,0.25);background:rgba(26,122,76,0.06);color:var(--green-dark);" onclick="quickExampleTGiam(1,0)">1 tháng</button>
+                                <button class="quick-example" style="border-color:rgba(26,122,76,0.25);background:rgba(26,122,76,0.06);color:var(--green-dark);" onclick="quickExampleTGiam(2,0)">2 tháng</button>
+                                <button class="quick-example" style="border-color:rgba(26,122,76,0.25);background:rgba(26,122,76,0.06);color:var(--green-dark);" onclick="quickExampleTGiam(3,0)">3 tháng</button>
+                                <button class="quick-example" style="border-color:rgba(26,122,76,0.25);background:rgba(26,122,76,0.06);color:var(--green-dark);" onclick="quickExampleTGiam(4,0)">4 tháng</button>
+                            </div>
+                        </div>
+
+                        <button class="btn-calculate btn-tamgiam" onclick="calculateTamGiam()">
+                            <i class="fa-solid fa-calculator"></i> TÍNH THỜI HẠN TẠM GIAM
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kết quả tạm giam -->
+                <div class="result-section" id="tgiam-result-section">
+                    <div class="result-card" style="margin-top:20px;border-color:var(--green-light)!important;">
+                        <div class="result-header">
+                            <h2 style="color:var(--green-dark);"><i class="fa-solid fa-check-circle"></i> KẾT QUẢ THỜI HẠN TẠM GIAM</h2>
+                        </div>
+                        <div id="tgiam-result-content"></div>
+                    </div>
+                </div>
+
+                <!-- Ghi chú pháp lý Điều 17 TT 01/2026 -->
+                <div class="legal-note legal-note-tamgiam collapsed" style="max-height: 450px; overflow-y: auto; font-size: 13px; line-height: 1.7;"><button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
+                    <i class="fa-solid fa-scale-balanced" style="margin-top: 2px;"></i>
+                    <div>
+                        <strong style="font-size: 15px; display: block; margin-bottom: 8px;">Căn cứ pháp lý</strong>
+
+                        <p><strong>Điều 17 Thông tư liên tịch số 01/2026/TTLT-VKSNDTC-BCA-BQP</strong> ngày 28 tháng 01 năm 2026 quy định về phối hợp giữa Cơ quan điều tra và Viện kiểm sát trong việc thực hiện một số quy định của Bộ luật Tố tụng hình sự:</p>
+
+                        <p><strong>Tính thời hạn tạm giam trong trường hợp bị can đã bị tạm giữ và cách ghi thời hạn trong lệnh tạm giam, lệnh bắt bị can để tạm giam đối với bị can đã bị tạm giữ</strong></p>
+
+                        <p>1. Thời hạn tạm giữ được trừ vào thời hạn tạm giam để điều tra. Nếu việc tạm giam liên tục với việc tạm giữ thì thời hạn tạm giam được tính tiếp từ ngày hết thời hạn tạm giữ. Nếu việc tạm giam không liên tục với việc tạm giữ thì thời hạn tạm giam được tính kể từ ngày bắt bị can để tạm giam cho đến ngày kết thúc được ghi trong lệnh (đã trừ đi số ngày bị tạm giữ). Thời điểm cuối cùng của thời hạn tạm giam là 24 giờ 00 phút của ngày cuối cùng được ghi trong lệnh. Khi tính thời hạn tạm giữ, tạm giam phải căn cứ vào thời hạn thực tế được ghi trong quyết định tạm giữ, lệnh tạm giam, lệnh bắt bị can để tạm giam và <strong>tính liên tục cả ngày nghỉ (thứ bảy, chủ nhật, ngày lễ, ngày tết), 01 tháng tạm giam được tính bằng 30 ngày</strong>.</p>
+
+                        <p>2. Cách ghi thời hạn trong lệnh tạm giam, lệnh bắt bị can để tạm giam trong trường hợp trước đó bị can đã bị tạm giữ được thực hiện như sau: thời hạn tạm giam được tính theo ngày, bắt đầu kể từ ngày cuối cùng của thời hạn tạm giữ hoặc ngày bắt bị can để tạm giam và kết thúc vào ngày cuối cùng của thời hạn tạm giam (sau khi đã trừ đi số ngày tạm giữ).</p>
+
+                        <p style="margin-top: 10px; padding: 10px; background: rgba(26,122,76,0.06); border-radius: 8px; border-left: 3px solid var(--green-dark);">
+                            <strong>Ví dụ 1:</strong> Nguyễn Văn A bị tạm giữ 03 ngày, từ 10 giờ 00 phút ngày 01/3/2025 đến 10 giờ 00 phút ngày 04/3/2025, sau đó A bị khởi tố bị can và bị ra lệnh tạm giam 02 tháng, thì thời hạn tạm giam thực tế đối với bị can là 01 tháng 27 ngày (đã trừ 03 ngày tạm giữ). Do đó, thời hạn trong lệnh tạm giam ghi là: tạm giam trong thời hạn 01 tháng 27 ngày, kể từ ngày 04/3/2025 đến hết ngày 29/4/2025.
+                        </p>
+
+                        <p style="padding: 10px; background: rgba(26,122,76,0.06); border-radius: 8px; border-left: 3px solid var(--green-dark);">
+                            <strong>Ví dụ 2:</strong> Trần Thị B bị tạm giữ 06 ngày, từ 14 giờ 00 phút ngày 05/3/2025 đến 14 giờ 00 phút ngày 11/3/2025 thì được áp dụng biện pháp cấm đi khỏi nơi cư trú. Đến ngày 11/4/2025 bị can B bị bắt để tạm giam thời hạn là 02 tháng, thì thời hạn tạm giam đối với bị can B là 01 tháng 24 ngày (đã trừ 06 ngày tạm giữ). Do đó, thời hạn trong lệnh bắt bị can để tạm giam ghi là: tạm giam trong thời hạn 01 tháng 24 ngày, kể từ ngày 11/4/2025 đến hết ngày 03/6/2025.
+                        </p>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PHẦN 3: TÍNH TUỔI & TÍNH THỜI HẠN (Điều 135 BLTTHS) -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset class="fieldset-thoihan">
+                <legend><i class="fa-solid fa-calendar-alt"></i> TÍNH TUỔI & TÍNH THỜI HẠN</legend>
+
+                <div class="form-section">
+                    <!-- CỘT TRÁI: THỜI GIAN GỐC -->
+                    <div class="form-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-calendar-day"></i>
+                            Thời gian gốc
+                            <span class="info-badge"><i class="fa-regular fa-star"></i> Mốc bắt đầu</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ngày - Tháng - Năm</label>
+                            <div class="form-row-3">
+                                <div>
+                                    <input type="number" id="start-day" min="1" max="31" placeholder="Ngày" value="1">
+                                </div>
+                                <div>
+                                    <input type="number" id="start-month" min="1" max="12" placeholder="Tháng" value="1">
+                                </div>
+                                <div>
+                                    <input type="number" id="start-year" min="1" max="9999" placeholder="Năm" value="2026">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- CỘT PHẢI: TUỔI / THỜI HẠN -->
+                    <div class="form-card">
+                        <div class="card-title">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                            Tuổi / Thời hạn tố tụng
+                        </div>
+
+                        <div class="calc-tabs" id="calc-tabs">
+                            <button class="calc-tab active" data-mode="add" onclick="setMode('add')">
+                                <i class="fa-solid fa-plus"></i> Cộng thêm
+                            </button>
+                            <button class="calc-tab" data-mode="subtract" onclick="setMode('subtract')">
+                                <i class="fa-solid fa-minus"></i> Trừ đi
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Thời hạn (điền các giá trị mong muốn, có thể để trống)</label>
+                            <div class="form-row-3">
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Năm</label>
+                                    <input type="number" id="dur-year" min="0" placeholder="0" value="0">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Tháng</label>
+                                    <input type="number" id="dur-month" min="0" placeholder="0" value="0">
+                                </div>
+                                <div>
+                                    <label style="font-size:11px;color:#999;font-weight:600;">Ngày</label>
+                                    <input type="number" id="dur-day" min="0" placeholder="0" value="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ví dụ nhanh</label>
+                            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                                <button class="quick-example" onclick="quickExample(18,0,0)">18 tuổi</button>
+                                <button class="quick-example" onclick="quickExample(0,0,20)">20 ngày</button>
+                                <button class="quick-example" onclick="quickExample(0,1,0)">1 tháng</button>
+                                <button class="quick-example" onclick="quickExample(0,3,0)">3 tháng</button>
+                                <button class="quick-example" onclick="quickExample(0,6,0)">6 tháng</button>
+                                <button class="quick-example" onclick="quickExample(1,0,0)">1 năm</button>
+                                <button class="quick-example" onclick="quickExample(2,0,0)">2 năm</button>
+                                <button class="quick-example" onclick="quickExample(1,2,15)">1n2th15ng</button>
+                            </div>
+                        </div>
+
+                        <style>
+                            .quick-example {
+                                padding: 6px 14px;
+                                border: 1.5px solid rgba(201, 149, 46, 0.25);
+                                border-radius: 20px;
+                                background: rgba(201, 149, 46, 0.06);
+                                font-family: inherit;
+                                font-size: 12px;
+                                font-weight: 700;
+                                color: var(--plum-dark);
+                                cursor: pointer;
+                                transition: all 0.2s;
+                            }
+                            .quick-example:hover {
+                                background: rgba(201, 149, 46, 0.15);
+                                border-color: var(--bronze);
+                                transform: translateY(-1px);
+                            }
+                            .quick-example:active {
+                                transform: translateY(0);
+                            }
+                        </style>
+
+                        <button class="btn-calculate" onclick="calculate()">
+                            <i class="fa-solid fa-calculator"></i> TÍNH TOÁN
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kết quả -->
+                <div class="result-section" id="result-section">
+                    <div class="result-card" id="result-card">
+                        <div class="result-header">
+                            <h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ TÍNH TOÁN</h2>
+                        </div>
+
+                        <div class="result-summary" id="result-summary">
+                            <!-- Dynamically filled -->
+                        </div>
+
+                        <div class="result-display" id="result-display">
+                            <!-- Dynamically filled -->
+                        </div>
+
+                        <div id="holiday-section">
+                            <!-- Dynamically filled -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ghi chú pháp lý Điều 134, 135 BLTTHS -->
+                <div class="legal-note legal-note-thoihan collapsed" style="max-height: 320px; overflow-y: auto; font-size: 13px; line-height: 1.7;"><button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
+                    <i class="fa-solid fa-scale-balanced" style="margin-top: 2px;"></i>
+                    <div>
+                        <strong style="font-size: 15px; display: block; margin-bottom: 8px;">Căn cứ pháp lý</strong>
+
+                        <p><strong>Điều 134. Tính thời hạn</strong></p>
+                        <p>1. Thời hạn mà Bộ luật này quy định được tính theo giờ, ngày, tháng, năm. Đêm được tính từ 22 giờ đến 06 giờ sáng ngày hôm sau.</p>
+                        <p>Khi tính thời hạn theo ngày thì thời hạn sẽ hết vào lúc 24 giờ ngày cuối cùng của thời hạn.</p>
+                        <p>Khi tính thời hạn theo tháng thì thời hạn hết vào ngày trùng của tháng sau; nếu tháng đó không có ngày trùng thì thời hạn hết vào ngày cuối cùng của tháng đó; nếu thời hạn hết vào ngày nghỉ thì ngày làm việc đầu tiên tiếp theo được tính là ngày cuối cùng của thời hạn.</p>
+                        <p>Khi tính thời hạn tạm giữ, tạm giam thì thời hạn hết vào ngày kết thúc thời hạn được ghi trong lệnh, quyết định. Nếu thời hạn được tính bằng tháng thì 01 tháng được tính là 30 ngày.</p>
+                        <p>2. Trường hợp có đơn hoặc giấy tờ gửi qua dịch vụ bưu chính thì thời hạn được tính theo dấu bưu chính nơi gửi. Nếu có đơn hoặc giấy tờ gửi qua cơ sở giam giữ thì thời hạn được tính từ ngày Trưởng Nhà tạm giữ, Trưởng Buồng tạm giữ thuộc Đồn biên phòng, Giám thị Trại tạm giam, Giám thị Trại giam nhận đơn hoặc giấy tờ đó.</p>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PHẦN 4: ĐẾM TUỔI / KHOẢNG CÁCH THỜI GIAN GIỮA HAI MỐC -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset class="fieldset-demtuoi">
+                <legend><i class="fa-solid fa-user-clock"></i> ĐẾM TUỔI / KHOẢNG CÁCH GIỮA HAI MỐC THỜI GIAN</legend>
+
+                <div class="form-section">
+                    <!-- CỘT TRÁI: Mốc bắt đầu -->
+                    <div class="form-card">
+                        <div class="card-title" style="color:var(--indigo-dark);border-bottom-color:var(--indigo-light);">
+                            <i class="fa-solid fa-play-circle"></i>
+                            Mốc bắt đầu <span class="optional">(VD: ngày sinh)</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ngày - Tháng - Năm</label>
+                            <div class="form-row-3">
+                                <div><input type="number" id="dt-start-day" min="1" max="31" placeholder="Ngày" value="1"></div>
+                                <div><input type="number" id="dt-start-month" min="1" max="12" placeholder="Tháng" value="1"></div>
+                                <div><input type="number" id="dt-start-year" min="1" max="9999" placeholder="Năm" value="2000"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CỘT PHẢI: Mốc kết thúc -->
+                    <div class="form-card">
+                        <div class="card-title" style="color:var(--indigo-dark);border-bottom-color:var(--indigo-light);">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                            Mốc kết thúc <span class="optional">(VD: ngày xảy ra sự việc)</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ngày - Tháng - Năm</label>
+                            <div class="form-row-3">
+                                <div><input type="number" id="dt-end-day" min="1" max="31" placeholder="Ngày" value="1"></div>
+                                <div><input type="number" id="dt-end-month" min="1" max="12" placeholder="Tháng" value="1"></div>
+                                <div><input type="number" id="dt-end-year" min="1" max="9999" placeholder="Năm" value="2026"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:8px;text-align:right;">
+                            <button onclick="fillCurrentTimeDT()" style="padding:6px 14px;border:1px solid rgba(91,75,156,0.25);border-radius:8px;background:transparent;font-family:inherit;font-size:12px;font-weight:600;color:var(--indigo-dark);cursor:pointer;">
+                                <i class="fa-regular fa-clock"></i> Lấy ngày hiện tại
+                            </button>
+                        </div>
+
+                        <button class="btn-calculate btn-demtuoi" onclick="calculateDemTuoi()">
+                            <i class="fa-solid fa-calculator"></i> ĐẾM KHOẢNG CÁCH / TÍNH TUỔI
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kết quả -->
+                <div class="result-section" id="dt-result-section">
+                    <div class="result-card" style="margin-top:20px;">
+                        <div class="result-header">
+                            <h2 style="color:var(--indigo-dark);"><i class="fa-solid fa-check-circle"></i> KẾT QUẢ ĐẾM THỜI GIAN</h2>
+                        </div>
+                        <div id="dt-result-content"></div>
+                    </div>
+                </div>
+
+                <!-- Ghi chú pháp lý -->
+                <div class="legal-note legal-note-demtuoi collapsed" style="max-height: 380px; overflow-y: auto; font-size: 13px; line-height: 1.7;"><button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
+                    <i class="fa-solid fa-scale-balanced" style="margin-top: 2px;"></i>
+                    <div>
+                        <strong style="font-size: 15px; display: block; margin-bottom: 8px;">Căn cứ pháp lý tham khảo</strong>
+
+                        <p><strong>Điều 12. Tuổi chịu trách nhiệm hình sự</strong></p>
+                        <p>1. Người từ đủ 16 tuổi trở lên phải chịu trách nhiệm hình sự về mọi tội phạm, trừ những tội phạm mà Bộ luật này có quy định khác.</p>
+                        <p>2. Người từ đủ 14 tuổi đến dưới 16 tuổi phải chịu trách nhiệm hình sự về tội phạm rất nghiêm trọng, tội phạm đặc biệt nghiêm trọng quy định tại một trong các điều 123, 134, 141, 142, 143, 144, 150, 151, 168, 169, 170, 171, 173, 178, 248, 249, 250, 251, 252, 265, 266, 286, 287, 289, 290, 299, 303 và 304 của Bộ luật này.</p>
+
+                        <p style="margin-top: 10px; padding: 10px; background: rgba(91,75,156,0.06); border-radius: 8px; border-left: 3px solid var(--indigo);">
+                            <strong>Cách tính:</strong> Tuổi/khoảng cách được tính đủ theo lịch dương (năm - tháng - ngày), lấy mốc kết thúc trừ mốc bắt đầu; một người được coi là "đã đủ N tuổi" kể từ ngày liền sau ngày sinh nhật lần thứ N (tức là qua 0 giờ ngày sinh nhật lần thứ N). Kết quả trên đây chỉ mang tính hỗ trợ nghiệp vụ, không thay thế văn bản, quyết định của cơ quan có thẩm quyền.
+                        </p>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- INFO SECTION -->
+        <div class="info-section">
+            <div class="info-grid">
+                <div class="info-item">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <p><strong>Cách sử dụng:</strong> Nhập thời gian bắt đầu (ngày/tháng/năm), chọn "Cộng thêm" hoặc "Trừ đi", nhập giá trị và đơn vị thời hạn. Kết quả sẽ hiển thị ngày/tháng/năm tương ứng.</p>
+                </div>
+                <div class="info-item">
+                    <i class="fa-solid fa-calendar-alt"></i>
+                    <p><strong>Tính chính xác theo lịch:</strong> Công cụ tự động tính toán dựa trên lịch thực tế (số ngày trong tháng, năm nhuận). Phù hợp với nghiệp vụ tính thời hạn tố tụng.</p>
+                </div>
+                <div class="info-item">
+                    <i class="fa-solid fa-flag-checkered"></i>
+                    <p><strong>Lưu ý ngày lễ:</strong> Nếu khoảng thời gian tính toán nằm trong cùng một năm, công cụ sẽ liệt kê các ngày lễ, Tết rơi vào khoảng đó để tiện theo dõi.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleLegalNote(button) { button.closest('.legal-note').classList.toggle('collapsed'); }
+        // ============================================================
+        // BIẾN TOÀN CỤC
+        // ============================================================
+        var currentMode = 'add';
+        var selectedTGHours = 24;
+
+        // Danh sách ngày lễ cố định (dương lịch)
+        var FIXED_HOLIDAYS = [
+            { day: 1, month: 1, name: 'Tết Dương lịch', icon: 'fa-calendar' },
+            { day: 30, month: 4, name: 'Ngày Giải phóng miền Nam (30/4)', icon: 'fa-flag' },
+            { day: 1, month: 5, name: 'Quốc tế Lao động (1/5)', icon: 'fa-briefcase' },
+            { day: 2, month: 9, name: 'Quốc khánh (2/9)', icon: 'fa-star' },
+            // Giỗ Tổ Hùng Vương (10/3 ÂL) - ước tính ngày dương (thường rơi vào tháng 4)
+            // Các năm tham khảo: 2025 (07/04), 2026 (26/04), 2027 (16/04), 2028 (04/04)
+            // Tết Nguyên đán - ước tính (thường cuối tháng 1 - đầu tháng 2)
+            // Các năm tham khảo: 2025 (29/01), 2026 (17/02), 2027 (06/02), 2028 (26/01)
+        ];
+
+        // Các ngày lễ âm lịch cần lưu ý (thông báo chung)
+        var LUNAR_HOLIDAY_NOTES = [
+            { name: 'Tết Nguyên đán', note: '(thường rơi vào cuối tháng 1 - đầu tháng 2 dương lịch)' },
+            { name: 'Giỗ Tổ Hùng Vương (10/3 ÂL)', note: '(thường rơi vào tháng 4 dương lịch)' },
+            { name: 'Tết Trung thu (15/8 ÂL)', note: '(thường rơi vào tháng 9 - 10 dương lịch)' },
+        ];
+
+        // ============================================================
+        // KHỞI TẠO
+        // ============================================================
+        (function init() {
+            // Đặt giá trị mặc định cho thời gian gốc là hôm nay
+            var now = new Date();
+            document.getElementById('start-day').value = now.getDate();
+            document.getElementById('start-month').value = now.getMonth() + 1;
+            document.getElementById('start-year').value = now.getFullYear();
+
+            // Đặt giá trị mặc định cho tạm giữ
+            document.getElementById('tg-hour').value = now.getHours();
+            document.getElementById('tg-minute').value = now.getMinutes();
+            document.getElementById('tg-day').value = now.getDate();
+            document.getElementById('tg-month').value = now.getMonth() + 1;
+            document.getElementById('tg-year').value = now.getFullYear();
+
+            // Đặt giá trị mặc định cho mốc kết thúc (Phần 4 - Đếm tuổi/khoảng cách) là hôm nay
+            document.getElementById('dt-end-day').value = now.getDate();
+            document.getElementById('dt-end-month').value = now.getMonth() + 1;
+            document.getElementById('dt-end-year').value = now.getFullYear();
+        })();
+
+        // ============================================================
+        // CHỨC NĂNG TÍNH TUỔI & THỜI HẠN
+        // ============================================================
+
+        function setMode(mode) {
+            currentMode = mode;
+            var tabs = document.querySelectorAll('.calc-tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            document.querySelector('.calc-tab[data-mode="' + mode + '"]').classList.add('active');
+        }
+
+        function fillCurrentTime() {
+            var now = new Date();
+            document.getElementById('start-day').value = now.getDate();
+            document.getElementById('start-month').value = now.getMonth() + 1;
+            document.getElementById('start-year').value = now.getFullYear();
+        }
+
+        function quickExample(y, m, d) {
+            document.getElementById('dur-year').value = y;
+            document.getElementById('dur-month').value = m;
+            document.getElementById('dur-day').value = d;
+            calculate();
+        }
+
+        // ============================================================
+        // HÀM TÍNH TOÁN NGÀY THÁNG
+        // ============================================================
+
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+
+        function getDaysInMonth(year, month) {
+            var daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (month === 2 && isLeapYear(year)) return 29;
+            return daysInMonths[month - 1];
+        }
+
+        function isValidDate(year, month, day) {
+            if (month < 1 || month > 12) return false;
+            var maxDay = getDaysInMonth(year, month);
+            return day >= 1 && day <= maxDay;
+        }
+
+        function normalizeDate(year, month, day) {
+            while (month > 12) { month -= 12; year++; }
+            while (month < 1) { month += 12; year--; }
+            var maxDay = getDaysInMonth(year, month);
+            if (day > maxDay) day = maxDay;
+            return { year: year, month: month, day: day };
+        }
+
+        function pad(n) {
+            return String(n).padStart(2, '0');
+        }
+
+        // ============================================================
+        // TÍNH TOÁN CHÍNH (Tính từ mốc gốc, không +1 ngày)
+        // ============================================================
+
+        function calculate() {
+            // Đọc dữ liệu đầu vào
+            var startDay = parseInt(document.getElementById('start-day').value) || 1;
+            var startMonth = parseInt(document.getElementById('start-month').value) || 1;
+            var startYear = parseInt(document.getElementById('start-year').value) || 2026;
+
+            // Đọc thời hạn từ 3 trường
+            var durYear = parseInt(document.getElementById('dur-year').value) || 0;
+            var durMonth = parseInt(document.getElementById('dur-month').value) || 0;
+            var durDay = parseInt(document.getElementById('dur-day').value) || 0;
+
+            var totalNonZero = (durYear > 0 ? 1 : 0) + (durMonth > 0 ? 1 : 0) + (durDay > 0 ? 1 : 0);
+
+            // Kiểm tra dữ liệu hợp lệ
+            if (totalNonZero === 0) {
+                alert('Vui lòng nhập ít nhất một giá trị thời hạn (lớn hơn 0).');
+                return;
+            }
+
+            if (!isValidDate(startYear, startMonth, startDay)) {
+                alert('Ngày tháng không hợp lệ! Vui lòng kiểm tra lại.');
+                return;
+            }
+
+            // Dùng trực tiếp ngày bắt đầu làm mốc (không +1 ngày)
+            var result = { year: startYear, month: startMonth, day: startDay };
+            result = calculateDate(result, durYear, 'year', currentMode);
+            result = calculateDate(result, durMonth, 'month', currentMode);
+            result = calculateDate(result, durDay, 'day', currentMode);
+
+            // Hiển thị kết quả
+            displayResult(result, startYear, startMonth, startDay, durYear, durMonth, durDay);
+        }
+
+        function calculateDate(current, value, unit, mode) {
+            if (value === 0) return current;
+            var sign = (mode === 'add') ? 1 : -1;
+            var dateObj;
+
+            switch (unit) {
+                case 'year':
+                    current.year += sign * value;
+                    // Xử lý ngày 29/2 trong năm nhuận
+                    if (current.day === 29 && current.month === 2) {
+                        if (!isLeapYear(current.year)) {
+                            current.day = 28;
+                        }
+                    }
+                    break;
+
+                case 'month':
+                    current.month += sign * value;
+                    // Chuẩn hóa
+                    var norm = normalizeDate(current.year, current.month, current.day);
+                    current.year = norm.year;
+                    current.month = norm.month;
+                    current.day = norm.day;
+                    break;
+
+                case 'day':
+                    dateObj = new Date(current.year, current.month - 1, current.day);
+                    dateObj.setDate(dateObj.getDate() + sign * value);
+                    current.year = dateObj.getFullYear();
+                    current.month = dateObj.getMonth() + 1;
+                    current.day = dateObj.getDate();
+                    break;
+            }
+
+            return current;
+        }
+
+        // ============================================================
+        // HIỂN THỊ KẾT QUẢ
+        // ============================================================
+
+        function displayResult(result, startYear, startMonth, startDay, durYear, durMonth, durDay) {
+            var section = document.getElementById('result-section');
+            section.classList.add('visible');
+
+            // Scroll to result
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // --- Build duration string ---
+            var durationParts = [];
+            if (durYear > 0) durationParts.push(durYear + ' năm');
+            if (durMonth > 0) durationParts.push(durMonth + ' tháng');
+            if (durDay > 0) durationParts.push(durDay + ' ngày');
+            var durationStr = durationParts.length > 0 ? durationParts.join(', ') : '0';
+
+            var modeLabel = (currentMode === 'add') ? 'cộng thêm' : 'trừ đi';
+
+            var startDateStr = pad(startDay) + '/' + pad(startMonth) + '/' + startYear;
+            var endDateStr = pad(result.day) + '/' + pad(result.month) + '/' + result.year;
+
+            var summaryHtml = '<p>';
+            summaryHtml += 'Từ mốc <span class="big-date">' + startDateStr + '</span>';
+            summaryHtml += ' <span class="arrow-icon">' + (currentMode === 'add' ? '→' : '←') + '</span> ';
+            summaryHtml += modeLabel + ' <strong>' + durationStr + '</strong>';
+            summaryHtml += ' <span class="arrow-icon">→</span> ';
+            summaryHtml += 'Kết quả: <span class="big-date" style="color:var(--bronze);">' + endDateStr + '</span>';
+            summaryHtml += '</p>';
+            document.getElementById('result-summary').innerHTML = summaryHtml;
+
+            // --- Result display items ---
+            var displayHtml = '';
+
+            displayHtml += '<div class="result-item">';
+            displayHtml += '<div class="label">Ngày</div>';
+            displayHtml += '<div class="value highlight">' + pad(result.day) + '</div>';
+            displayHtml += '</div>';
+
+            displayHtml += '<div class="result-item">';
+            displayHtml += '<div class="label">Tháng</div>';
+            displayHtml += '<div class="value highlight">' + pad(result.month) + '</div>';
+            displayHtml += '</div>';
+
+            displayHtml += '<div class="result-item">';
+            displayHtml += '<div class="label">Năm</div>';
+            displayHtml += '<div class="value highlight">' + result.year + '</div>';
+            displayHtml += '</div>';
+
+            // Thêm thứ trong tuần
+            var dateObj = new Date(result.year, result.month - 1, result.day);
+            var dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+            displayHtml += '<div class="result-item">';
+            displayHtml += '<div class="label">Thứ</div>';
+            displayHtml += '<div class="value time-value">' + dayNames[dateObj.getDay()] + '</div>';
+            displayHtml += '</div>';
+
+            document.getElementById('result-display').innerHTML = displayHtml;
+
+            // --- Kiểm tra ngày nghỉ (Điều 134 BLTTHS) ---
+            var resultDate = new Date(result.year, result.month - 1, result.day);
+            if (isHolidayOrWeekend(resultDate)) {
+                var workingDay = getNextWorkingDay(resultDate);
+                var workingDayStr = pad(workingDay.getDate()) + '/' + pad(workingDay.getMonth() + 1) + '/' + workingDay.getFullYear();
+                var dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+
+                // Thêm banner cảnh báo vào result-summary
+                var summaryDiv = document.getElementById('result-summary');
+                var holidayBanner = '<div class="holiday-warning" style="margin-top:14px;">';
+                holidayBanner += '<div class="warning-title"><i class="fa-solid fa-gavel"></i> Căn cứ Điều 134 BLTTHS</div>';
+                holidayBanner += '<p style="font-size:13px;color:#991b1b;font-weight:600;line-height:1.6;">';
+                holidayBanner += 'Thời hạn hết vào ngày <strong>' + endDateStr + ' (' + dayNames[resultDate.getDay()] + ')</strong> là ngày nghỉ, ';
+                holidayBanner += 'nên được dời sang ngày làm việc đầu tiên tiếp theo: ';
+                holidayBanner += '<strong style="color:var(--green-dark);font-size:15px;">' + workingDayStr + ' (' + dayNames[workingDay.getDay()] + ')</strong>';
+                holidayBanner += '</p>';
+                holidayBanner += '</div>';
+                summaryDiv.innerHTML += holidayBanner;
+            }
+
+            // --- Holiday section ---
+            showHolidayNotes(result, startYear, startMonth, startDay);
+        }
+
+        function showHolidayNotes(result, startYear, startMonth, startDay) {
+            var holidaySection = document.getElementById('holiday-section');
+            var html = '';
+
+            // Kiểm tra nếu kết quả nằm trong cùng năm với năm bắt đầu
+            if (result.year === startYear) {
+                // Tạo mốc thời gian bắt đầu và kết thúc
+                var startDate = new Date(startYear, startMonth - 1, startDay);
+                var endDate = new Date(result.year, result.month - 1, result.day);
+
+                // Đảm bảo startDate <= endDate
+                if (startDate > endDate) {
+                    var temp = startDate;
+                    startDate = endDate;
+                    endDate = temp;
+                }
+
+                // Tìm các ngày lễ rơi vào khoảng này
+                var holidaysInRange = [];
+                for (var i = 0; i < FIXED_HOLIDAYS.length; i++) {
+                    var h = FIXED_HOLIDAYS[i];
+                    var holidayDate = new Date(startYear, h.month - 1, h.day);
+                    if (holidayDate >= startDate && holidayDate <= endDate) {
+                        holidaysInRange.push(h);
+                    }
+                }
+
+                if (holidaysInRange.length > 0) {
+                    html += '<div class="holiday-warning">';
+                    html += '<div class="warning-title"><i class="fa-solid fa-triangle-exclamation"></i> Lưu ý ngày lễ, Tết</div>';
+                    html += '<p style="font-size:13px;color:#991b1b;margin-bottom:10px;">Khoảng thời gian tính toán nằm trong cùng năm ' + startYear + ' và có các ngày lễ sau:</p>';
+                    html += '<div class="holiday-list">';
+                    for (var i = 0; i < holidaysInRange.length; i++) {
+                        var h = holidaysInRange[i];
+                        html += '<span class="holiday-tag"><i class="fa-solid ' + h.icon + '"></i> ' + h.name + ' (' + pad(h.day) + '/' + pad(h.month) + ')</span>';
+                    }
+                    html += '</div>';
+                    html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(220,38,38,0.1);">';
+                    html += '<p style="font-size:12px;color:#991b1b;font-weight:600;"><i class="fa-regular fa-clock"></i> Đề nghị lưu ý khi tính thời hạn tố tụng có thể bị ảnh hưởng bởi ngày nghỉ lễ.</p>';
+                    // Thêm thông báo về các ngày lễ âm lịch
+                    html += '<div style="margin-top:8px;">';
+                    html += '<p style="font-size:12px;color:#856404;font-weight:600;"><i class="fa-regular fa-moon"></i> Ngoài ra, lưu ý các ngày lễ Âm lịch có thể rơi vào khoảng này:</p>';
+                    html += '<div class="holiday-list" style="margin-top:6px;">';
+                    for (var j = 0; j < LUNAR_HOLIDAY_NOTES.length; j++) {
+                        var ln = LUNAR_HOLIDAY_NOTES[j];
+                        html += '<span class="holiday-tag" style="background:rgba(133,100,4,0.08);border-color:rgba(133,100,4,0.2);color:#856404;">';
+                        html += '<i class="fa-regular fa-calendar"></i> ' + ln.name + ' ' + ln.note + '</span>';
+                    }
+                    html += '</div></div>';
+                    html += '</div>';
+                    html += '</div>';
+                } else {
+                    // Cùng năm nhưng không có ngày lễ nào
+                    html += '<div class="holiday-note-positive">';
+                    html += '<p><i class="fa-regular fa-circle-check"></i> Khoảng thời gian tính toán nằm trong cùng năm ' + startYear + ', không phát hiện ngày lễ chính thức nào. Tuy nhiên, hãy lưu ý các ngày lễ Âm lịch có thể thay đổi theo từng năm.</p>';
+                    html += '</div>';
+                }
+            } else if (result.year > startYear) {
+                // Khác năm
+                html += '<div class="holiday-note-positive">';
+                html += '<p><i class="fa-regular fa-calendar-plus"></i> Khoảng thời gian tính toán trải qua nhiều năm (' + startYear + ' - ' + result.year + '). Lưu ý kiểm tra ngày lễ, Tết theo từng năm tương ứng.</p>';
+                html += '</div>';
+            } else {
+                // result.year < startYear (trường hợp trừ)
+                html += '<div class="holiday-note-positive">';
+                html += '<p><i class="fa-regular fa-calendar-plus"></i> Khoảng thời gian tính toán trải qua nhiều năm (' + result.year + ' - ' + startYear + '). Lưu ý kiểm tra ngày lễ, Tết theo từng năm tương ứng.</p>';
+                html += '</div>';
+            }
+
+            holidaySection.innerHTML = html;
+        }
+
+        // ============================================================
+        // HÀM KIỂM TRA NGÀY NGHỈ & DỜI NGÀY LÀM VIỆC (Điều 134 BLTTHS)
+        // ============================================================
+
+        function isHolidayOrWeekend(date) {
+            // Kiểm tra thứ 7 (6) hoặc Chủ nhật (0)
+            var dayOfWeek = date.getDay();
+            if (dayOfWeek === 0 || dayOfWeek === 6) return true;
+
+            // Kiểm tra ngày lễ trong FIXED_HOLIDAYS
+            var d = date.getDate();
+            var m = date.getMonth() + 1;
+            for (var i = 0; i < FIXED_HOLIDAYS.length; i++) {
+                var h = FIXED_HOLIDAYS[i];
+                if (h.day === d && h.month === m) return true;
+            }
+            return false;
+        }
+
+        function getNextWorkingDay(date) {
+            var nextDate = new Date(date);
+            nextDate.setDate(nextDate.getDate() + 1);
+            while (isHolidayOrWeekend(nextDate)) {
+                nextDate.setDate(nextDate.getDate() + 1);
+            }
+            return nextDate;
+        }
+
+        // ============================================================
+        // CHỨC NĂNG TẠM GIỮ (Điều 117 BLTTHS)
+        // ============================================================
+
+        function fillCurrentTimeTG() {
+            var now = new Date();
+            document.getElementById('tg-hour').value = now.getHours();
+            document.getElementById('tg-minute').value = now.getMinutes();
+            document.getElementById('tg-day').value = now.getDate();
+            document.getElementById('tg-month').value = now.getMonth() + 1;
+            document.getElementById('tg-year').value = now.getFullYear();
+        }
+
+        function selectTGHours(hours) {
+            selectedTGHours = hours;
+            // Update active button
+            var btns = document.querySelectorAll('.tamgiu-option-btn');
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].classList.remove('active');
+            }
+            event.target.classList.add('active');
+
+            // Show/hide custom input
+            var customGroup = document.getElementById('tg-custom-group');
+            if (hours === 0) {
+                customGroup.style.display = 'block';
+            } else {
+                customGroup.style.display = 'none';
+            }
+        }
+
+        function calculateTamGiu() {
+            // Đọc dữ liệu đầu vào
+            var tgHour = parseInt(document.getElementById('tg-hour').value) || 0;
+            var tgMinute = parseInt(document.getElementById('tg-minute').value) || 0;
+            var tgDay = parseInt(document.getElementById('tg-day').value) || 1;
+            var tgMonth = parseInt(document.getElementById('tg-month').value) || 1;
+            var tgYear = parseInt(document.getElementById('tg-year').value) || 2026;
+
+            // Lấy số giờ tạm giữ
+            var hoursToAdd = selectedTGHours;
+            if (hoursToAdd === 0) {
+                hoursToAdd = parseInt(document.getElementById('tg-custom-hours').value) || 0;
+            }
+
+            if (hoursToAdd <= 0) {
+                alert('Vui lòng chọn hoặc nhập số giờ tạm giữ hợp lệ.');
+                return;
+            }
+
+            if (tgHour < 0 || tgHour > 23 || tgMinute < 0 || tgMinute > 59) {
+                alert('Giờ hoặc phút không hợp lệ!');
+                return;
+            }
+
+            if (!isValidDate(tgYear, tgMonth, tgDay)) {
+                alert('Ngày tháng không hợp lệ! Vui lòng kiểm tra lại.');
+                return;
+            }
+
+            // Tính thời điểm hết hạn tạm giữ
+            var startDate = new Date(tgYear, tgMonth - 1, tgDay, tgHour, tgMinute);
+            var endDate = new Date(startDate.getTime() + hoursToAdd * 60 * 60 * 1000);
+
+            // Tính thời gian hiện tại
+            var now = new Date();
+            var elapsedMs = now.getTime() - startDate.getTime();
+            var remainingMs = endDate.getTime() - now.getTime();
+
+            var elapsedHours = Math.floor(elapsedMs / (60 * 60 * 1000));
+            var elapsedMinutes = Math.floor((elapsedMs % (60 * 60 * 1000)) / (60 * 1000));
+
+            var remainingHours = Math.floor(remainingMs / (60 * 60 * 1000));
+            var remainingMinutes = Math.floor((remainingMs % (60 * 60 * 1000)) / (60 * 1000));
+
+            // Hiển thị kết quả
+            displayTamGiuResult(startDate, endDate, hoursToAdd, elapsedHours, elapsedMinutes, remainingHours, remainingMinutes, remainingMs, elapsedMs);
+        }
+
+        function displayTamGiuResult(startDate, endDate, totalHours, elapsedHours, elapsedMinutes, remainingHours, remainingMinutes, remainingMs, elapsedMs) {
+            var section = document.getElementById('tg-result-section');
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            var content = document.getElementById('tg-result-content');
+
+            // Warning banner
+            var warningHtml = '';
+            var totalRemainingHours = remainingHours + remainingMinutes / 60;
+
+            if (totalRemainingHours < 6 && remainingMs > 0) {
+                warningHtml += '<div class="tamgiu-warning danger">';
+                warningHtml += '<i class="fa-solid fa-circle-exclamation"></i>';
+                warningHtml += '<span>CẢNH BÁO: Thời gian tạm giữ sắp hết! Còn ' + remainingHours + ' giờ ' + remainingMinutes + ' phút.</span>';
+                warningHtml += '</div>';
+            } else if (totalRemainingHours < 24 && remainingMs > 0) {
+                warningHtml += '<div class="tamgiu-warning caution">';
+                warningHtml += '<i class="fa-solid fa-triangle-exclamation"></i>';
+                warningHtml += '<span>Lưu ý: Thời gian tạm giữ còn dưới 24 giờ. Còn ' + remainingHours + ' giờ ' + remainingMinutes + ' phút.</span>';
+                warningHtml += '</div>';
+            } else if (remainingMs > 0) {
+                warningHtml += '<div class="tamgiu-warning safe">';
+                warningHtml += '<i class="fa-solid fa-check-circle"></i>';
+                warningHtml += '<span>Thời gian tạm giữ còn ' + remainingHours + ' giờ ' + remainingMinutes + ' phút.</span>';
+                warningHtml += '</div>';
+            } else {
+                warningHtml += '<div class="tamgiu-warning danger">';
+                warningHtml += '<i class="fa-solid fa-bell"></i>';
+                warningHtml += '<span>ĐÃ HẾT HẠN TẠM GIỮ! Thời hạn tạm giữ đã kết thúc.</span>';
+                warningHtml += '</div>';
+            }
+
+            // Result grid
+            var dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+
+            var gridHtml = '<div class="tamgiu-result-grid">';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Bắt đầu</div>';
+            gridHtml += '<div class="value time-value">' + pad(startDate.getHours()) + ':' + pad(startDate.getMinutes()) + '</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">' + pad(startDate.getDate()) + '/' + pad(startDate.getMonth() + 1) + '/' + startDate.getFullYear() + '</div>';
+            gridHtml += '<div style="font-size:11px;color:#999;margin-top:2px;">' + dayNames[startDate.getDay()] + '</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Hết hạn</div>';
+            gridHtml += '<div class="value time-value">' + pad(endDate.getHours()) + ':' + pad(endDate.getMinutes()) + '</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">' + pad(endDate.getDate()) + '/' + pad(endDate.getMonth() + 1) + '/' + endDate.getFullYear() + '</div>';
+            gridHtml += '<div style="font-size:11px;color:#999;margin-top:2px;">' + dayNames[endDate.getDay()] + '</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Thời hạn</div>';
+            gridHtml += '<div class="value">' + totalHours + '</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">giờ</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Đã qua</div>';
+            var elapsedClass = 'normal';
+            if (elapsedHours >= totalHours) elapsedClass = 'warning-red';
+            else if (elapsedHours >= totalHours * 0.75) elapsedClass = 'warning-yellow';
+            gridHtml += '<div class="value ' + elapsedClass + '">' + elapsedHours + 'h' + elapsedMinutes + 'p</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">' + Math.round(elapsedMs / (totalHours * 60 * 60 * 1000) * 100) + '%</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiu-result-item">';
+            gridHtml += '<div class="label">Còn lại</div>';
+            var remainingClass = 'normal';
+            if (remainingMs > 0) {
+                if (totalRemainingHours < 6) remainingClass = 'warning-red';
+                else if (totalRemainingHours < 24) remainingClass = 'warning-yellow';
+            } else {
+                remainingClass = 'warning-red';
+            }
+            gridHtml += '<div class="value ' + remainingClass + '">' + (remainingMs > 0 ? remainingHours + 'h' + remainingMinutes + 'p' : 'HẾT') + '</div>';
+            gridHtml += '<div style="font-size:13px;font-weight:600;color:#666;margin-top:4px;">' + (remainingMs > 0 ? Math.round(remainingMs / (totalHours * 60 * 60 * 1000) * 100) + '%' : '0%') + '</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '</div>'; // close tamgiu-result-grid
+
+            // Summary
+            var summaryHtml = '<div class="result-summary">';
+            summaryHtml += '<p>';
+            summaryHtml += 'Tạm giữ từ <span class="big-date">' + pad(startDate.getHours()) + ':' + pad(startDate.getMinutes()) + ' ' + pad(startDate.getDate()) + '/' + pad(startDate.getMonth() + 1) + '/' + startDate.getFullYear() + '</span>';
+            summaryHtml += ' <span class="arrow-icon">→</span> ';
+            summaryHtml += 'Hết hạn lúc <span class="big-date" style="color:var(--bronze);">' + pad(endDate.getHours()) + ':' + pad(endDate.getMinutes()) + ' ' + pad(endDate.getDate()) + '/' + pad(endDate.getMonth() + 1) + '/' + endDate.getFullYear() + '</span>';
+            summaryHtml += '</p>';
+            summaryHtml += '<p style="margin-top:8px;font-size:14px;color:#666;">';
+            summaryHtml += 'Thời hạn tạm giữ: <strong>' + totalHours + ' giờ</strong>';
+            summaryHtml += ' &middot; Đã qua: <strong>' + elapsedHours + ' giờ ' + elapsedMinutes + ' phút</strong>';
+            summaryHtml += ' &middot; Còn lại: <strong>' + (remainingMs > 0 ? remainingHours + ' giờ ' + remainingMinutes + ' phút' : 'ĐÃ HẾT') + '</strong>';
+            summaryHtml += '</p>';
+            summaryHtml += '</div>';
+
+            content.innerHTML = warningHtml + summaryHtml + gridHtml;
+        }
+
+        // ============================================================
+        // CHỨC NĂNG TÍNH TẠM GIAM (Điều 17 TT 01/2026)
+        // ============================================================
+
+        function toggleTamGiamContinuous() {
+            var isContinuous = document.getElementById('tgiam-lientuc').checked;
+            var ngayBatDauGroup = document.getElementById('tgiam-ngaybatdau-group');
+            ngayBatDauGroup.style.display = 'block';
+            // Nếu lấy ngày hết hạn từ phần tạm giữ, user có thể copy thủ công
+        }
+
+        function fillCurrentTimeTGIAM() {
+            var now = new Date();
+            document.getElementById('tgiam-day').value = now.getDate();
+            document.getElementById('tgiam-month').value = now.getMonth() + 1;
+            document.getElementById('tgiam-year').value = now.getFullYear();
+        }
+
+        function quickExampleTGiam(thang, ngay) {
+            document.getElementById('tgiam-thang').value = thang;
+            document.getElementById('tgiam-ngay').value = ngay;
+            calculateTamGiam();
+        }
+
+        function calculateTamGiam() {
+            // Đọc dữ liệu đầu vào
+            var startDay = parseInt(document.getElementById('tgiam-day').value) || 1;
+            var startMonth = parseInt(document.getElementById('tgiam-month').value) || 1;
+            var startYear = parseInt(document.getElementById('tgiam-year').value) || 2026;
+
+            var thangGoc = parseInt(document.getElementById('tgiam-thang').value) || 0;
+            var ngayGoc = parseInt(document.getElementById('tgiam-ngay').value) || 0;
+            var daTamGiu = parseInt(document.getElementById('tgiam-da-tamgiu').value) || 0;
+
+            // Validate
+            if (thangGoc === 0 && ngayGoc === 0) {
+                alert('Vui lòng nhập thời hạn tạm giam (tháng hoặc ngày).');
+                return;
+            }
+
+            if (!isValidDate(startYear, startMonth, startDay)) {
+                alert('Ngày tháng không hợp lệ! Vui lòng kiểm tra lại.');
+                return;
+            }
+
+            // === LOGIC THEO ĐIỀU 17 TT 01/2026 ===
+            // 1. 1 tháng = 30 ngày (cố định)
+            var tongNgayGoc = thangGoc * 30 + ngayGoc;
+
+            // 2. Trừ số ngày đã tạm giữ
+            var tongNgayThucTe = tongNgayGoc - daTamGiu;
+            if (tongNgayThucTe <= 0) {
+                alert('Thời hạn tạm giam thực tế không hợp lệ (≤ 0 ngày). Vui lòng kiểm tra số ngày đã tạm giữ.');
+                return;
+            }
+
+            // 3. Quy đổi ngược ra tháng + ngày để hiển thị
+            var thangThucTe = Math.floor(tongNgayThucTe / 30);
+            var ngayThucTe = tongNgayThucTe % 30;
+
+            // 4. Tính ngày hết hạn
+            //    "Kể từ ngày X" → ngày X là ngày thứ 1
+            //    → endDate = startDate + (tổng_ngày_thực_tế - 1)
+            var startDate = new Date(startYear, startMonth - 1, startDay);
+            var endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + tongNgayThucTe - 1);
+
+            // 5. KHÔNG dời ngày nghỉ (tính liên tục cả T7, CN, Lễ, Tết)
+
+            // 6. Tính thời gian đã qua / còn lại (so với hiện tại)
+            var now = new Date();
+            // Tính elapsed: số ngày đã qua từ startDate đến now
+            var elapsedDays = Math.floor((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+            // Nếu chưa đến startDate thì elapsed = 0
+            if (elapsedDays < 0) elapsedDays = 0;
+            // Tính remaining: số ngày còn lại từ hôm nay đến endDate (tính luôn hôm nay nếu chưa quá)
+            var remainingDays = Math.floor((endDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+            if (remainingDays < 0) remainingDays = 0;
+
+            // Hiển thị
+            displayTamGiamResult(startDate, endDate, thangGoc, ngayGoc, daTamGiu, thangThucTe, ngayThucTe, tongNgayThucTe, elapsedDays, remainingDays);
+        }
+
+        function displayTamGiamResult(startDate, endDate, thangGoc, ngayGoc, daTamGiu, thangThucTe, ngayThucTe, tongNgayThucTe, elapsedDays, remainingDays) {
+            var section = document.getElementById('tgiam-result-section');
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            var content = document.getElementById('tgiam-result-content');
+            var dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+
+            // Warning banner
+            var warningHtml = '';
+            if (remainingDays <= 0) {
+                warningHtml += '<div class="tamgiam-warning danger">';
+                warningHtml += '<i class="fa-solid fa-circle-exclamation"></i>';
+                warningHtml += '<span>ĐÃ HẾT HẠN TẠM GIAM! Thời hạn tạm giam đã kết thúc.</span>';
+                warningHtml += '</div>';
+            } else if (remainingDays <= 3) {
+                warningHtml += '<div class="tamgiam-warning danger">';
+                warningHtml += '<i class="fa-solid fa-circle-exclamation"></i>';
+                warningHtml += '<span>CẢNH BÁO: Thời gian tạm giam sắp hết! Còn ' + remainingDays + ' ngày.</span>';
+                warningHtml += '</div>';
+            } else if (remainingDays <= 10) {
+                warningHtml += '<div class="tamgiam-warning caution">';
+                warningHtml += '<i class="fa-solid fa-triangle-exclamation"></i>';
+                warningHtml += '<span>Lưu ý: Thời gian tạm giam còn dưới 10 ngày. Còn ' + remainingDays + ' ngày.</span>';
+                warningHtml += '</div>';
+            } else {
+                warningHtml += '<div class="tamgiam-warning safe">';
+                warningHtml += '<i class="fa-solid fa-check-circle"></i>';
+                warningHtml += '<span>Thời gian tạm giam còn ' + remainingDays + ' ngày.</span>';
+                warningHtml += '</div>';
+            }
+
+            // Result grid
+            var gridHtml = '<div class="tamgiam-result-grid">';
+
+            gridHtml += '<div class="tamgiam-result-item">';
+            gridHtml += '<div class="label">Bắt đầu</div>';
+            gridHtml += '<div class="value time-value">' + pad(startDate.getDate()) + '/' + pad(startDate.getMonth() + 1) + '/' + startDate.getFullYear() + '</div>';
+            gridHtml += '<div class="sub-small">' + dayNames[startDate.getDay()] + '</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiam-result-item">';
+            gridHtml += '<div class="label">Hết hạn (24h00)</div>';
+            gridHtml += '<div class="value time-value" style="color:var(--bronze);">' + pad(endDate.getDate()) + '/' + pad(endDate.getMonth() + 1) + '/' + endDate.getFullYear() + '</div>';
+            gridHtml += '<div class="sub-small">' + dayNames[endDate.getDay()] + '</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiam-result-item">';
+            gridHtml += '<div class="label">Thời hạn gốc</div>';
+            var gocStr = '';
+            if (thangGoc > 0) gocStr += thangGoc + ' tháng';
+            if (ngayGoc > 0) gocStr += (gocStr ? ' ' : '') + ngayGoc + ' ngày';
+            gridHtml += '<div class="value" style="font-size:20px;">' + gocStr + '</div>';
+            gridHtml += '<div class="sub">= ' + (thangGoc * 30 + ngayGoc) + ' ngày</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '<div class="tamgiam-result-item">';
+            gridHtml += '<div class="label">Thời hạn thực tế</div>';
+            var ttStr = '';
+            if (thangThucTe > 0) ttStr += thangThucTe + ' tháng';
+            if (ngayThucTe > 0) ttStr += (ttStr ? ' ' : '') + ngayThucTe + ' ngày';
+            if (ttStr === '') ttStr = '0 ngày';
+            gridHtml += '<div class="value" style="font-size:20px;">' + ttStr + '</div>';
+            gridHtml += '<div class="sub">= ' + tongNgayThucTe + ' ngày (đã trừ ' + daTamGiu + ' ngày tạm giữ)</div>';
+            gridHtml += '</div>';
+
+            // Đã qua
+            var elapsedClass = 'normal';
+            if (elapsedDays >= tongNgayThucTe) elapsedClass = 'warning-red';
+            else if (elapsedDays >= tongNgayThucTe * 0.75) elapsedClass = 'warning-yellow';
+            gridHtml += '<div class="tamgiam-result-item">';
+            gridHtml += '<div class="label">Đã qua</div>';
+            gridHtml += '<div class="value ' + elapsedClass + '" style="font-size:22px;">' + (elapsedDays > 0 ? elapsedDays : 0) + '</div>';
+            gridHtml += '<div class="sub">ngày (' + Math.min(100, Math.round(elapsedDays / tongNgayThucTe * 100)) + '%)</div>';
+            gridHtml += '</div>';
+
+            // Còn lại
+            var remClass = 'normal';
+            if (remainingDays <= 0) remClass = 'warning-red';
+            else if (remainingDays <= 3) remClass = 'warning-red';
+            else if (remainingDays <= 10) remClass = 'warning-yellow';
+            gridHtml += '<div class="tamgiam-result-item">';
+            gridHtml += '<div class="label">Còn lại</div>';
+            gridHtml += '<div class="value ' + remClass + '" style="font-size:22px;">' + (remainingDays > 0 ? remainingDays : 'HẾT') + '</div>';
+            gridHtml += '<div class="sub">' + (remainingDays > 0 ? 'ngày (' + Math.round(remainingDays / tongNgayThucTe * 100) + '%)' : '') + '</div>';
+            gridHtml += '</div>';
+
+            gridHtml += '</div>'; // close tamgiam-result-grid
+
+            // Summary
+            var summaryHtml = '<div class="result-summary">';
+            summaryHtml += '<p>';
+            summaryHtml += 'Tạm giam từ <span class="big-date">' + pad(startDate.getDate()) + '/' + pad(startDate.getMonth() + 1) + '/' + startDate.getFullYear() + '</span>';
+            summaryHtml += ' <span class="arrow-icon">→</span> ';
+            summaryHtml += 'Hết hạn lúc <strong style="color:var(--bronze);font-size:18px;">24h00 ngày ' + pad(endDate.getDate()) + '/' + pad(endDate.getMonth() + 1) + '/' + endDate.getFullYear() + '</strong>';
+            summaryHtml += '</p>';
+            summaryHtml += '<p style="margin-top:8px;font-size:14px;color:#666;">';
+            summaryHtml += 'Thời hạn thực tế: <strong>' + tongNgayThucTe + ' ngày</strong>';
+            if (daTamGiu > 0) summaryHtml += ' (đã trừ ' + daTamGiu + ' ngày tạm giữ)';
+            summaryHtml += ' &middot; 1 tháng = 30 ngày';
+            summaryHtml += ' &middot; Tính liên tục cả ngày nghỉ';
+            summaryHtml += '</p>';
+            summaryHtml += '</div>';
+
+            content.innerHTML = warningHtml + summaryHtml + gridHtml;
+        }
+
+        // ============================================================
+        // CHỨC NĂNG ĐẾM TUỔI / KHOẢNG CÁCH GIỮA HAI MỐC THỜI GIAN
+        // ============================================================
+
+        var AGE_MILESTONES = [14, 16, 18, 60, 70, 75];
+
+        function fillCurrentTimeDT() {
+            var now = new Date();
+            document.getElementById('dt-end-day').value = now.getDate();
+            document.getElementById('dt-end-month').value = now.getMonth() + 1;
+            document.getElementById('dt-end-year').value = now.getFullYear();
+        }
+
+        // Cộng thêm số tháng vào một mốc (năm, tháng, ngày), tự "kẹp" ngày nếu tháng đích
+        // không có ngày đó (VD: 31/1 + 1 tháng => 28 hoặc 29/2).
+        function addMonthsClamped(year, month, day, deltaMonths) {
+            var totalMonths = (year * 12 + (month - 1)) + deltaMonths;
+            var newYear = Math.floor(totalMonths / 12);
+            var newMonth = totalMonths - newYear * 12 + 1;
+            var maxDay = getDaysInMonth(newYear, newMonth);
+            return { year: newYear, month: newMonth, day: Math.min(day, maxDay) };
+        }
+
+        // Tính chênh lệch (năm, tháng, ngày) theo lịch, kiểu tính tuổi chuẩn.
+        // Giả định startDate <= endDate. Dùng cách cộng dồn theo tháng (rồi kẹp ngày)
+        // để tránh trường hợp số ngày còn lại bị âm khi ngày bắt đầu là 29-31.
+        function diffYMD(startY, startM, startD, endY, endM, endD) {
+            var endDate = new Date(endY, endM - 1, endD);
+            var totalMonths = (endY - startY) * 12 + (endM - startM);
+
+            var t = addMonthsClamped(startY, startM, startD, totalMonths);
+            var tDate = new Date(t.year, t.month - 1, t.day);
+            if (tDate > endDate) {
+                totalMonths -= 1;
+                t = addMonthsClamped(startY, startM, startD, totalMonths);
+                tDate = new Date(t.year, t.month - 1, t.day);
+            }
+
+            var years = Math.floor(totalMonths / 12);
+            var months = totalMonths - years * 12;
+            var days = Math.round((endDate.getTime() - tDate.getTime()) / (24 * 60 * 60 * 1000));
+
+            return { years: years, months: months, days: days };
+        }
+
+        function calculateDemTuoi() {
+            var startDay = parseInt(document.getElementById('dt-start-day').value) || 1;
+            var startMonth = parseInt(document.getElementById('dt-start-month').value) || 1;
+            var startYear = parseInt(document.getElementById('dt-start-year').value) || 2000;
+
+            var endDay = parseInt(document.getElementById('dt-end-day').value) || 1;
+            var endMonth = parseInt(document.getElementById('dt-end-month').value) || 1;
+            var endYear = parseInt(document.getElementById('dt-end-year').value) || 2026;
+
+            if (!isValidDate(startYear, startMonth, startDay) || !isValidDate(endYear, endMonth, endDay)) {
+                alert('Ngày tháng không hợp lệ! Vui lòng kiểm tra lại.');
+                return;
+            }
+
+            var startDate = new Date(startYear, startMonth - 1, startDay);
+            var endDate = new Date(endYear, endMonth - 1, endDay);
+            var swapped = false;
+
+            if (startDate > endDate) {
+                var t = startDate; startDate = endDate; endDate = t;
+                swapped = true;
+            }
+
+            var diff = diffYMD(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate(),
+                                endDate.getFullYear(), endDate.getMonth() + 1, endDate.getDate());
+            var totalDays = Math.round((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+
+            displayDemTuoiResult(startDate, endDate, diff, totalDays, swapped);
+        }
+
+        function displayDemTuoiResult(startDate, endDate, diff, totalDays, swapped) {
+            var section = document.getElementById('dt-result-section');
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            var dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+            var startStr = pad(startDate.getDate()) + '/' + pad(startDate.getMonth() + 1) + '/' + startDate.getFullYear();
+            var endStr = pad(endDate.getDate()) + '/' + pad(endDate.getMonth() + 1) + '/' + endDate.getFullYear();
+
+            var html = '';
+
+            if (swapped) {
+                html += '<div class="dt-milestone-next" style="margin-bottom:14px;">';
+                html += '<i class="fa-solid fa-circle-info"></i> Mốc kết thúc bạn nhập sớm hơn mốc bắt đầu nên hệ thống đã tự hoán đổi hai mốc để tính khoảng cách.';
+                html += '</div>';
+            }
+
+            // Summary
+            html += '<div class="result-summary">';
+            html += '<p>Từ mốc <span class="big-date">' + startStr + ' (' + dayNames[startDate.getDay()] + ')</span>';
+            html += ' <span class="arrow-icon">→</span> ';
+            html += 'đến mốc <span class="big-date" style="color:var(--indigo-dark);">' + endStr + ' (' + dayNames[endDate.getDay()] + ')</span>';
+            html += '</p>';
+            html += '<p style="margin-top:10px;font-size:20px;font-weight:800;color:var(--indigo-dark);">';
+            html += diff.years + ' năm ' + diff.months + ' tháng ' + diff.days + ' ngày';
+            html += '</p>';
+            html += '</div>';
+
+            // Grid
+            html += '<div class="dt-result-grid">';
+            html += '<div class="dt-result-item"><div class="label">Năm</div><div class="value">' + diff.years + '</div></div>';
+            html += '<div class="dt-result-item"><div class="label">Tháng</div><div class="value">' + diff.months + '</div></div>';
+            html += '<div class="dt-result-item"><div class="label">Ngày</div><div class="value">' + diff.days + '</div></div>';
+            html += '<div class="dt-result-item"><div class="label">Tổng số ngày</div><div class="value" style="font-size:20px;">' + totalDays.toLocaleString('vi-VN') + '</div></div>';
+            html += '</div>';
+
+            // Milestone tuổi
+            html += '<div class="dt-milestone-section">';
+            html += '<div class="dt-milestone-title"><i class="fa-solid fa-child-reaching"></i> Đối chiếu mốc tuổi (tại thời điểm mốc kết thúc)</div>';
+            html += '<div class="dt-milestone-list">';
+            var nextMilestone = null;
+            for (var i = 0; i < AGE_MILESTONES.length; i++) {
+                var m = AGE_MILESTONES[i];
+                var reached = diff.years >= m;
+                html += '<span class="dt-milestone-tag ' + (reached ? 'reached' : 'not-reached') + '">';
+                html += '<i class="fa-solid ' + (reached ? 'fa-check' : 'fa-minus') + '"></i> ';
+                html += (reached ? 'Đã đủ ' : 'Chưa đủ ') + m + ' tuổi';
+                html += '</span>';
+                if (!reached && nextMilestone === null) nextMilestone = m;
+            }
+            html += '</div>';
+
+            if (nextMilestone !== null) {
+                var remaining = diffYMD(endDate.getFullYear(), endDate.getMonth() + 1, endDate.getDate(),
+                                         startDate.getFullYear() + nextMilestone, startDate.getMonth() + 1, startDate.getDate());
+                var isClose = remaining.years === 0 && remaining.months <= 1;
+                html += '<div class="dt-milestone-next' + (isClose ? ' close' : '') + '">';
+                html += '<i class="fa-solid fa-hourglass-half"></i> Còn <strong>' + remaining.years + ' năm ' + remaining.months + ' tháng ' + remaining.days + ' ngày</strong> nữa (tính từ mốc kết thúc) mới đủ ' + nextMilestone + ' tuổi.';
+                html += '</div>';
+            }
+            html += '</div>';
+
+            document.getElementById('dt-result-content').innerHTML = html;
+        }
+    </script>
+
+</body>
+</html>

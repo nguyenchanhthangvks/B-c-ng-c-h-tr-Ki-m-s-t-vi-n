@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ tự động đổi tên file trong thư mục</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #7b2d42;
+            --plum-dark: #5a1f30;
+            --plum-light: #a84560;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f7fc 0%, #faf5f0 50%, #fefcf5 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border-bottom: 3px solid var(--bronze);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--bronze), #e8a830);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(201, 149, 46, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header-title span {
+            color: var(--bronze-light);
+        }
+
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* INFO CARD */
+        .info-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            border: 1px solid rgba(93, 169, 217, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .info-card h2 {
+            font-size: 22px;
+            color: var(--sky-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card h2 i {
+            color: var(--bronze);
+        }
+
+        .info-card p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card ul li {
+            padding: 8px 0;
+            font-size: 15px;
+            color: #555;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-card ul li i {
+            color: var(--bronze);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* FEATURE GRID */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .feature-item {
+            background: #f8fafc;
+            border: 1px solid #e8ecf0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .feature-item i {
+            color: var(--bronze);
+            font-size: 18px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .feature-item strong {
+            color: #333;
+        }
+
+        /* LAUNCH BUTTON */
+        .launch-section {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 48px;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: inherit;
+            color: #fff;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(30, 90, 138, 0.35);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(30, 90, 138, 0.45);
+        }
+
+        .btn-launch:active {
+            transform: translateY(0);
+        }
+
+        .btn-launch i {
+            font-size: 24px;
+        }
+
+        .btn-launch .sub-text {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.8;
+            letter-spacing: 0;
+        }
+
+        /* DEVELOPER INFO */
+        .dev-info {
+            background: linear-gradient(135deg, rgba(93, 169, 217, 0.08), rgba(123, 45, 66, 0.06));
+            border-radius: 12px;
+            padding: 20px 24px;
+            border-left: 4px solid var(--bronze);
+            margin-top: 20px;
+        }
+
+        .dev-info p {
+            font-size: 14px;
+            color: #666;
+            margin: 4px 0;
+        }
+
+        .dev-info i {
+            color: var(--bronze);
+            margin-right: 8px;
+        }
+
+        /* NOTE */
+        .note-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .note-box i {
+            color: #f9a825;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .note-box p {
+            font-size: 14px;
+            color: #6d4c00;
+            line-height: 1.6;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .header {
+                padding: 14px 16px;
+            }
+            .main-content {
+                padding: 20px 12px;
+            }
+            .info-card {
+                padding: 20px 16px;
+            }
+            .btn-launch {
+                padding: 14px 28px;
+                font-size: 17px;
+                width: 100%;
+                justify-content: center;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    
+        .btn-launch.guide {
+            margin-top: 14px;
+            text-decoration: none;
+            background: linear-gradient(135deg, #b45309, #c9952e);
+            box-shadow: 0 6px 20px rgba(201, 149, 46, 0.35);
+        }
+    </style>
+    <link rel="stylesheet" href="../../static/tool-page-theme.css">
+</head>
+<body class="ks-tool-page">
+    <!-- HEADER -->
+    <div class="header">
+        <img class="ks-header-logo" src="../../static/logo_moi.png" alt="Logo ngành Kiểm sát nhân dân">
+        <div>
+            <div class="header-title">Công cụ <span>tự động đổi tên file</span> trong thư mục</div>
+            <div class="header-sub"><i class="fas fa-folder-tree"></i> Chuẩn hóa tên file - Tự động hóa</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- GIỚI THIỆU -->
+        <div class="info-card">
+            <h2><i class="fas fa-info-circle"></i> Giới thiệu</h2>
+            <p>
+                Công cụ <strong>tự động đổi tên file trong thư mục</strong> giúp bạn nhanh chóng 
+                quét và chuẩn hóa tên file hàng loạt. Công cụ phát hiện các file có tên chứa 
+                tiếng Việt có dấu, tên quá dài, hoặc chứa ký tự đặc biệt - và đề xuất tên mới 
+                chuẩn hóa để bạn xem xét trước khi thực thi.
+            </p>
+            <p style="font-weight:600;color:var(--sky-dark);">
+                <i class="fas fa-star" style="color:var(--bronze);"></i> 
+                Điểm nổi bật: Giao diện trực quan - Xem trước kết quả - Chọn file muốn đổi - 
+                Thực thi chính xác!
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="fas fa-folder-open"></i>
+                    <span><strong>Chọn thư mục cha</strong><br>Tự động quét toàn bộ thư mục con bên trong</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-list-check"></i>
+                    <span><strong>Xem trước danh sách</strong><br>Hiển thị file theo cây thư mục, kèm tên cũ và tên đề xuất</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-check-square"></i>
+                    <span><strong>Tích chọn linh hoạt</strong><br>Chọn/bỏ chọn từng file hoặc cả thư mục</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-rocket"></i>
+                    <span><strong>Thực thi một lần</strong><br>Đổi tên tất cả file đã chọn, có thông báo kết quả</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KHỞI CHẠY -->
+        <div class="launch-section">
+            <button class="btn-launch" onclick="launchTool()">
+                <i class="fas fa-download"></i>
+                <span>
+                    TẢI XUỐNG CÔNG CỤ
+                    <span class="sub-text">Tải FileRenamer.zip — Giải nén, chạy FileRenamerPortable.exe</span>
+                </span>
+            </button>
+            <br>
+            <a class="btn-launch guide" href="huong_dan/index.html">
+                <i class="fas fa-circle-play"></i>
+                <span>
+                    XEM VIDEO &amp; SLIDE HƯỚNG DẪN
+                    <span class="sub-text">Video có lời bình, thao tác thực tế trên thư mục mô phỏng · slide từng bước</span>
+                </span>
+            </a>
+        </div>
+
+        <!-- CÁCH SỬ DỤNG -->
+        <div class="info-card">
+            <h2><i class="fas fa-list-ol"></i> Cách sử dụng</h2>
+            <ul>
+                <li><i class="fas fa-1"></i> <span><strong>Bước 1:</strong> Tải <strong>FileRenamer.zip</strong> và giải nén toàn bộ vào một thư mục</span></li>
+                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Mở thư mục <strong>FileRenamerPortable</strong>, chạy <strong>FileRenamerPortable.exe</strong> rồi chọn thư mục cha chứa file cần đổi tên</span></li>
+                <li><i class="fas fa-3"></i> <span><strong>Bước 3:</strong> Bấm "Quét ngay" để xem danh sách file có vấn đề (tên cũ → tên đề xuất)</span></li>
+                <li><i class="fas fa-4"></i> <span><strong>Bước 4:</strong> Tích chọn file muốn đổi tên (mặc định chọn tất cả)</span></li>
+                <li><i class="fas fa-5"></i> <span><strong>Bước 5:</strong> Bấm "Thực thi đổi tên" để áp dụng đổi tên cho các file đã chọn</span></li>
+            </ul>
+
+            <div class="note-box">
+                <i class="fas fa-lightbulb"></i>
+                <p>
+                    <strong>Lưu ý:</strong> Không chạy tệp trực tiếp khi còn nằm trong ZIP. Hãy giải nén đầy đủ rồi mở
+                    <strong>FileRenamerPortable.exe</strong>. Công cụ sẽ tự động mở giao diện trong trình duyệt cục bộ;
+                    dữ liệu vẫn chỉ được xử lý trên máy tính.
+                </p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="fas fa-circle-info"></i> Thông tin công cụ</h2>
+            <div class="dev-info">
+                <p><i class="fas fa-cog"></i> Engine: <strong>FileRenamer</strong> - Chuẩn hóa Unicode NFC, bỏ dấu, viết tắt, rút gọn</p>
+                <p><i class="fas fa-shield-alt"></i> An toàn: <strong>Xem trước trước khi thực thi</strong> - Không tự động đổi tên</p>
+                <p><i class="fas fa-network-wired"></i> Công nghệ: <strong>Flask + HTML/CSS/JS</strong> - Giao diện web trực quan</p>
+                <p><i class="fas fa-tools"></i> Phiên bản: <strong>1.0</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function launchTool() {
+            var confirmed = confirm(
+                'Bạn sắp tải xuống FileRenamer.zip.\n\n' +
+                'Hướng dẫn sử dụng:\n' +
+                '1. Nhấn OK để tải tệp FileRenamer.zip\n' +
+                '2. Giải nén file .zip vào một thư mục\n' +
+                '3. Mở thư mục FileRenamerPortable và chạy FileRenamerPortable.exe\n' +
+                '4. Trình duyệt sẽ tự động mở giao diện sử dụng'
+            );
+
+            if (confirmed) {
+                var link = document.createElement('a');
+                // Đường dẫn tương đối tới chính trang Pages (domain raw của GitHub
+                // chặn truy cập công khai khi repo ở chế độ riêng tư).
+                link.href = 'FileRenamer.zip?v=20260917-1';
+                link.download = 'FileRenamer.zip';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                setTimeout(function() {
+                    alert(
+                        '✅ Tệp FileRenamer.zip đã được tải xuống.\n\n' +
+                        '👉 Giải nén, mở thư mục FileRenamerPortable và chạy FileRenamerPortable.exe.'
+                    );
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>

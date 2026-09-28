@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phần mềm Tự động tính tiền lãi Chuyên Dụng - KSND</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* THAY ĐỔI TOÀN BỘ SANG TÔNG MÀU XANH THIÊN THANH NGÀNH KIỂM SÁT / GIAO DIỆN NGÂN HÀNG HÀI HÒA */
+        body { background-color: #eef5fa; font-family: 'Segoe UI', Arial, sans-serif; color: #2c3e50; margin: 0; padding: 0; overflow-x: hidden; }
+        
+        .fixed-header-banner { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 130px; 
+            background-color: #4ba3e3;
+            background-image: linear-gradient(135deg, #4ba3e3, #1d71b8);
+            border-bottom: 4px solid #d4af37; z-index: 1050; display: flex; align-items: center; padding: 0 30px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+        .header-content-wrapper { display: flex; align-items: center; width: 100%; position: relative; height: 100%; }
+        .header-tool-actions { margin-left: auto; display: flex; gap: 10px; z-index: 3; }
+        .header-tool-btn { border: 1px solid rgba(255,255,255,.65); border-radius: 8px; background: rgba(255,255,255,.14); color: #fff; padding: 9px 13px; font-weight: 700; font-size: 12px; cursor: pointer; }
+        .header-tool-btn:hover,.header-tool-btn.active { background: #fff; color: #16568c; }
+        .header-text-container { margin-left: 20px; z-index: 2; }
+        .header-text-container h1 { color: #ffffff; font-weight: bold; font-size: 1.6rem; margin: 0; letter-spacing: 0.5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.15); }
+        .header-text-container p { color: #fff3cc; font-size: 13px; margin: 3px 0 0 0; font-weight: 500; }
+        
+        .header-legal-watermark {
+            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+            width: 25%; height: 90%; opacity: 0.12; color: #ffffff;
+            display: flex; align-items: center; justify-content: flex-end;
+            pointer-events: none; z-index: 1;
+        }
+        .header-legal-watermark svg { height: 100%; width: auto; }
+        
+        /* LAYOUT CONTAINER KHÔNG GIAN 3 CỘT TRÁI - GIỮA - PHẢI TRẢI NGANG */
+        .app-layout-container { display: flex; margin-top: 150px; padding: 0 20px 20px 20px; gap: 15px; width: 100%; align-items: flex-start; }
+        
+        /* SIDEBAR TRÁI - TRA CỨU LUẬT THU GỌN TRÁI PHẢI */
+        .law-sidebar-container { display:none; position:fixed; left:20px; top:142px; bottom:18px; width:min(420px,calc(100vw - 40px)); z-index:1040; overflow:auto; }
+        .law-sidebar-container.open { display:block; }
+        
+        /* SIDEBAR PHẢI - CÔNG CỤ THỜI GIAN THỰC THU GỌN TRÁI PHẢI */
+        .time-sidebar-container { display:none; position:fixed; right:20px; top:142px; width:min(360px,calc(100vw - 40px)); z-index:1040; }
+        .time-sidebar-container.open { display:block; }
+        .law-sidebar-container .btn-gold-toggle,.time-sidebar-container .btn-gold-toggle{display:none}
+        .law-card,.time-card{max-height:calc(100vh - 165px);overflow:auto;box-shadow:0 14px 38px rgba(16,42,67,.24)}
+        
+        /* VÙNG HIỂN THỊ TÍNH TOÁN TRUNG TÂM GIÃN NỞ */
+        .main-content-area { flex-grow: 1; transition: all 0.4s ease; min-width: 0; }
+        
+        .btn-gold-toggle {
+            width: 100%; background-color: #1d71b8; color: #ffffff; 
+            border: 1px solid #16568c; font-weight: bold; padding: 8px; 
+            border-radius: 8px; margin-bottom: 10px; transition: all 0.3s ease; 
+            font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+            white-space: nowrap; overflow: hidden;
+        }
+        .btn-gold-toggle:hover { background-color: #4ba3e3; color: #ffffff; }
+        
+        .main-card { background-color: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); color: #2c3e50; border: 1px solid #d3e4f1; }
+        .law-card, .time-card { background-color: #ffffff; padding: 15px; border-radius: 12px; border: 1px solid #bad5f0; color: #2c3e50; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+        
+        /* STYLE ACCORDION PHÁP LUẬT MỚI GIAO DIỆN SÁNG CHUYÊN NGHIỆP */
+        .law-accordion-item { background-color: #f8fbfe; border-left: 4px solid #1d71b8; margin-bottom: 12px; border-radius: 6px; overflow: hidden; border-top: 1px solid #e2eef8; border-right: 1px solid #e2eef8; border-bottom: 1px solid #e2eef8; }
+        .law-accordion-header { background-color: #eaf3fa; padding: 12px; font-weight: bold; font-size: 13px; color: #16568c; cursor: pointer; display: flex; align-items: center; transition: background 0.2s ease; border-bottom: 1px solid #e2eef8; text-align: justify; }
+        .law-accordion-header:hover { background-color: #dbeaf6; }
+        .law-accordion-body { padding: 12px; font-size: 12.5px; color: #34495e; text-align: justify; line-height: 1.6; white-space: pre-wrap; background-color: #ffffff; }
+        .acc-arrow { font-size: 10px; margin-left: auto; color: #1d71b8; }
+
+        .gold-badge { background-color: #eaf3fa !important; color: #16568c !important; border: 1px solid #bad5f0 !important; font-weight: bold !important; }
+        .rate-selector-btn { border: 2px solid #1d71b8; background-color: transparent; color: #1d71b8; font-weight: bold; }
+        .rate-selector-btn:hover { background-color: #1d71b8; color: #ffffff; }
+        .btn-check:checked + .rate-selector-btn { background-color: #1d71b8 !important; color: #ffffff !important; }
+        
+        .form-section { background-color: #fdfefe; border: 1px solid #dbe6f0; padding: 18px; border-radius: 8px; margin-bottom: 20px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.01); }
+        .loan-mode-box { display: flex; gap: 8px; padding: 5px; margin-bottom: 18px; background: #eaf3fa; border: 1px solid #bad5f0; border-radius: 10px; }
+        .loan-mode-btn { flex: 1; border: 0; border-radius: 7px; padding: 10px 12px; background: transparent; color: #4b6478; font-weight: 700; cursor: pointer; }
+        .loan-mode-btn.active { color: #fff; background: #1d71b8; box-shadow: 0 3px 10px rgba(29,113,184,.22); }
+        .loan-mode-help { margin: -8px 0 18px; color: #607d8b; font-size: 12.5px; text-align: center; }
+        .loan-form.basic-mode .advanced-only { display: none !important; }
+        .advanced-note { background: #f2f8fc; border: 1px dashed #8fbddd; color: #315d7d; border-radius: 7px; padding: 10px 12px; font-size: 12.5px; margin-bottom: 16px; }
+        .interest-basis-warning { margin-top: 7px; padding: 8px 10px; border-left: 3px solid #d4af37; background: #fffaf0; color: #6b5716; border-radius: 4px; font-size: 12px; line-height: 1.45; }
+        .payment-empty { padding: 18px; text-align: center; color: #708598; background: #f8fbfd; border: 1px dashed #bfd2df; border-radius: 8px; }
+        .payment-row { background: #f8fcf9; border: 1px solid #d8eadf; border-radius: 8px; padding: 9px 4px; margin-left: 0; margin-right: 0; }
+        .payment-index { width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #198754; color: #fff; font-size: 12px; font-weight: 700; }
+        .payment-total { color: #24623d; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .payment-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 12px; }
+        .payment-summary-item { padding: 9px; background: #edf7f1; border-radius: 7px; text-align: center; color: #315c43; font-size: 12px; }
+        .payment-summary-item strong { display: block; margin-top: 2px; font-size: 14px; }
+        .dien-giai-box { background-color: #2c3e50; color: #ecf0f1; padding: 20px; border-radius: 6px; white-space: pre-wrap; font-family: 'Consolas', monospace; font-size: 13.5px; line-height: 1.6; max-height: 500px; overflow-y: auto; border-left: 4px solid #1d71b8; }
+        .phap-ly-note { background-color: #fffde7; border-left: 6px solid #ffc107; padding: 12px; border-radius: 4px; margin-bottom: 20px; color: #665203; font-size: 13.5px; border-top: 1px solid #fff9c4; border-right: 1px solid #fff9c4; border-bottom: 1px solid #fff9c4; }
+        
+        .row-goc { background-color: #e8f5e9 !important; color: #1b5e20; }
+        .row-lth { background-color: #e3f2fd !important; color: #0d47a1; }
+        .row-lqh { background-color: #fffde7 !important; color: #f57f17; }
+        .row-lct { background-color: #fbe9e7 !important; color: #b71c1c; }
+        .row-tong { background-color: #fce4ec !important; color: #880e4f; font-weight: bold; }
+        
+        .author-footer { text-align: center; margin-top: 40px; padding: 15px 0 35px 0; border-top: 1px solid #bad5f0; color: #5a738e; font-size: 14px; }
+        .footer-logo-large { height: 1.6rem; width: auto; vertical-align: middle; margin-left: 10px; }
+        @media(max-width:800px){.header-text-container p{display:none}.header-tool-actions{position:absolute;right:0;bottom:8px}.header-tool-btn{padding:7px 9px;font-size:10px}.fixed-header-banner{padding:0 14px}.payment-summary{grid-template-columns:1fr}.loan-mode-box{flex-direction:column}}
+    </style>
+</head>
+<body>
+
+<div class="fixed-header-banner">
+    <div class="header-content-wrapper">
+        <img src="static/logo_moi.png" alt="Logo Ngành Kiểm Sát" style="height: 80px; width: auto; z-index: 2;">
+        <div class="header-text-container">
+            <h1>PHẦN MỀM HỖ TRỢ TỰ ĐỘNG TÍNH TIỀN LÃI CHUYÊN DỤNG</h1>
+            <p>Nghiệp vụ kỹ thuật số áp dụng trong ngành Kiểm sát nhân dân</p>
+        </div>
+        <div class="header-legal-watermark">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 4V56M20 16H44M20 16L14 36H26L20 16ZM44 16L38 36H50L44 16ZM12 56H52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M27 51H37V56H27V51Z" fill="currentColor"/>
+            </svg>
+        </div>
+        <div class="header-tool-actions">
+            <button type="button" id="toggleLawBtnTop" class="header-tool-btn" onclick="toggleLawSidebar()">📖 Tra cứu luật</button>
+            <button type="button" id="toggleTimeBtnTop" class="header-tool-btn" onclick="toggleTimeSidebar()">🗓 Tiện ích ngày</button>
+        </div>
+    </div>
+</div>
+
+<div class="app-layout-container">
+    
+    <div class="law-sidebar-container" id="lawSidebarContainer">
+        <button type="button" id="toggleLawBtn" class="btn-gold-toggle" onclick="toggleLawSidebar()">
+            ◀ THU GỌN TRA CỨU LUẬT
+        </button>
+        
+        <div class="law-card">
+            <h5 class="text-warning border-bottom pb-2 mb-3" style="font-size: 13px; font-weight: bold;">📖 THƯ VIỆN PHÁP LUẬT NGUYÊN VĂN</h5>
+            
+            <div class="law-accordion-item">
+                <div class="law-accordion-header" onclick="toggleLawItem(this)">
+                    Bộ luật Dân sự 2015: Điều 468. Lãi suất <span class="acc-arrow">▼</span>
+                </div>
+                <div class="law-accordion-body" style="display: none;">"Điều 468. Lãi suất
+1. Lãi suất vay do các bên thỏa thuận.
+Trường hợp các bên có thỏa thuận về lãi suất thì lãi suất theo thỏa thuận không được vượt quá 20%/năm của khoản tiền vay, trừ trường hợp luật khác có quy định khác. Căn cứ tình hình thực tế và theo đề xuất của Chính phủ, Ủy ban thường vụ Quốc hội quyết định điều chỉnh mức lãi suất nói trên và báo cáo Quốc hội tại kỳ họp gần nhất.
+Trường hợp lãi suất thỏa thuận vượt quá lãi suất giới hạn quy định tại khoản này thì mức lãi suất vượt quá không có hiệu lực.
+2. Trường hợp các bên có thỏa thuận về việc trả lãi, nhưng không xác định rõ lãi suất và có tranh chấp về lãi suất thì lãi suất được xác định bằng 50% mức lãi suất giới hạn quy định tại khoản 1 Điều này tại thời điểm trả nợ."</div>
+            </div>
+
+            <div class="law-accordion-item">
+                <div class="law-accordion-header" onclick="toggleLawItem(this)">
+                    Bộ luật Dân sự 2015: Điều 466. Nghĩa vụ trả nợ <span class="acc-arrow">▼</span>
+                </div>
+                <div class="law-accordion-body" style="display: none;">"Điều 466. Nghĩa vụ trả nợ của bên vay
+1. Bên vay tài sản là tiền thì phải trả đủ tiền khi đến hạn; nếu tài sản là vật thì phải trả vật cùng loại đúng số lượng, chất lượng, trừ trường hợp có thỏa thuận khác.
+2. Trường hợp bên vay không thể trả vật thì có thể trả bằng tiền theo trị giá của vật đã vay tại địa điểm và thời điểm trả nợ, nếu được bên cho vay đồng ý.
+3. Địa điểm trả nợ là nơi cư trú hoặc nơi đặt trụ sở của bên cho vay, trừ trường hợp có thỏa thuận khác.
+4. Trường hợp vay không có lãi mà khi đến hạn bên vay không trả nợ hoặc trả không đủ nợ thì bên cho vay có quyền yêu cầu trả tiền lãi với mức lãi suất theo quy định tại khoản 2 Điều 468 của Bộ luật này trên số tiền chậm trả tương ứng với thời gian chậm trả, trừ trường hợp có thỏa thuận khác hoặc luật có quy định khác.
+5. Trường hợp vay có lãi mà khi đến hạn bên vay không trả hoặc trả không đủ thì bên vay phải trả lãi như sau:
+a) Lãi trên nợ gốc theo lãi suất thỏa thuận trong hạn tương ứng với thời hạn vay mà chưa trả tại thời điểm trả nợ; nếu chậm trả thì còn phải trả lãi theo mức lãi suất quy định tại khoản 2 Điều 468 của Bộ luật này tương ứng với thời gian chậm trả;
+b) Lãi trên nợ gốc quá hạn chưa trả bằng 150% lãi suất vay theo thỏa thuận tương ứng với thời gian chậm trả, trừ trường hợp có thỏa thuận khác."</div>
+            </div>
+
+            <div class="law-accordion-item">
+                <div class="law-accordion-header" onclick="toggleLawItem(this)">
+                    Bộ luật Dân sự 2015: Điều 357. Chậm thực hiện nghĩa vụ tiền <span class="acc-arrow">▼</span>
+                </div>
+                <div class="law-accordion-body" style="display: none;">"Điều 357. Trách nhiệm do chậm thực hiện nghĩa vụ trả tiền
+1. Trường hợp bên có nghĩa vụ chậm trả tiền thì bên đó phải trả lãi đối với số tiền chậm trả tương ứng với thời gian chậm trả.
+2. Lãi suất phát sinh do chậm trả tiền được xác định theo thỏa thuận của các bên nhưng không được vượt quá mức lãi suất giới hạn quy định tại khoản 1 Điều 468 của Bộ luật này; nếu không có thỏa thuận thì thực hiện theo quy định tại khoản 2 Điều 468 của Bộ luật này."</div>
+            </div>
+
+            <div class="law-accordion-item">
+                <div class="law-accordion-header" onclick="toggleLawItem(this)">
+                    Thông tư 39/2016/TT-NHNN: Điều 13. Lãi suất cho vay <span class="acc-arrow">▼</span>
+                </div>
+                <div class="law-accordion-body" style="display: none;">"Điều 13. Lãi suất cho vay
+1. Tổ chức tín dụng và khách hàng thỏa thuận về mức lãi suất cho vay theo cung cầu vốn thị trường, nhu cầu vay vốn và mức độ tín nhiệm của khách hàng, trừ trường hợp Ngân hàng Nhà nước Việt Nam có quy định về mức lãi suất cho vay tối đa tại khoản 2 Điều này.
+2. Tổ chức tín dụng và khách hàng thỏa thuận về mức lãi suất cho vay ngắn hạn bằng đồng Việt Nam nhưng không vượt quá mức lãi suất cho vay tối đa do Thống đốc Ngân hàng Nhà nước Việt Nam quyết định trong từng thời kỳ nhằm đáp ứng một số nhu cầu vốn:
+a) Phục vụ lĩnh vực phát triển nông nghiệp, nông thôn theo quy định của Chính phủ về chính sách tín dụng phục vụ phát triển nông nghiệp, nông thôn;
+b) Thực hiện phương án kinh doanh hàng xuất khẩu theo quy định tại Luật thương mại và các văn bản hướng dẫn Luật thương mại;
+c) Phục vụ kinh doanh của doanh nghiệp nhỏ và vừa theo quy định của Luật hỗ trợ doanh nghiệp nhỏ và vừa và quy định của Chính phủ về hỗ trợ doanh nghiệp nhỏ và vừa;
+d) Phát triển ngành công nghiệp hỗ trợ theo quy định của Chính phủ về phát triển công nghiệp hỗ trợ;
+đ) Phục vụ kinh doanh của doanh nghiệp ứng dụng công nghệ cao theo quy định tại Luật công nghệ cao và các văn bản hướng dẫn Luật công nghệ cao.
+3. Nội dung thỏa thuận về lãi suất cho vay bao gồm mức lãi suất cho vay và phương pháp tính lãi đối với khoản vay. Trường hợp mức lãi suất cho vay không quy đổi theo tỷ lệ %/năm và/hoặc không áp dụng phương pháp tính lãi theo số dư nợ thực tế, thời gian duy trì số dư nợ thực tế đó, tổ chức tín dụng phải quy đổi mức lãi suất cho vay theo tỷ lệ %/năm (một năm tính là 365 ngày) và thể hiện rõ phương pháp tính lãi theo số dư nợ thực tế, thời gian duy trì số dư nợ thực tế trong thỏa thuận cho vay để khách hàng biết.
+4. Khi đến hạn thanh toán mà khách hàng không trả hoặc trả không đủ nợ gốc và/hoặc lãi tiền vay theo thỏa thuận, thì khách hàng phải trả lãi tiền vay như sau:
+a) Lãi trên nợ gốc trong hạn chưa trả tương ứng với thời hạn vay chưa trả theo lãi suất cho vay đã thỏa thuận;
+b) Trường hợp khách hàng không trả đúng hạn tiền lãi theo thỏa thuận tại điểm a khoản này, thì phải trả lãi chậm trả theo mức lãi suất do tổ chức tín dụng và khách hàng thỏa thuận nhưng không vượt quá 10%/năm tính trên số dư lãi chậm trả tương ứng với thời gian chậm trả;
+c) Trường hợp khoản nợ vay bị chuyển nợ quá hạn, thì khách hàng phải trả lãi trên nợ gốc quá hạn tương ứng với thời gian chậm trả, mức lãi suất áp dụng không vượt quá 150% lãi suất cho vay trong hạn đã thỏa thuận tại thời điểm chuyển nợ quá hạn."</div>
+            </div>
+
+            <div class="law-accordion-item">
+                <div class="law-accordion-header" onclick="toggleLawItem(this)">
+                    Nghị quyết 01/2019/NQ-HĐTP: Điều 5. Hợp đồng vay không phải tín dụng <span class="acc-arrow">▼</span>
+                </div>
+                <div class="law-accordion-body" style="display: none;">"Điều 5. Xác định lãi suất, tiền lãi trong hợp đồng vay tài sản không phải là hợp đồng tín dụng tại thời điểm tuyên án xét xử sơ thẩm
+1. Hợp đồng vay không có lãi mà khi đến hạn bên vay không trả nợ hoặc trả không đủ nợ, thì tiền lãi được xác định như sau: Tiền lãi phát sinh bằng số tiền gốc chậm trả nhân với mức lãi suất quy định tại khoản 2 Điều 468 của Bộ luật Dân sự năm 2015 tương ứng với thời gian chậm trả tại thời điểm trả nợ (thời điểm tuyên án sơ thẩm), trừ trường hợp có thỏa thuận khác hoặc luật có quy định khác.
+2. Hợp đồng vay có lãi mà khi đến hạn bên vay không trả hoặc trả không đủ nợ, thì tiền lãi được xác định như sau:
+a) Tiền lãi trong hạn chưa trả bằng dư nợ gốc nhân với lãi suất thỏa thuận trong hạn tương ứng với thời hạn vay chưa trả nợ gốc;
+b) Tiền lãi chậm trả lãi bằng số tiền lãi trong hạn chậm trả nhân với mức lãi suất quy định tại khoản 2 Điều 468 của Bộ luật Dân sự năm 2015 tương ứng với thời gian chậm trả tại thời điểm trả nợ (thời điểm tuyên án sơ thẩm);
+c) Tiền lãi quá hạn bằng số dư nợ gốc quá hạn nhân với 150% lãi suất vay theo thỏa thuận trong hạn tương ứng với thời gian chậm trả gốc quá hạn, trừ trường hợp có thỏa thuận khác."</div>
+            </div>
+
+            <div class="law-accordion-item">
+                <div class="law-accordion-header" onclick="toggleLawItem(this)">
+                    Nghị quyết 01/2019/NQ-HĐTP: Điều 6. Hợp đồng tín dụng xác định lãi <span class="acc-arrow">▼</span>
+                </div>
+                <div class="law-accordion-body" style="display: none;">"Điều 6. Xác định lãi suất, tiền lãi trong hợp đồng tín dụng tại thời điểm tuyên án xét xử sơ thẩm
+1. Tiền lãi trong hạn chưa trả tính bằng dư nợ gốc nhân với mức lãi suất thỏa thuận trong hạn tương ứng với thời hạn vay chưa trả nợ gốc;
+2. Tiền lãi chậm trả lãi tính bằng số tiền lãi trong hạn chậm trả nhân với mức lãi suất thỏa thuận chậm trả lãi nhưng không vượt quá mức lãi suất quy định tại điểm b khoản 4 Điều 13 của Thông tư số 39/2016/TT-NHNN tương ứng với thời gian chậm trả lãi;
+3. Tiền lãi quá hạn tính bằng số dư nợ gốc quá hạn nhân với mức lãi suất thỏa thuận quá hạn nợ gốc nhưng không vượt quá mức lãi suất quy định tại điểm c khoản 4 Điều 13 của Thông tư số 39/2016/TT-NHNN tương ứng với thời gian chậm trả gốc quá hạn."</div>
+            </div>
+
+            <div class="law-accordion-item">
+                <div class="law-accordion-header" onclick="toggleLawItem(this)">
+                    Nghị quyết 01/2019/NQ-HĐTP: Điều 7. Áp dụng BLDS 1995 & 2005 <span class="acc-arrow">▼</span>
+                </div>
+                <div class="law-accordion-body" style="display: none;">"Điều 7. Xác định lãi suất, tiền lãi trong hợp đồng vay tài sản không phải là hợp đồng tín dụng xác lập trước ngày 01-01-2017
+1. Đối với hợp đồng xác lập trước ngày 01-01-2017 mà chưa thực hiện hoặc đang thực hiện, phát sinh tranh chấp thì áp dụng quy định về lãi suất của Bộ luật Dân sự năm 1995 hoặc Bộ luật Dân sự năm 2005 tương ứng với thời điểm xác lập hợp đồng để giải quyết nghĩa vụ trả lãi trong hạn và lãi quá hạn cho đến ngày 31-12-2016.
+2. Kể từ ngày 01-01-2017, tiền lãi phát sinh tiếp tục tính theo quy định của Bộ luật Dân sự năm 2015 và các hướng dẫn tại Nghị quyết này."</div>
+            </div>
+
+            <div class="law-accordion-item">
+                <div class="law-accordion-header" onclick="toggleLawItem(this)">
+                    Nghị quyết 01/2019/NQ-HĐTP: Điều 8. Hợp đồng tín dụng trước hiệu lực <span class="acc-arrow">▼</span>
+                </div>
+                <div class="law-accordion-body" style="display: none;">"Điều 8. Xác định lãi suất, tiền lãi trong hợp đồng tín dụng xác lập trước ngày Thông tư số 39/2016/TT-NHNN có hiệu lực thi hành
+1. Hợp đồng tín dụng được thực hiện theo đúng văn bản quy phạm pháp luật về lãi suất có hiệu lực tại thời điểm xác lập hợp đồng cho đến hết thời hạn nợ gốc trong hạn.
+2. Đối với phần nghĩa vụ chậm trả phát sinh sau thời điểm Thông tư số 39/2016/TT-NHNN có hiệu lực thi hành thì áp dụng cơ chế chuyển đổi lãi suất và xử lý nợ quá hạn đồng bộ theo quy định tại Thông tư số 39/2016/TT-NHNN và quy định pháp luật liên quan."</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content-area">
+        <div class="main-card">
+            
+            <div class="phap-ly-note">
+                <strong>Thông tin nghiệp vụ:</strong> Hệ thống tự động bóc tách số ngày cho vay dựa trên cấu trúc lịch của năm cụ thể. Thực thi nghiêm ngặt cơ chế chuyển đổi 360 ngày/năm sang 365 ngày/năm kể từ mốc có hiệu lực của Thông tư số 14/2017/TT-NHNN ngày 01/01/2018 và các quy định khác của pháp luật.
+            </div>
+
+            <div class="loan-mode-box" role="group" aria-label="Chọn mức độ nhập khoản vay">
+                <button type="button" id="basicModeBtn" class="loan-mode-btn active" onclick="setLoanMode('basic')">Khoản vay cơ bản</button>
+                <button type="button" id="advancedModeBtn" class="loan-mode-btn" onclick="setLoanMode('advanced')">Mở rộng / Nâng cao</button>
+            </div>
+            <div id="loanModeHelp" class="loan-mode-help">Dành cho khoản vay một mức lãi suất; các thiết lập phức tạp mặc định bằng 0 hoặc theo mức luật định.</div>
+
+            <form id="interestForm" class="loan-form basic-mode" data-mode="basic" onsubmit="executeCalculation(event)">
+                
+                <div class="form-section">
+                    <h6 class="mb-3 text-primary font-weight-bold">THÔNG TIN KHOẢN VAY</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold text-primary">Ngày cho vay (Ngày giải ngân nguồn vốn):</label>
+                            <input type="text" class="form-control border-primary date-dmy" id="ngay_vay" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Số tiền gốc vay ban đầu (VNĐ):</label>
+                            <input type="number" min="1" class="form-control" id="so_tien_vay" value="100000000" required>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Mức lãi suất trong hạn và đơn vị tính:</label>
+                            <div class="input-group">
+                                <input type="number" step="0.01" min="0" class="form-control" id="lai_suat_nam" value="10" required>
+                                <div class="btn-group" role="group" style="margin-left: 5px;">
+                                    <input type="radio" class="btn-check" name="loai_lai_suat" id="unitNam" value="nam" checked>
+                                    <label class="btn btn-outline-primary rate-selector-btn" for="unitNam">%/năm</label>
+                                    
+                                    <input type="radio" class="btn-check" name="loai_lai_suat" id="unitThang" value="thang">
+                                    <label class="btn btn-outline-primary rate-selector-btn" for="unitThang">%/tháng</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3 advanced-only">
+                            <label class="form-label font-weight-bold text-success">Lãi suất thỏa thuận quá hạn (Không bắt buộc):</label>
+                            <div class="input-group">
+                                <input type="number" step="0.01" class="form-control border-success" id="lai_suat_thoa_thuan_qh" placeholder="Mặc định bằng 150% lãi trong hạn">
+                                <div class="btn-group" role="group" style="margin-left: 5px;">
+                                    <input type="radio" class="btn-check" name="loai_lai_suat_qh" id="unitQhNam" value="nam" checked>
+                                    <label class="btn btn-outline-success rate-selector-btn" style="border-color: #198754; color: #198754;" for="unitQhNam">%/năm</label>
+                                    
+                                    <input type="radio" class="btn-check" name="loai_lai_suat_qh" id="unitQhThang" value="thang">
+                                    <label class="btn btn-outline-success rate-selector-btn" style="border-color: #198754; color: #198754;" for="unitQhThang">%/tháng</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3 advanced-only">
+                            <label class="form-label font-weight-bold">Cơ sở tính lãi theo thỏa thuận:</label>
+                            <select class="form-select" id="co_so_tinh_lai" aria-describedby="interestBasisWarning">
+                                <option value="du_no_thuc_te">Dư nợ gốc thực tế sau mỗi lần trả nợ (mặc định)</option>
+                                <option value="goc_ban_dau_co_dinh">Nợ gốc ban đầu cố định — trường hợp đặc biệt</option>
+                            </select>
+                            <div id="interestBasisWarning" class="interest-basis-warning">
+                                Chỉ chọn nợ gốc ban đầu cố định khi hợp đồng hoặc chứng từ ghi rõ lãi vẫn tính trên số tiền này sau khi đã trả một phần gốc.
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3 advanced-only">
+                            <label class="form-label font-weight-bold text-primary">Lãi suất chậm trả trên tiền lãi (%/năm):</label>
+                            <input type="number" step="0.01" min="0" max="10" class="form-control border-primary" id="lai_suat_cham_tra" value="0">
+                            <div class="form-text">Mặc định 0%. Nếu có thỏa thuận thì nhập mức không vượt quá 10%/năm.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label font-weight-bold">Thời hạn vay theo hợp đồng:</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control text-center" id="thoi_han_nam" value="1" min="0" required>
+                                <span class="input-group-text gold-badge">Năm</span>
+                                <input type="number" class="form-control text-center" id="thoi_han_thang" value="0" min="0" required>
+                                <span class="input-group-text gold-badge">Tháng</span>
+                                <input type="number" class="form-control text-center" id="thoi_han_ngay" value="0" min="0" required>
+                                <span class="input-group-text gold-badge">Ngày</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="advanced-note advanced-only">Chế độ nâng cao chỉ dùng khi hợp đồng có lãi suất thay đổi hoặc có thỏa thuận riêng được ghi rõ về cơ sở tính lãi, lãi quá hạn hay lãi chậm trả.</div>
+
+                <div class="form-section advanced-only" style="border-left: 4px solid #d4af37;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="m-0 text-dark font-weight-bold">LÃI SUẤT THẢ NỔI THEO TỪNG THỜI KỲ <span class="text-muted fw-normal" style="font-size: 12px;">(Không bắt buộc)</span></h6>
+                        <button type="button" class="btn btn-sm btn-dark" onclick="addFloatingRateRow()">+ Thêm thời kỳ thả nổi</button>
+                    </div>
+                    <div id="floating-container"></div>
+                </div>
+
+                <div class="form-section" style="border-left: 4px solid #198754;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h6 class="m-0 text-dark font-weight-bold">QUÁ TRÌNH TRẢ NỢ THỰC TẾ</h6>
+                            <div class="text-muted" style="font-size: 12px;">Nhập từng lần đã trả gốc, trả lãi hoặc đồng thời cả hai.</div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-success" onclick="addPaymentRow()">+ Thêm lần trả nợ</button>
+                    </div>
+                    <div id="payment-empty" class="payment-empty">Chưa có giao dịch trả nợ. Khoản vay sẽ được tính như chưa trả gốc và lãi.</div>
+                    <div id="payment-container"></div>
+                    <div id="payment-summary" class="payment-summary d-none">
+                        <div class="payment-summary-item">Số giao dịch<strong id="payment-count">0</strong></div>
+                        <div class="payment-summary-item">Tổng gốc đã trả<strong id="payment-principal-total">0 VNĐ</strong></div>
+                        <div class="payment-summary-item">Tổng lãi đã trả<strong id="payment-interest-total">0 VNĐ</strong></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h6 class="mb-3 text-primary font-weight-bold">NGÀY CHỐT SỐ LIỆU</h6>
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label class="form-label font-weight-bold text-primary">Ngày chốt nợ gốc và lãi (Ngày tất toán / Ngày xét xử):</label>
+                            <input type="text" class="form-control border-primary date-dmy" id="ngay_tra_thuc_te" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning py-2 px-3 mb-3 text-center" style="font-size: 13.5px; border-left: 4px solid #ffc107; background-color: #fff3cd; color: #664d03; border-radius: 6px;">
+                    ⚠️ <strong>Khuyến cáo:</strong> Kết quả tính toán trên phần mềm chỉ mang tính chất tham khảo nghiệp vụ, không thay thế cho các quyết định tố tụng chính thức của cơ quan có thẩm quyền.
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 font-weight-bold py-2 shadow-sm" style="background-color: #1d71b8; border-color:#bad5f0; font-size:1.1rem;">📊 TÍNH TOÁN & BÁO CÁO</button>
+            </form>
+
+            <div id="resultBlock" class="d-none mt-4">
+                <hr class="my-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="m-0" style="font-size: 1.3rem; color: #16568c; font-weight: bold;">BÁO CÁO CHI TIẾT NGHĨA VỤ TÀI CHÍNH</h3>
+                    <a id="excelDownloadBtn" href="#" class="btn btn-sm btn-success" download>📥 Tải Bảng Tính Excel Phụ Lục</a>
+                </div>
+                
+                <p class="text-muted small mb-2">Thời hạn tính toán: <strong id="lblTotalDays">0</strong> ngày (<span id="lblDecomposedText" class="text-primary fw-bold"></span>)</p>
+
+                <table class="table table-bordered text-end align-middle small shadow-sm">
+                    <thead class="table-dark text-center" style="background-color: #1d71b8; border-color: #bad5f0;">
+                        <tr>
+                            <th class="text-start">Danh mục nghĩa vụ</th>
+                            <th>Bình quân / Tháng</th>
+                            <th>Bình quân / Năm</th>
+                            <th>Tổng dư nợ tính đến ngày chốt nợ (Ngày xét xử)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-goc">
+                            <td class="text-start">1. Dư nợ gốc còn lại (Đã đối trừ)</td>
+                            <td id="cell_goc_m">0 VNĐ</td><td id="cell_goc_y">0 VNĐ</td><td id="cell_goc_t" class="fw-bold">0 VNĐ</td>
+                        </tr>
+                        <tr class="row-lth">
+                            <td class="text-start">2. Lãi trong hạn tồn đọng</td>
+                            <td id="cell_lth_m">0 VNĐ</td><td id="cell_lth_y">0 VNĐ</td><td id="cell_lth_t">0 VNĐ</td>
+                        </tr>
+                        <tr class="row-lqh">
+                            <td class="text-start">3. Lãi quá hạn tích lũy (trên gốc)</td>
+                            <td id="cell_lqh_m">0 VNĐ</td><td id="cell_lqh_y">0 VNĐ</td><td id="cell_lqh_t">0 VNĐ</td>
+                        </tr>
+                        <tr class="row-lct">
+                            <td class="text-start">4. Lãi chậm trả tích lũy (trên lãi)</td>
+                            <td id="cell_lct_m">0 VNĐ</td><td id="cell_lct_y">0 VNĐ</td><td id="cell_lct_t">0 VNĐ</td>
+                        </tr>
+                        <tr class="row-tong">
+                            <td class="text-start text-uppercase">Tổng nghĩa vụ tài chính chốt sau đối trừ</td>
+                            <td id="cell_tong_m">0 VNĐ</td><td id="cell_tong_y">0 VNĐ</td><td id="cell_tong_t">0 VNĐ</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="mt-3 text-dark font-weight-bold" style="font-size: 1rem;">BÁO CÁO DIỄN GIẢI CHI TIẾT THEO PHƯƠNG PHÁP PHÂN TÁCH NĂM - THÁNG - NGÀY</h5>
+                <div class="dien-giai-box" id="dienGiaiText"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="time-sidebar-container" id="timeSidebarContainer">
+        <button type="button" id="toggleTimeBtn" class="btn-gold-toggle" onclick="toggleTimeSidebar()">
+            THU GỌN QUY ĐỔI ▶
+        </button>
+        
+        <div class="time-card">
+            <h5 class="text-warning border-bottom pb-2 mb-3" style="font-size: 13px; font-weight: bold; color: #16568c !important; border-bottom-color: #1d71b8 !important;">⏱ TIỆN ÍCH CỘNG THỜI GIAN THỰC</h5>
+            
+            <div class="mb-2">
+                <label class="form-label small fw-bold">1. Nhập ngày bắt đầu:</label>
+                <input type="text" class="form-control form-control-sm text-center date-dmy" id="quick_date_start" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label small fw-bold">2. Nhập khoảng thời hạn cộng thêm:</label>
+                <div class="row g-1">
+                    <div class="col-4">
+                        <input type="number" class="form-control form-control-sm text-center" id="quick_add_year" placeholder="Năm" min="0" value="1" oninput="calculateFutureTargetDate()">
+                        <div class="text-muted text-center" style="font-size: 10px;">Số năm</div>
+                    </div>
+                    <div class="col-4">
+                        <input type="number" class="form-control form-control-sm text-center" id="quick_add_month" placeholder="Tháng" min="0" value="0" oninput="calculateFutureTargetDate()">
+                        <div class="text-muted text-center" style="font-size: 10px;">Số tháng</div>
+                    </div>
+                    <div class="col-4">
+                        <input type="number" class="form-control form-control-sm text-center" id="quick_add_day" placeholder="Ngày" min="0" value="0" oninput="calculateFutureTargetDate()">
+                        <div class="text-muted text-center" style="font-size: 10px;">Số ngày</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="quick_future_result" class="alert alert-success p-2 small text-center d-none" style="font-weight: 600; line-height: 1.5; color: #155724; background-color: #d4edda; border-color: #c3e6cb;">
+                Kết quả: Đang tính toán...
+            </div>
+            
+            <hr style="border-color: #bad5f0;">
+            <p class="text-secondary m-0" style="font-size: 11.5px; text-align: justify; line-height: 1.4;">
+                * Tiện ích hỗ trợ Kiểm sát viên nhanh chóng tìm ra ngày đáo hạn thực tế bằng cách lấy mốc ngày giải ngân ban đầu cộng tịnh tiến cơ học số năm/tháng/ngày quy định trên hợp đồng dân sự.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="container-fluid">
+</div>
+
+<script>
+    function toggleLawItem(element) {
+        const body = element.nextElementSibling;
+        const arrow = element.querySelector('.acc-arrow');
+        if (body.style.display === "none" || body.style.display === "") {
+            body.style.display = "block";
+            if (arrow) arrow.innerText = "▴";
+        } else {
+            body.style.display = "none";
+            if (arrow) arrow.innerText = "▼";
+        }
+    }
+
+    // THU GỌN / MỞ RỘNG TRÁI NGANG (TRA CỨU LUẬT)
+    function toggleLawSidebar() {
+        const container = document.getElementById('lawSidebarContainer');
+        container.classList.toggle('open');
+        document.getElementById('toggleLawBtnTop').classList.toggle('active', container.classList.contains('open'));
+    }
+
+    // THU GỌN / MỞ RỘNG TRÁI NGANG (QUY ĐỔI NGÀY THÁNG)
+    function toggleTimeSidebar() {
+        const container = document.getElementById('timeSidebarContainer');
+        container.classList.toggle('open');
+        document.getElementById('toggleTimeBtnTop').classList.toggle('active', container.classList.contains('open'));
+    }
+
+    function setLoanMode(mode) {
+        const advanced = mode === 'advanced';
+        const form = document.getElementById('interestForm');
+        form.dataset.mode = advanced ? 'advanced' : 'basic';
+        form.classList.toggle('basic-mode', !advanced);
+        document.getElementById('basicModeBtn').classList.toggle('active', !advanced);
+        document.getElementById('advancedModeBtn').classList.toggle('active', advanced);
+        document.getElementById('basicModeBtn').setAttribute('aria-pressed', String(!advanced));
+        document.getElementById('advancedModeBtn').setAttribute('aria-pressed', String(advanced));
+        document.getElementById('loanModeHelp').textContent = advanced
+            ? 'Dùng khi hợp đồng có lãi suất thay đổi hoặc ghi rõ thỏa thuận riêng về cơ sở tính lãi, lãi quá hạn hay lãi chậm trả.'
+            : 'Dành cho khoản vay một mức lãi suất; lãi chậm trả mặc định 0%, lãi quá hạn mặc định 150% và lãi tính trên dư nợ gốc thực tế.';
+    }
+
+    // MỚI: HÀM CỘNG THỜI GIAN THEO THỜI GIAN THỰC TẾ (YÊU CẦU SỐ 2)
+    function calculateFutureTargetDate() {
+        const startVal = document.getElementById('quick_date_start').value;
+        const addYear = parseInt(document.getElementById('quick_add_year').value) || 0;
+        const addMonth = parseInt(document.getElementById('quick_add_month').value) || 0;
+        const addDay = parseInt(document.getElementById('quick_add_day').value) || 0;
+        const resBox = document.getElementById('quick_future_result');
+        
+        const parsedStartDate = parseDate(startVal);
+        if (parsedStartDate) {
+            let baseDate = new Date(parsedStartDate);
+            
+            // Thực hiện cộng tịnh tiến Năm, Tháng, Ngày theo đúng cơ chế lịch thực tế
+            baseDate.setFullYear(baseDate.getFullYear() + addYear);
+            baseDate.setMonth(baseDate.getMonth() + addMonth);
+            baseDate.setDate(baseDate.getDate() + addDay);
+            
+            const dd = String(baseDate.getDate()).padStart(2, '0');
+            const mm = String(baseDate.getMonth() + 1).padStart(2, '0');
+            const yyyy = baseDate.getFullYear();
+            
+            resBox.classList.remove('d-none');
+            resBox.innerHTML = `Ngày kết quả dự kiến:<br><strong style="font-size: 15px; color: #155724;">${dd}/${mm}/${yyyy}</strong>`;
+        } else {
+            resBox.classList.add('d-none');
+        }
+    }
+
+    function addFloatingRateRow() {
+        const container = document.getElementById('floating-container');
+        const div = document.createElement('div');
+        div.className = 'row g-2 mb-2 align-items-center floating-row';
+        div.innerHTML = `
+            <div class="col-md-3"><input type="number" step="0.01" class="form-control form-control-sm tn-rate" placeholder="Mức lãi suất"></div>
+            <div class="col-md-2">
+                <select class="form-select form-select-sm tn-unit">
+                    <option value="nam">%/năm</option>
+                    <option value="thang">%/tháng</option>
+                </select>
+            </div>
+            <div class="col-md-3"><input type="text" class="form-control form-control-sm tn-from date-dmy" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off"></div>
+            <div class="col-md-3"><input type="text" class="form-control form-control-sm tn-to date-dmy" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off"></div>
+            <div class="col-md-1"><button type="button" class="btn btn-sm btn-outline-secondary w-100" aria-label="Xóa thời kỳ lãi suất" onclick="this.parentElement.parentElement.remove()">×</button></div>
+        `;
+        container.appendChild(div);
+    }
+
+    function addPaymentRow(values = {}) {
+        const container = document.getElementById('payment-container');
+        const div = document.createElement('div');
+        div.className = 'row g-2 mb-2 align-items-center payment-row';
+        div.innerHTML = `
+            <div class="col-md-1 text-center"><span class="payment-index">1</span></div>
+            <div class="col-md-3"><label class="form-text mb-1">Ngày trả</label><input type="text" class="form-control form-control-sm tt-date date-dmy" placeholder="Ngày/Tháng/Năm" inputmode="numeric" maxlength="10" autocomplete="off"></div>
+            <div class="col-md-3"><label class="form-text mb-1">Gốc đã trả</label><input type="number" min="0" class="form-control form-control-sm tt-goc" placeholder="0" oninput="updatePaymentSummary()"></div>
+            <div class="col-md-2"><label class="form-text mb-1">Lãi đã trả</label><input type="number" min="0" class="form-control form-control-sm tt-lai" placeholder="0" oninput="updatePaymentSummary()"></div>
+            <div class="col-md-2 text-center"><label class="form-text mb-1">Tổng lần trả</label><div class="payment-total">0 VNĐ</div></div>
+            <div class="col-md-1"><button type="button" class="btn btn-sm btn-outline-secondary w-100" aria-label="Xóa giao dịch" onclick="removePaymentRow(this)">×</button></div>
+        `;
+        div.querySelector('.tt-date').value = values.date || '';
+        div.querySelector('.tt-goc').value = values.goc || '';
+        div.querySelector('.tt-lai').value = values.lai || '';
+        container.appendChild(div);
+        updatePaymentSummary();
+        div.querySelector('.tt-date').focus();
+    }
+
+    function removePaymentRow(button) {
+        button.closest('.payment-row').remove();
+        updatePaymentSummary();
+    }
+
+    function updatePaymentSummary() {
+        const rows = Array.from(document.querySelectorAll('.payment-row'));
+        let principal = 0;
+        let interest = 0;
+        rows.forEach((row, index) => {
+            const rowPrincipal = Math.max(0, parseFloat(row.querySelector('.tt-goc').value) || 0);
+            const rowInterest = Math.max(0, parseFloat(row.querySelector('.tt-lai').value) || 0);
+            principal += rowPrincipal;
+            interest += rowInterest;
+            row.querySelector('.payment-index').textContent = String(index + 1);
+            row.querySelector('.payment-total').textContent = Math.round(rowPrincipal + rowInterest).toLocaleString('vi-VN') + ' VNĐ';
+        });
+        document.getElementById('payment-empty').classList.toggle('d-none', rows.length > 0);
+        document.getElementById('payment-summary').classList.toggle('d-none', rows.length === 0);
+        document.getElementById('payment-count').textContent = String(rows.length);
+        document.getElementById('payment-principal-total').textContent = Math.round(principal).toLocaleString('vi-VN') + ' VNĐ';
+        document.getElementById('payment-interest-total').textContent = Math.round(interest).toLocaleString('vi-VN') + ' VNĐ';
+    }
+
+    setLoanMode('basic');
+    updatePaymentSummary();
+
+    function formatVND(val) {
+        return parseFloat(val).toLocaleString('vi-VN') + " VNĐ";
+    }
+
+    function executeCalculation(event) {
+        event.preventDefault();
+
+        const form = document.getElementById('interestForm');
+        const advancedMode = form.dataset.mode === 'advanced';
+
+        const dateInputs = Array.from(document.querySelectorAll('.date-dmy'))
+            .filter(input => advancedMode || !input.closest('.advanced-only'));
+        for (const input of dateInputs) {
+            if (!validateDmyInput(input)) {
+                input.reportValidity();
+                input.focus();
+                return;
+            }
+        }
+
+        const list_tha_noi = [];
+        if (advancedMode) {
+            for (const row of document.querySelectorAll('.floating-row')) {
+                const rateInput = row.querySelector('.tn-rate');
+                const fromInput = row.querySelector('.tn-from');
+                const toInput = row.querySelector('.tn-to');
+                const hasData = rateInput.value || fromInput.value || toInput.value;
+                if (!hasData) continue;
+                if (!(parseFloat(rateInput.value) > 0) || !parseDate(fromInput.value) || !parseDate(toInput.value)) {
+                    alert('Mỗi thời kỳ lãi suất thả nổi phải có đủ mức lãi suất, ngày bắt đầu và ngày kết thúc hợp lệ.');
+                    (rateInput.value ? fromInput : rateInput).focus();
+                    return;
+                }
+                if (parseDate(fromInput.value) > parseDate(toInput.value)) {
+                    alert('Ngày bắt đầu của thời kỳ lãi suất không được sau ngày kết thúc.');
+                    fromInput.focus();
+                    return;
+                }
+                list_tha_noi.push({
+                    rate: rateInput.value,
+                    unit: row.querySelector('.tn-unit').value,
+                    from: dateInputToIso(fromInput),
+                    to: dateInputToIso(toInput)
+                });
+            }
+        }
+
+        const list_thanh_toan = [];
+        const loanStart = parseDate(document.getElementById('ngay_vay').value);
+        const closingDate = parseDate(document.getElementById('ngay_tra_thuc_te').value);
+        if (closingDate < loanStart) {
+            alert('Ngày chốt số liệu không được trước ngày cho vay.');
+            document.getElementById('ngay_tra_thuc_te').focus();
+            return;
+        }
+        for (const row of document.querySelectorAll('.payment-row')) {
+            const dateInput = row.querySelector('.tt-date');
+            const principalInput = row.querySelector('.tt-goc');
+            const interestInput = row.querySelector('.tt-lai');
+            const principalPaid = parseFloat(principalInput.value) || 0;
+            const interestPaid = parseFloat(interestInput.value) || 0;
+            const hasData = dateInput.value || principalInput.value || interestInput.value;
+            if (!hasData) continue;
+            const paymentDate = parseDate(dateInput.value);
+            if (!paymentDate || principalPaid < 0 || interestPaid < 0 || principalPaid + interestPaid <= 0) {
+                alert('Mỗi lần trả nợ phải có ngày hợp lệ và ít nhất một khoản gốc hoặc lãi lớn hơn 0.');
+                (paymentDate ? principalInput : dateInput).focus();
+                return;
+            }
+            if (paymentDate < loanStart || paymentDate > closingDate) {
+                alert('Ngày trả nợ phải nằm trong khoảng từ ngày cho vay đến ngày chốt số liệu.');
+                dateInput.focus();
+                return;
+            }
+            list_thanh_toan.push({
+                date: dateInputToIso(dateInput),
+                goc: principalPaid,
+                lai: interestPaid
+            });
+        }
+        const originalPrincipal = parseFloat(document.getElementById('so_tien_vay').value) || 0;
+        const totalPrincipalPaid = list_thanh_toan.reduce((sum, item) => sum + item.goc, 0);
+        if (totalPrincipalPaid > originalPrincipal) {
+            alert('Tổng số tiền gốc đã trả không được lớn hơn số tiền vay ban đầu.');
+            return;
+        }
+
+        const payload = {
+            so_tien_vay: originalPrincipal,
+            lai_suat_nam: parseFloat(document.getElementById('lai_suat_nam').value) || 0,
+            loai_lai_suat: document.querySelector('input[name="loai_lai_suat"]:checked').value,
+            lai_suat_thoa_thuan_qh: advancedMode ? document.getElementById('lai_suat_thoa_thuan_qh').value : '',
+            loai_lai_suat_qh: advancedMode ? document.querySelector('input[name="loai_lai_suat_qh"]:checked').value : 'nam',
+            lai_suat_cham_tra: advancedMode ? (parseFloat(document.getElementById('lai_suat_cham_tra').value) || 0) : 0,
+            co_so_tinh_lai: advancedMode ? document.getElementById('co_so_tinh_lai').value : 'du_no_thuc_te',
+            thoi_han_nam: parseInt(document.getElementById('thoi_han_nam').value) || 0,
+            thoi_han_thang: parseInt(document.getElementById('thoi_han_thang').value) || 0,
+            thoi_han_ngay: parseInt(document.getElementById('thoi_han_ngay').value) || 0,
+            ngay_vay: dateInputToIso(document.getElementById('ngay_vay')),
+            ngay_tra_thuc_te: dateInputToIso(document.getElementById('ngay_tra_thuc_te')),
+            list_tha_noi: list_tha_noi,
+            list_thanh_toan: list_thanh_toan
+        };
+
+        try {
+            const resData = tinhToanChiTiet(payload);
+            const matrix = resData.matrix;
+
+            document.getElementById('lblTotalDays').innerText = resData.so_ngay_thuc_te;
+            document.getElementById('lblDecomposedText').innerText = resData.decomposed ? resData.decomposed.decompose_text : '';
+
+            document.getElementById('cell_goc_m').innerText = formatVND(matrix.goc.thang);
+            document.getElementById('cell_goc_y').innerText = formatVND(matrix.goc.nam);
+            document.getElementById('cell_goc_t').innerText = formatVND(matrix.goc.tong);
+
+            document.getElementById('cell_lth_m').innerText = formatVND(matrix.lth.thang);
+            document.getElementById('cell_lth_y').innerText = formatVND(matrix.lth.nam);
+            document.getElementById('cell_lth_t').innerText = formatVND(matrix.lth.tong);
+
+            document.getElementById('cell_lqh_m').innerText = formatVND(matrix.lqh.thang);
+            document.getElementById('cell_lqh_y').innerText = formatVND(matrix.lqh.nam);
+            document.getElementById('cell_lqh_t').innerText = formatVND(matrix.lqh.tong);
+
+            document.getElementById('cell_lct_m').innerText = formatVND(matrix.lct.thang);
+            document.getElementById('cell_lct_y').innerText = formatVND(matrix.lct.nam);
+            document.getElementById('cell_lct_t').innerText = formatVND(matrix.lct.tong);
+
+            document.getElementById('cell_tong_m').innerText = formatVND(matrix.tong.thang);
+            document.getElementById('cell_tong_y').innerText = formatVND(matrix.tong.nam);
+            document.getElementById('cell_tong_t').innerText = formatVND(matrix.tong.tong);
+
+            document.getElementById('dienGiaiText').innerText = resData.dien_giai;
+            document.getElementById('excelDownloadBtn').style.display = 'none';
+
+            document.getElementById('resultBlock').classList.remove('d-none');
+            document.getElementById('resultBlock').scrollIntoView({ behavior: 'smooth' });
+        } catch (err) {
+            alert("Lỗi tính toán: " + err.message);
+            console.error(err);
+        }
+    }
+
+// ============================================================
+// === PHẦN A: HÀM PHỤ TRỢ NGÀY THÁNG ===
+// ============================================================
+
+function parseDate(str) {
+    if (!str) return null;
+    const value = String(str).trim();
+    let year, month, day;
+
+    let match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (match) {
+        day = parseInt(match[1], 10);
+        month = parseInt(match[2], 10);
+        year = parseInt(match[3], 10);
+    } else {
+        match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!match) return null;
+        year = parseInt(match[1], 10);
+        month = parseInt(match[2], 10);
+        day = parseInt(match[3], 10);
+    }
+
+    const result = new Date(year, month - 1, day);
+    if (result.getFullYear() !== year || result.getMonth() !== month - 1 || result.getDate() !== day) {
+        return null;
+    }
+    return result;
+}
+
+function formatDmyInput(input) {
+    const digits = input.value.replace(/\D/g, '').slice(0, 8);
+    if (digits.length <= 2) {
+        input.value = digits;
+    } else if (digits.length <= 4) {
+        input.value = digits.slice(0, 2) + '/' + digits.slice(2);
+    } else {
+        input.value = digits.slice(0, 2) + '/' + digits.slice(2, 4) + '/' + digits.slice(4);
+    }
+    input.setCustomValidity('');
+}
+
+function validateDmyInput(input) {
+    if (!input.value) {
+        input.setCustomValidity(input.required ? 'Vui lòng nhập ngày theo thứ tự Ngày/Tháng/Năm.' : '');
+        return !input.required;
+    }
+    const valid = parseDate(input.value) !== null;
+    input.setCustomValidity(valid ? '' : 'Ngày không hợp lệ. Vui lòng nhập đúng định dạng Ngày/Tháng/Năm (ví dụ: 31/12/2025).');
+    return valid;
+}
+
+function dateInputToIso(input) {
+    if (!input || !input.value) return '';
+    const date = parseDate(input.value);
+    if (!date) return '';
+    return String(date.getFullYear()).padStart(4, '0') + '-' +
+        String(date.getMonth() + 1).padStart(2, '0') + '-' +
+        String(date.getDate()).padStart(2, '0');
+}
+
+document.addEventListener('input', function(event) {
+    if (event.target.matches('.date-dmy')) {
+        formatDmyInput(event.target);
+        if (event.target.id === 'quick_date_start') calculateFutureTargetDate();
+    }
+});
+
+document.addEventListener('blur', function(event) {
+    if (event.target.matches('.date-dmy')) validateDmyInput(event.target);
+}, true);
+
+function addDays(date, days) {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
+function daysBetween(d1, d2) {
+    return Math.round((d2 - d1) / (24 * 60 * 60 * 1000));
+}
+
+function formatDateStr(d) {
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return dd + '/' + mm + '/' + yyyy;
+}
+
+// ============================================================
+// === PHẦN B: HÀM TÍNH TOÁN LÃI SUẤT ===
+// ============================================================
+
+function getDaysPerYear(date) {
+    return date < new Date(2018, 0, 1) ? 360 : 365;
+}
+
+function decomposeTotalDays(totalDays, baseDate) {
+    const moc2018 = new Date(2018, 0, 1);
+    const endDate = addDays(baseDate, totalDays);
+
+    if (baseDate >= moc2018 || endDate <= moc2018) {
+        const dpy = getDaysPerYear(baseDate);
+        const years = Math.floor(totalDays / dpy);
+        const remain = totalDays % dpy;
+        return { years: years, months: Math.floor(remain / 30), days: remain % 30 };
+    }
+
+    const daysBefore = daysBetween(baseDate, moc2018);
+    const daysAfter = totalDays - daysBefore;
+    const r1 = decomposeTotalDays(daysBefore, baseDate);
+    const r2 = decomposeTotalDays(daysAfter, moc2018);
+
+    let totalD = r1.days + r2.days;
+    let totalM = r1.months + r2.months + Math.floor(totalD / 30);
+    let totalY = r1.years + r2.years + Math.floor(totalM / 12);
+    totalD = totalD % 30;
+    totalM = totalM % 12;
+
+    return { years: totalY, months: totalM, days: totalD };
+}
+
+function decomposePeriod(startDate, endDate) {
+    const totalDays = daysBetween(startDate, endDate);
+    if (totalDays <= 0) return { years: 0, months: 0, days: 0 };
+    return decomposeTotalDays(totalDays, startDate);
+}
+
+function calcInterestPeriod(principal, annualRate, startDate, endDate) {
+    const totalDays = Math.max(0, daysBetween(startDate, endDate));
+    if (annualRate <= 0 || principal <= 0) {
+        return { totalInterest: 0.0, detail: { years: [0, 0.0], months: [0, 0.0], days: [totalDays, 0.0] } };
+    }
+
+    const moc2018 = new Date(2018, 0, 1);
+    let interestDays = 0.0;
+
+    const beforeEnd = endDate < moc2018 ? endDate : moc2018;
+    if (startDate < beforeEnd) {
+        interestDays += principal * (annualRate / 100.0) * daysBetween(startDate, beforeEnd) / 360;
+    }
+
+    const afterStart = startDate > moc2018 ? startDate : moc2018;
+    if (afterStart < endDate) {
+        interestDays += principal * (annualRate / 100.0) * daysBetween(afterStart, endDate) / 365;
+    }
+
+    return { totalInterest: interestDays, detail: { years: [0, 0.0], months: [0, 0.0], days: [totalDays, interestDays] } };
+}
+
+function formatDecomposeText(y, m, d) {
+    const parts = [];
+    if (y > 0) parts.push(String(y).padStart(2, '0') + ' năm');
+    if (m > 0) parts.push(String(m).padStart(2, '0') + ' tháng');
+    if (d > 0) parts.push(String(d).padStart(2, '0') + ' ngày');
+    return parts.length === 0 ? '00 ngày' : parts.join(' ');
+}
+
+function mergeDetail(d1, d2) {
+    return {
+        years: [d1.years[0] + d2.years[0], d1.years[1] + d2.years[1]],
+        months: [d1.months[0] + d2.months[0], d1.months[1] + d2.months[1]],
+        days: [d1.days[0] + d2.days[0], d1.days[1] + d2.days[1]]
+    };
+}
+
+// ============================================================
+// === PHẦN C: HÀM CHÍNH tinhToanChiTiet ===
+// ============================================================
+
+function tinhToanChiTiet(payload) {
+    const so_tien_vay = payload.so_tien_vay;
+    const thoi_han_nam = payload.thoi_han_nam;
+    const thoi_han_thang = payload.thoi_han_thang;
+    const thoi_han_ngay = payload.thoi_han_ngay;
+    const lai_suat_nhap = payload.lai_suat_nam;
+    const loai_lai_suat = payload.loai_lai_suat;
+    const lai_suat_thoa_thuan_qh = payload.lai_suat_thoa_thuan_qh;
+    const loai_lai_suat_qh = payload.loai_lai_suat_qh;
+    // Mặc định luôn dùng dư nợ thực tế. Tên cũ được giữ ở đây chỉ để các dữ liệu
+    // đã lưu trước đây vẫn mở được, không còn xuất hiện trong giao diện.
+    const co_so_tinh_lai = payload.co_so_tinh_lai ||
+        (payload.phuong_thuc === 'goc_ban_dau' ? 'goc_ban_dau_co_dinh' : 'du_no_thuc_te');
+    const ngay_vay = payload.ngay_vay;
+    const ngay_tra_thuc_te = payload.ngay_tra_thuc_te;
+    const lai_suat_cham_tra = Math.min(10, Math.max(0, parseFloat(payload.lai_suat_cham_tra) || 0.0));
+    const list_tha_noi = payload.list_tha_noi || [];
+    const list_thanh_toan = payload.list_thanh_toan || [];
+
+    // 1. XỬ LÝ CÁC MỐC THỜI GIAN CƠ BẢN
+    const ngay_vay_dt = parseDate(ngay_vay);
+    // Tính lãi hết ngày chốt nợ thực tế do người dùng nhập.
+    const ngay_tra_dt = addDays(parseDate(ngay_tra_thuc_te), 1);
+    const moc_thong_tu_dt = new Date(2018, 0, 1);
+
+    if (!ngay_vay_dt || !ngay_tra_dt) {
+        throw new Error('Hệ thống yêu cầu nhập đầy đủ Ngày cho vay và Ngày chốt nợ.');
+    }
+
+    // Tính ngày đáo hạn
+    let ngay_dao_han_dt = new Date(ngay_vay_dt);
+    ngay_dao_han_dt.setFullYear(ngay_dao_han_dt.getFullYear() + thoi_han_nam);
+    let thang_hien_tai = ngay_dao_han_dt.getMonth() + 1;
+    let nam_hien_tai = ngay_dao_han_dt.getFullYear();
+    for (let i = 0; i < thoi_han_thang; i++) {
+        thang_hien_tai++;
+        if (thang_hien_tai > 12) { thang_hien_tai = 1; nam_hien_tai++; }
+    }
+    let ngay_tam = ngay_dao_han_dt.getDate();
+    while (true) {
+        try {
+            ngay_dao_han_dt = new Date(nam_hien_tai, thang_hien_tai - 1, ngay_tam);
+            if (ngay_dao_han_dt.getMonth() + 1 === thang_hien_tai) break;
+            ngay_tam--;
+        } catch (e) { ngay_tam--; }
+    }
+    ngay_dao_han_dt = addDays(ngay_dao_han_dt, thoi_han_ngay);
+    const so_ngay_quy_dinh = daysBetween(ngay_vay_dt, ngay_dao_han_dt);
+
+    // 2. XỬ LÝ LÃI SUẤT THẢ NỔI VÀ NHẬT KÝ THANH TOÁN
+    const tha_noi_processed = [];
+    for (const tn of list_tha_noi) {
+        if (tn.rate && tn.from && tn.to) {
+            let r = parseFloat(tn.rate);
+            if (tn.unit === 'thang') r *= 12;
+            tha_noi_processed.push({ rate: r, from: parseDate(tn.from), to: addDays(parseDate(tn.to), 1) });
+        }
+    }
+
+    const thanh_toan_processed = {};
+    for (const tt of list_thanh_toan) {
+        if (tt.date) {
+            const d_dt = parseDate(tt.date);
+            const goc_tra = parseFloat(tt.goc) || 0.0;
+            const lai_tra = parseFloat(tt.lai) || 0.0;
+            const key = d_dt.getTime();
+            if (thanh_toan_processed[key]) {
+                thanh_toan_processed[key].goc += goc_tra;
+                thanh_toan_processed[key].lai += lai_tra;
+            } else {
+                thanh_toan_processed[key] = { goc: goc_tra, lai: lai_tra };
+            }
+        }
+    }
+
+    // 3. KHỞI TẠO BIẾN
+    let du_no_goc_hien_tai = so_tien_vay;
+    const goc_ban_dau_co_dinh = so_tien_vay;
+    let tong_lai_trong_han_tich_luy = 0.0;
+    let tong_lai_qua_han_tich_luy = 0.0;
+    let tong_lai_cham_tra_tich_luy = 0.0;
+    let lai_trong_han_chua_tra = 0.0;
+    const base_rate_nam = loai_lai_suat === 'thang' ? lai_suat_nhap * 12 : lai_suat_nhap;
+    const total_days_simulation = daysBetween(ngay_vay_dt, ngay_tra_dt);
+    const tong = decomposePeriod(ngay_vay_dt, ngay_dao_han_dt);
+
+    // 4. CHUẨN BỊ BÁO CÁO
+    let dien_giai_text = '=== BÁO CÁO SAO KÊ CHI TIẾT THEO PHƯƠNG PHÁP PHÂN TÁCH NĂM - THÁNG - NGÀY ===\n';
+    dien_giai_text += 'THÔNG TIN BAN ĐẦU:\n';
+    dien_giai_text += '- Nợ gốc vay: ' + so_tien_vay.toLocaleString('vi-VN') + ' VNĐ\n';
+    dien_giai_text += '- Kỳ hạn vay: ' + formatDateStr(ngay_vay_dt) + ' đến ' + formatDateStr(ngay_dao_han_dt) + '\n';
+    dien_giai_text += '- Thời hạn vay đã phân tách: ' + formatDecomposeText(tong.years, tong.months, tong.days) + ' (' + so_ngay_quy_dinh + ' ngày)\n';
+    dien_giai_text += '='.repeat(60) + '\n\n';
+
+    // 5. XÂY DỰNG SEGMENTS
+    const milestonesSet = new Set();
+    milestonesSet.add(ngay_vay_dt.getTime());
+    milestonesSet.add(ngay_tra_dt.getTime());
+    milestonesSet.add(ngay_dao_han_dt.getTime());
+    milestonesSet.add(moc_thong_tu_dt.getTime());
+    for (const tn of tha_noi_processed) { milestonesSet.add(tn.from.getTime()); milestonesSet.add(tn.to.getTime()); }
+    for (const key in thanh_toan_processed) { milestonesSet.add(parseInt(key)); }
+
+    let milestones = Array.from(milestonesSet)
+        .map(t => new Date(parseInt(t)))
+        .filter(d => d >= ngay_vay_dt && d <= ngay_tra_dt)
+        .sort((a, b) => a - b);
+
+    const segments = [];
+    for (let i = 0; i < milestones.length - 1; i++) {
+        if (milestones[i] < milestones[i + 1]) segments.push({ start: milestones[i], end: milestones[i + 1] });
+    }
+    if (segments.length === 0 && total_days_simulation > 0) segments.push({ start: ngay_vay_dt, end: ngay_tra_dt });
+
+    // 6. TÍNH TOÁN THEO TỪNG SEGMENT
+    let chi_tiet_trong_han = { years: [0, 0.0], months: [0, 0.0], days: [0, 0.0] };
+    let chi_tiet_qua_han = { years: [0, 0.0], months: [0, 0.0], days: [0, 0.0] };
+    let chi_tiet_cham_tra = { years: [0, 0.0], months: [0, 0.0], days: [0, 0.0] };
+
+    let current_month_str = total_days_simulation > 0 ? String(ngay_vay_dt.getMonth() + 1).padStart(2, '0') + '/' + ngay_vay_dt.getFullYear() : '';
+    let m_start_date = ngay_vay_dt;
+    let m_goc_dau = du_no_goc_hien_tai;
+    let m_lai_trong_han_dau = lai_trong_han_chua_tra;
+    let m_lai_trong_han_ps = 0.0, m_lai_qua_han_ps = 0.0, m_lai_cham_tra_ps = 0.0, m_goc_tra = 0.0, m_lai_tra = 0.0;
+    let m_nhat_ky_tra = [];
+
+    for (const seg of segments) {
+        const seg_start = seg.start;
+        const seg_end = seg.end;
+
+        let active_rate = base_rate_nam;
+        const mid_point = new Date(seg_start.getTime() + (seg_end - seg_start) / 2);
+        for (const tn of tha_noi_processed) {
+            if (tn.from <= mid_point && mid_point <= tn.to) { active_rate = tn.rate; break; }
+        }
+        if (active_rate > 20.0) active_rate = 20.0;
+
+        const is_qua_han = seg_start >= ngay_dao_han_dt;
+        const is_cross_due = seg_start < ngay_dao_han_dt && seg_end > ngay_dao_han_dt;
+
+        if (is_cross_due) {
+            // Đoạn trong hạn
+            const co_so_goc = co_so_tinh_lai === 'goc_ban_dau_co_dinh' ? goc_ban_dau_co_dinh : du_no_goc_hien_tai;
+            const result = calcInterestPeriod(co_so_goc, active_rate, seg_start, ngay_dao_han_dt);
+            tong_lai_trong_han_tich_luy += result.totalInterest;
+            lai_trong_han_chua_tra += result.totalInterest;
+            m_lai_trong_han_ps += result.totalInterest;
+            chi_tiet_trong_han = mergeDetail(chi_tiet_trong_han, result.detail);
+
+            // Đoạn quá hạn
+            let rate_qh;
+            if (lai_suat_thoa_thuan_qh) {
+                rate_qh = parseFloat(lai_suat_thoa_thuan_qh);
+                if (loai_lai_suat_qh === 'thang') rate_qh *= 12;
+                if (rate_qh > 30.0) rate_qh = 30.0;
+            } else {
+                rate_qh = active_rate * 1.5;
+                if (rate_qh > 30.0) rate_qh = 30.0;
+            }
+            const lqh_result = calcInterestPeriod(du_no_goc_hien_tai, rate_qh, ngay_dao_han_dt, seg_end);
+            tong_lai_qua_han_tich_luy += lqh_result.totalInterest;
+            m_lai_qua_han_ps += lqh_result.totalInterest;
+            chi_tiet_qua_han = mergeDetail(chi_tiet_qua_han, lqh_result.detail);
+
+            const lct_result = calcInterestPeriod(Math.max(0, lai_trong_han_chua_tra), lai_suat_cham_tra, ngay_dao_han_dt, seg_end);
+            tong_lai_cham_tra_tich_luy += lct_result.totalInterest;
+            m_lai_cham_tra_ps += lct_result.totalInterest;
+            chi_tiet_cham_tra = mergeDetail(chi_tiet_cham_tra, lct_result.detail);
+
+        } else if (is_qua_han) {
+            // Toàn bộ đoạn quá hạn
+            let rate_qh;
+            if (lai_suat_thoa_thuan_qh) {
+                rate_qh = parseFloat(lai_suat_thoa_thuan_qh);
+                if (loai_lai_suat_qh === 'thang') rate_qh *= 12;
+                if (rate_qh > 30.0) rate_qh = 30.0;
+            } else {
+                rate_qh = active_rate * 1.5;
+                if (rate_qh > 30.0) rate_qh = 30.0;
+            }
+            const lqh_result = calcInterestPeriod(du_no_goc_hien_tai, rate_qh, seg_start, seg_end);
+            tong_lai_qua_han_tich_luy += lqh_result.totalInterest;
+            m_lai_qua_han_ps += lqh_result.totalInterest;
+            chi_tiet_qua_han = mergeDetail(chi_tiet_qua_han, lqh_result.detail);
+
+            const lct_result = calcInterestPeriod(Math.max(0, lai_trong_han_chua_tra), lai_suat_cham_tra, seg_start, seg_end);
+            tong_lai_cham_tra_tich_luy += lct_result.totalInterest;
+            m_lai_cham_tra_ps += lct_result.totalInterest;
+            chi_tiet_cham_tra = mergeDetail(chi_tiet_cham_tra, lct_result.detail);
+
+        } else {
+            // Đoạn trong hạn
+            const co_so_goc = co_so_tinh_lai === 'goc_ban_dau_co_dinh' ? goc_ban_dau_co_dinh : du_no_goc_hien_tai;
+            const result = calcInterestPeriod(co_so_goc, active_rate, seg_start, seg_end);
+            tong_lai_trong_han_tich_luy += result.totalInterest;
+            lai_trong_han_chua_tra += result.totalInterest;
+            m_lai_trong_han_ps += result.totalInterest;
+            chi_tiet_trong_han = mergeDetail(chi_tiet_trong_han, result.detail);
+        }
+
+        // XỬ LÝ THANH TOÁN TẠI MỐC SEGMENT
+        const seg_end_key = seg_end.getTime();
+        if (thanh_toan_processed[seg_end_key]) {
+            const tt = thanh_toan_processed[seg_end_key];
+            m_goc_tra += tt.goc;
+            m_lai_tra += tt.lai;
+            m_nhat_ky_tra.push({ date: formatDateStr(seg_end), goc: tt.goc, lai: tt.lai });
+
+            // Bảo toàn cả khoản lãi trả trước để đối trừ các kỳ phát sinh sau.
+            lai_trong_han_chua_tra -= tt.lai;
+            if (tt.goc > 0) {
+                du_no_goc_hien_tai = Math.max(0, du_no_goc_hien_tai - tt.goc);
+            }
+        }
+
+        // CHỐT SỔ THÁNG
+        const seg_month_str = String(seg_end.getMonth() + 1).padStart(2, '0') + '/' + seg_end.getFullYear();
+        if (seg_month_str !== current_month_str || seg === segments[segments.length - 1]) {
+            if (m_goc_dau > 0 || m_lai_trong_han_ps > 0 || m_lai_qua_han_ps > 0 || m_lai_cham_tra_ps > 0 || m_goc_tra > 0 || m_lai_tra > 0) {
+                dien_giai_text += '--- Tháng ' + current_month_str + ' ---\n';
+                dien_giai_text += '  Dư nợ đầu kỳ: ' + m_goc_dau.toLocaleString('vi-VN') + ' VNĐ\n';
+                dien_giai_text += '  Lãi trong hạn phát sinh: ' + m_lai_trong_han_ps.toLocaleString('vi-VN') + ' VNĐ\n';
+                dien_giai_text += '  Lãi quá hạn phát sinh: ' + m_lai_qua_han_ps.toLocaleString('vi-VN') + ' VNĐ\n';
+                dien_giai_text += '  Lãi chậm trả phát sinh: ' + m_lai_cham_tra_ps.toLocaleString('vi-VN') + ' VNĐ\n';
+                if (m_nhat_ky_tra.length > 0) {
+                    for (const nk of m_nhat_ky_tra) {
+                        dien_giai_text += '  >> Thanh toán ngày ' + nk.date + ': Gốc ' + nk.goc.toLocaleString('vi-VN') + ' VNĐ, Lãi ' + nk.lai.toLocaleString('vi-VN') + ' VNĐ\n';
+                    }
+                }
+                dien_giai_text += '  Dư nợ cuối kỳ: ' + du_no_goc_hien_tai.toLocaleString('vi-VN') + ' VNĐ\n\n';
+            }
+
+            // Reset tháng
+            current_month_str = seg_month_str;
+            m_start_date = seg_end;
+            m_goc_dau = du_no_goc_hien_tai;
+            m_lai_trong_han_dau = lai_trong_han_chua_tra;
+            m_lai_trong_han_ps = 0.0;
+            m_lai_qua_han_ps = 0.0;
+            m_lai_cham_tra_ps = 0.0;
+            m_goc_tra = 0.0;
+            m_lai_tra = 0.0;
+            m_nhat_ky_tra = [];
+        }
+    }
+
+    // 7. TỔNG KẾT
+    dien_giai_text += '=== TỔNG KẾT ===\n';
+    dien_giai_text += 'Tổng lãi trong hạn tích lũy: ' + tong_lai_trong_han_tich_luy.toLocaleString('vi-VN') + ' VNĐ\n';
+    dien_giai_text += 'Tổng lãi quá hạn tích lũy: ' + tong_lai_qua_han_tich_luy.toLocaleString('vi-VN') + ' VNĐ\n';
+    dien_giai_text += 'Tổng lãi chậm trả tích lũy: ' + tong_lai_cham_tra_tich_luy.toLocaleString('vi-VN') + ' VNĐ\n';
+    dien_giai_text += 'Dư nợ gốc còn lại: ' + du_no_goc_hien_tai.toLocaleString('vi-VN') + ' VNĐ\n';
+    dien_giai_text += 'Tổng nghĩa vụ tài chính: ' + (du_no_goc_hien_tai + lai_trong_han_chua_tra + tong_lai_qua_han_tich_luy + tong_lai_cham_tra_tich_luy).toLocaleString('vi-VN') + ' VNĐ\n';
+
+    // 8. TÍNH TOÁN MA TRẬN KẾT QUẢ
+    const so_ngay_thuc_te = total_days_simulation;
+    const decomposed = decomposePeriod(ngay_vay_dt, ngay_tra_dt);
+    const decompose_text = formatDecomposeText(decomposed.years, decomposed.months, decomposed.days);
+
+    const goc_t = du_no_goc_hien_tai;
+    const lth_t = lai_trong_han_chua_tra;
+    const lqh_t = tong_lai_qua_han_tich_luy;
+    const lct_t = tong_lai_cham_tra_tich_luy;
+    const tong_t = goc_t + lth_t + lqh_t + lct_t;
+
+    const totalMonths = decomposed.years * 12 + decomposed.months + (decomposed.days > 0 ? 1 : 0);
+    const effectiveMonths = Math.max(totalMonths, 1);
+    const effectiveYears = Math.max(decomposed.years + (decomposed.months > 0 || decomposed.days > 0 ? 1 : 0), 1);
+
+    const matrix = {
+        goc: { thang: goc_t / effectiveMonths, nam: goc_t / effectiveYears, tong: goc_t },
+        lth: { thang: lth_t / effectiveMonths, nam: lth_t / effectiveYears, tong: lth_t },
+        lqh: { thang: lqh_t / effectiveMonths, nam: lqh_t / effectiveYears, tong: lqh_t },
+        lct: { thang: lct_t / effectiveMonths, nam: lct_t / effectiveYears, tong: lct_t },
+        tong: { thang: tong_t / effectiveMonths, nam: tong_t / effectiveYears, tong: tong_t }
+    };
+
+    return {
+        success: true,
+        so_ngay_thuc_te: so_ngay_thuc_te,
+        decomposed: { years: decomposed.years, months: decomposed.months, days: decomposed.days, decompose_text: decompose_text },
+        matrix: matrix,
+        dien_giai: dien_giai_text,
+        excel_url: '#'
+    };
+}
+</script>
+</body>
+</html>

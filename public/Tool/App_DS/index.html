@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ Tra cứu & Tính toán Án phí</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #eef5fa; color: #333; }
+        .header {
+            position: fixed; inset: 0 0 auto 0; z-index: 1050; height: 130px;
+            display: flex; align-items: center; padding: 0 30px; overflow: hidden;
+            color: white; background: linear-gradient(135deg, #4ba3e3, #1d71b8);
+            border-bottom: 4px solid #d4af37; box-shadow: 0 3px 15px rgba(0,0,0,.1);
+        }
+        .header-inner { display: flex; align-items: center; width: 100%; height: 100%; position: relative; }
+        .header-copy { margin-left: 20px; position: relative; z-index: 2; }
+        .header h1 { margin: 0; font-size: 1.6rem; letter-spacing: .5px; text-shadow: 1px 1px 3px rgba(0,0,0,.15); }
+        .header p { margin: 3px 0 0; color: #fff3cc; font-size: 13px; font-weight: 500; }
+        .header-watermark { position: absolute; right: 0; top: 5%; width: 25%; height: 90%; opacity: .12; color: #fff; display: flex; justify-content: flex-end; pointer-events: none; }
+        .header-watermark svg { width: auto; height: 100%; }
+        .container { max-width: 1000px; margin: 150px auto 20px; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.06); border: 1px solid #d3e4f1; }
+        .logo { height: 80px; width: auto; position: relative; z-index: 2; }
+        fieldset { border: 2px solid #0056b3; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
+        legend { color: #0056b3; font-weight: bold; font-size: 1.2em; padding: 0 10px; }
+        button { background-color: #0056b3; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; }
+        button:hover { background-color: #004494; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+        th { background-color: #e9ecef; }
+        .category { background-color: #0056b3; color: white; text-align: center; font-weight: bold; }
+        .category td { background-color: #0056b3; color: white; text-align: center; font-weight: bold; }
+        .sub-category { background-color: #d4edda; font-weight: bold; }
+        .stt-col { width: 40px; text-align: center; }
+        .stt-sub { width: 30px; text-align: center; color: #666; }
+        footer { margin-top: 40px; padding: 20px; text-align: center; border-top: 2px solid #0056b3; color: #555; font-size: 14px; }
+        .receipt { background-color: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #0056b3; margin-top: 20px; }
+        .note { font-size: 12px; color: #666; font-style: italic; margin-top: 5px; }
+        .checkbox-label { display: block; margin-bottom: 15px; font-size: 14px; color: #333; }
+        .checkbox-label input { width: auto; margin-right: 8px; }
+        .professional-advisory { margin: 0 0 16px; padding: 11px 14px; border-left: 4px solid #d4af37; border-radius: 7px; background: #fff8e1; color: #665203; font-size: 13.5px; line-height: 1.5; }
+        details { margin-top: 10px; border: 1px solid #ddd; border-radius: 8px; padding: 15px; background-color: #f8f9fa; }
+        summary { cursor: pointer; font-weight: bold; color: #0056b3; font-size: 15px; }
+        details div { margin-top: 15px; font-size: 14px; line-height: 1.7; text-align: justify; }
+        details p { margin: 8px 0; }
+        details .indent { margin-left: 20px; }
+        details .indent2 { margin-left: 40px; }
+        @media (max-width: 700px) {
+            .header { padding: 0 14px; }
+            .header-copy { margin-left: 12px; }
+            .header h1 { font-size: 1.15rem; }
+            .header p { display: none; }
+            .logo { height: 66px; }
+            .container { margin-top: 142px; padding: 16px; border-radius: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-inner">
+            <img src="../../static/logo_moi.png" alt="Logo Ngành Kiểm sát nhân dân" class="logo">
+            <div class="header-copy">
+                <h1>PHẦN MỀM TÍNH ÁN PHÍ &amp; LỆ PHÍ</h1>
+                <p>Tra cứu và tính toán theo Nghị quyết 326/2016/UBTVQH14</p>
+            </div>
+            <div class="header-watermark" aria-hidden="true">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 4V56M20 16H44M20 16L14 36H26L20 16ZM44 16L38 36H50L44 16ZM12 56H52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M27 51H37V56H27V51Z" fill="currentColor"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <fieldset>
+            <legend>Tính toán án phí (có giá ngạch)</legend>
+            <form onsubmit="tinhAnPhi(event)">
+                <select id="loai_phi" style="padding: 10px; width: 100%; margin-bottom: 15px;">
+                    <option value="ds_co_gia_ngach">Án phí dân sự sơ thẩm</option>
+                    <option value="kdtm_co_gia_ngach">Án phí KDTM sơ thẩm</option>
+                    <option value="lao_dong_co_gia_ngach">Án phí Lao động sơ thẩm</option>
+                </select>
+                <input type="number" id="gia_tri" placeholder="Nhập số tiền (VNĐ)..." required style="padding: 10px; width: 100%; margin-bottom: 15px; box-sizing: border-box;">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="giam_50" value="on">
+                    <strong>Thuận tình ly hôn / Hòa giải thành trước khi mở phiên tòa</strong> (chỉ chịu 50% án phí – Điều 27 NQ 326/2016)
+                </label>
+                <div class="professional-advisory" role="note">
+                    ⚠️ <strong>Khuyến cáo:</strong> Kết quả tính toán trên phần mềm chỉ mang tính chất tham khảo nghiệp vụ, không thay thế cho các quyết định tố tụng chính thức của cơ quan có thẩm quyền.
+                </div>
+                <button type="submit">Tính toán ngay</button>
+            </form>
+
+            <div id="receiptBlock" class="receipt" style="display: none;">
+                <h4 style="color: #0056b3;">Biên lai tính phí chi tiết</h4>
+                <p><strong>Giá trị tranh chấp:</strong> <span id="receipt_gia_tri"></span> VNĐ</p>
+                <p><strong>Công thức áp dụng:</strong> <span id="receipt_cong_thuc"></span></p>
+                <p><strong>Án phí gốc:</strong> <span id="receipt_ket_qua_goc"></span> VNĐ</p>
+                <p id="receipt_giam_row" style="color: #d9534f; display: none;"><strong>Giảm 50% (Điều 27 NQ 326/2016):</strong> -<span id="receipt_so_giam"></span> VNĐ</p>
+                <hr>
+                <h3 style="color: #d9534f;">Tổng án phí phải nộp: <span id="receipt_ket_qua"></span> VNĐ</h3>
+                <p style="font-size: 0.8em; color: #666;">* Áp dụng theo Nghị quyết 326/2016/UBTVQH14</p>
+            </div>
+        </fieldset>
+
+        <h2>Bảng Tra cứu đầy đủ (Nghị quyết 326)</h2>
+        <p class="note">(Ban hành kèm theo Nghị quyết số 326/2016/UBTVQH14 ngày 30 tháng 12 năm 2016)</p>
+
+        <table>
+            <tr><th class="stt-col">Stt</th><th>Tên án phí</th><th>Mức thu</th></tr>
+
+            <tr class="category"><td colspan="3">A. DANH MỤC ÁN PHÍ</td></tr>
+
+            <tr class="category"><td colspan="3">I. ÁN PHÍ HÌNH SỰ</td></tr>
+            <tr><td>1</td><td>Án phí hình sự sơ thẩm</td><td>200.000 đồng</td></tr>
+            <tr><td>2</td><td>Án phí hình sự phúc thẩm</td><td>200.000 đồng</td></tr>
+
+            <tr class="category"><td colspan="3">II. ÁN PHÍ DÂN SỰ</td></tr>
+
+            <tr><td>1</td><td><strong>Án phí dân sự sơ thẩm</strong></td><td></td></tr>
+
+            <tr><td>1.1</td><td>Đối với tranh chấp về dân sự, hôn nhân và gia đình, lao động không có giá ngạch</td><td>300.000 đồng</td></tr>
+            <tr><td>1.2</td><td>Đối với tranh chấp về kinh doanh, thương mại không có giá ngạch</td><td>3.000.000 đồng</td></tr>
+
+            <tr><td>1.3</td><td><strong>Đối với tranh chấp về dân sự, hôn nhân và gia đình có giá ngạch</strong></td><td></td></tr>
+            <tr><td>a</td><td>Từ 6.000.000 đồng trở xuống</td><td>300.000 đồng</td></tr>
+            <tr><td>b</td><td>Từ trên 6.000.000 đồng đến 400.000.000 đồng</td><td>5% giá trị tài sản có tranh chấp</td></tr>
+            <tr><td>c</td><td>Từ trên 400.000.000 đồng đến 800.000.000 đồng</td><td>20.000.000 đồng + 4% của phần giá trị tài sản có tranh chấp vượt quá 400.000.000 đồng</td></tr>
+            <tr><td>d</td><td>Từ trên 800.000.000 đồng đến 2.000.000.000 đồng</td><td>36.000.000 đồng + 3% của phần giá trị tài sản có tranh chấp vượt 800.000.000 đồng</td></tr>
+            <tr><td>đ</td><td>Từ trên 2.000.000.000 đồng đến 4.000.000.000 đồng</td><td>72.000.000 đồng + 2% của phần giá trị tài sản có tranh chấp vượt 2.000.000.000 đồng</td></tr>
+            <tr><td>e</td><td>Từ trên 4.000.000.000 đồng</td><td>112.000.000 đồng + 0,1% của phần giá trị tài sản tranh chấp vượt 4.000.000.000 đồng</td></tr>
+
+            <tr><td>1.4</td><td><strong>Đối với tranh chấp về kinh doanh, thương mại có giá ngạch</strong></td><td></td></tr>
+            <tr><td>a</td><td>Từ 60.000.000 đồng trở xuống</td><td>3.000.000 đồng</td></tr>
+            <tr><td>b</td><td>Từ trên 60.000.000 đồng đến 400.000.000 đồng</td><td>5% của giá trị tranh chấp</td></tr>
+            <tr><td>c</td><td>Từ trên 400.000.000 đồng đến 800.000.000 đồng</td><td>20.000.000 đồng + 4% của phần giá trị tranh chấp vượt quá 400.000.000 đồng</td></tr>
+            <tr><td>d</td><td>Từ trên 800.000.000 đồng đến 2.000.000.000 đồng</td><td>36.000.000 đồng + 3% của phần giá trị tranh chấp vượt quá 800.000.000 đồng</td></tr>
+            <tr><td>đ</td><td>Từ trên 2.000.000.000 đồng đến 4.000.000.000 đồng</td><td>72.000.000 đồng + 2% của phần giá trị tranh chấp vượt 2.000.000.000 đồng</td></tr>
+            <tr><td>e</td><td>Từ trên 4.000.000.000 đồng</td><td>112.000.000 đồng + 0,1% của phần giá trị tranh chấp vượt 4.000.000.000 đồng</td></tr>
+
+            <tr><td>1.5</td><td><strong>Đối với tranh chấp về lao động có giá ngạch</strong></td><td></td></tr>
+            <tr><td>a</td><td>Từ 6.000.000 đồng trở xuống</td><td>300.000 đồng</td></tr>
+            <tr><td>b</td><td>Từ trên 6.000.000 đồng đến 400.000.000 đồng</td><td>3% giá trị tranh chấp, nhưng không thấp hơn 300.000 đồng</td></tr>
+            <tr><td>c</td><td>Từ trên 400.000.000 đồng đến 2.000.000.000 đồng</td><td>12.000.000 đồng + 2% của phần giá trị có tranh chấp vượt quá 400.000.000 đồng</td></tr>
+            <tr><td>d</td><td>Từ trên 2.000.000.000 đồng</td><td>44.000.000 đồng + 0,1% của phần giá trị có tranh chấp vượt 2.000.000.000 đồng</td></tr>
+
+            <tr><td>2</td><td><strong>Án phí dân sự phúc thẩm</strong></td><td></td></tr>
+            <tr><td>2.1</td><td>Đối với tranh chấp về dân sự, hôn nhân và gia đình, lao động</td><td>300.000 đồng</td></tr>
+            <tr><td>2.2</td><td>Đối với tranh chấp về kinh doanh, thương mại</td><td>2.000.000 đồng</td></tr>
+
+            <tr class="category"><td colspan="3">III. ÁN PHÍ HÀNH CHÍNH</td></tr>
+            <tr><td>1</td><td>Án phí hành chính sơ thẩm</td><td>300.000 đồng</td></tr>
+            <tr><td>2</td><td>Án phí hành chính phúc thẩm</td><td>300.000 đồng</td></tr>
+
+            <tr class="category"><td colspan="3">B. DANH MỤC LỆ PHÍ TÒA ÁN</td></tr>
+
+            <tr class="category"><td colspan="3">I. LỆ PHÍ GIẢI QUYẾT VIỆC DÂN SỰ</td></tr>
+            <tr><td>1</td><td>Lệ phí sơ thẩm giải quyết yêu cầu về dân sự, hôn nhân và gia đình, kinh doanh, thương mại, lao động</td><td>300.000 đồng</td></tr>
+            <tr><td>2</td><td>Lệ phí phúc thẩm giải quyết yêu cầu về dân sự, hôn nhân và gia đình, kinh doanh, thương mại, lao động</td><td>300.000 đồng</td></tr>
+
+            <tr class="category"><td colspan="3">II. LỆ PHÍ TÒA ÁN KHÁC</td></tr>
+
+            <tr><td>1</td><td><strong>Lệ phí yêu cầu công nhận và cho thi hành tại Việt Nam bản án, quyết định của Tòa án nước ngoài; phán quyết của trọng tài nước ngoài</strong></td><td></td></tr>
+            <tr><td>a</td><td>Lệ phí công nhận và cho thi hành tại Việt Nam bản án, quyết định của Tòa án nước ngoài; phán quyết của Trọng tài nước ngoài</td><td>3.000.000 đồng</td></tr>
+            <tr><td>b</td><td>Lệ phí kháng cáo quyết định của Tòa án về việc công nhận và cho thi hành tại Việt Nam bản án, quyết định của Tòa án nước ngoài; phán quyết của Trọng tài nước ngoài</td><td>300.000 đồng</td></tr>
+
+            <tr><td>2</td><td><strong>Lệ phí giải quyết yêu cầu liên quan đến việc Trọng tài thương mại Việt Nam giải quyết tranh chấp theo quy định của pháp luật về Trọng tài thương mại</strong></td><td></td></tr>
+            <tr><td>a</td><td>Lệ phí yêu cầu Tòa án chỉ định, thay đổi trọng tài viên</td><td>300.000 đồng</td></tr>
+            <tr><td>b</td><td>Lệ phí yêu cầu Tòa án xem xét lại phán quyết của Hội đồng trọng tài về thỏa thuận trọng tài, về thẩm quyền giải quyết vụ tranh chấp của Hội đồng trọng tài; đăng ký phán quyết trọng tài vụ việc</td><td>500.000 đồng</td></tr>
+            <tr><td>c</td><td>Lệ phí yêu cầu Tòa án áp dụng, thay đổi, hủy bỏ biện pháp khẩn cấp tạm thời liên quan đến trọng tài; yêu cầu Tòa án thu thập chứng cứ, triệu tập người làm chứng</td><td>800.000 đồng</td></tr>
+            <tr><td>d</td><td>Lệ phí kháng cáo quyết định của Tòa án liên quan đến trọng tài</td><td>500.000 đồng</td></tr>
+
+            <tr><td>3</td><td>Lệ phí nộp đơn yêu cầu mở thủ tục phá sản</td><td>1.500.000 đồng</td></tr>
+            <tr><td>4</td><td>Lệ phí xét tính hợp pháp của cuộc đình công</td><td>1.500.000 đồng</td></tr>
+            <tr><td>5</td><td>Lệ phí bắt giữ tàu biển</td><td>8.000.000 đồng</td></tr>
+            <tr><td>6</td><td>Lệ phí bắt giữ tàu bay</td><td>8.000.000 đồng</td></tr>
+            <tr><td>7</td><td>Lệ phí thực hiện ủy thác tư pháp của Tòa án nước ngoài tại Việt Nam</td><td>1.000.000 đồng</td></tr>
+            <tr><td>8</td><td>Lệ phí ủy thác tư pháp ra nước ngoài</td><td>200.000 đồng</td></tr>
+            <tr><td>9</td><td>Lệ phí cấp bản sao giấy tờ, sao chụp tài liệu tại Tòa án</td><td>1.500 đồng/trang A4</td></tr>
+        </table>
+
+        <h2 style="margin-top: 30px;">Ghi chú pháp lý</h2>
+        <details>
+            <summary>📜 Điều 27 Nghị quyết 326/2016/UBTVQH14 – Nghĩa vụ chịu án phí dân sự sơ thẩm trong một số loại việc cụ thể (bấm để xem toàn văn)</summary>
+            <div>
+                <p><strong>1.</strong> Đối với tranh chấp về đòi tài sản cho mượn, cho ở nhờ thì đương sự phải chịu án phí dân sự sơ thẩm như đối với trường hợp vụ án dân sự không có giá ngạch. Trường hợp ngoài tranh chấp về đòi tài sản cho mượn, cho ở nhờ, đương sự còn có tranh chấp về bồi thường thiệt hại và yêu cầu Tòa án giải quyết, thì đương sự phải chịu án phí không có giá ngạch đối với tranh chấp về đòi tài sản cho mượn, cho ở nhờ và án phí có giá ngạch đối với yêu cầu bồi thường thiệt hại.</p>
+                <p><strong>2.</strong> Đối với tranh chấp về quyền sở hữu tài sản và tranh chấp về quyền sử dụng đất thì nghĩa vụ chịu án phí dân sự sơ thẩm được xác định như sau:</p>
+                <p class="indent">a) Trường hợp tranh chấp về quyền sở hữu tài sản và tranh chấp về quyền sử dụng đất mà Tòa án không xem xét giá trị, chỉ xem xét quyền sở hữu tài sản và tranh chấp về quyền sử dụng đất của ai thì đương sự phải chịu án phí dân sự sơ thẩm như đối với trường hợp vụ án không có giá ngạch;</p>
+                <p class="indent">b) Trường hợp tranh chấp về quyền sở hữu tài sản và tranh chấp về quyền sử dụng đất mà Tòa án phải xác định giá trị của tài sản hoặc xác định quyền sở hữu, quyền sử dụng đất theo phần thì đương sự phải chịu án phí dân sự sơ thẩm như trường hợp vụ án có giá ngạch đối với phần giá trị mà mình được hưởng.</p>
+                <p><strong>3.</strong> Đối với tranh chấp về hợp đồng mua bán tài sản, chuyển nhượng quyền sử dụng đất vô hiệu thì nghĩa vụ chịu án phí dân sự sơ thẩm được xác định như sau:</p>
+                <p class="indent">a) Trường hợp một bên yêu cầu công nhận hợp đồng mua bán tài sản, chuyển nhượng quyền sử dụng đất và một bên yêu cầu tuyên bố hợp đồng mua bán tài sản, chuyển nhượng quyền sử dụng đất vô hiệu và đều không có yêu cầu gì khác; nếu Tòa án tuyên bố hợp đồng vô hiệu thì bên yêu cầu công nhận hợp đồng phải chịu án phí như đối với trường hợp vụ án dân sự không có giá ngạch; nếu Tòa án tuyên bố công nhận hợp đồng thì bên yêu cầu tuyên bố hợp đồng vô hiệu phải chịu án phí như đối với trường hợp vụ án dân sự không có giá ngạch;</p>
+                <p class="indent">b) Trường hợp một bên yêu cầu công nhận hợp đồng mua bán tài sản, chuyển nhượng quyền sử dụng đất và một bên yêu cầu tuyên bố hợp đồng mua bán tài sản, chuyển nhượng quyền sử dụng đất vô hiệu và có yêu cầu Tòa án giải quyết hậu quả của hợp đồng vô hiệu thì ngoài việc chịu án phí không có giá ngạch được quy định tại điểm a khoản 3 Điều này, người phải thực hiện nghĩa vụ về tài sản hoặc bồi thường thiệt hại phải chịu án phí như trường hợp vụ án dân sự có giá ngạch đối với giá trị tài sản phải thực hiện nghĩa vụ.</p>
+                <p><strong>4.</strong> Trường hợp tranh chấp hợp đồng mua bán tài sản, chuyển nhượng quyền sử dụng đất, một bên yêu cầu trả lại tiền, đặt cọc và phạt cọc, một bên chấp nhận trả số tiền cọc đã nhận và không chấp nhận phạt cọc, mà Tòa án chấp nhận phạt cọc thì bên không chấp nhận phạt cọc phải chịu án phí như trường hợp vụ án dân sự có giá ngạch đối với phần phạt cọc. Trường hợp Tòa án không chấp nhận phạt cọc thì bên yêu cầu phạt cọc phải chịu án phí như trường hợp vụ án dân sự có giá ngạch đối với phần phạt cọc.</p>
+                <p><strong>5.</strong> Đối với vụ án hôn nhân và gia đình thì nghĩa vụ chịu án phí dân sự sơ thẩm được xác định như sau:</p>
+                <p class="indent">a) Nguyên đơn phải chịu án phí dân sự sơ thẩm trong vụ án ly hôn không phụ thuộc vào việc Tòa án chấp nhận hay không chấp nhận yêu cầu của nguyên đơn. Trường hợp thuận tình ly hôn thì mỗi bên đương sự phải chịu 50% mức án phí;</p>
+                <p class="indent">b) Các đương sự trong vụ án hôn nhân và gia đình có tranh chấp về việc chia tài sản chung của vợ chồng thì ngoài việc chịu án phí dân sự sơ thẩm quy định tại điểm a khoản 1 Điều 24 của Nghị quyết này, còn phải chịu án phí đối với phần tài sản có tranh chấp như đối với vụ án dân sự có giá ngạch tương ứng với giá trị phần tài sản mà họ được chia;</p>
+                <p class="indent">c) Trường hợp vợ chồng yêu cầu người khác thực hiện nghĩa vụ về tài sản mà Tòa án chấp nhận yêu cầu của vợ, chồng, thì người có nghĩa vụ về tài sản phải chịu án phí dân sự sơ thẩm đối với giá trị phân tài sản mà họ phải thực hiện; nếu họ không thỏa thuận chia được với nhau mà gộp vào tài sản chung và có yêu cầu Tòa án giải quyết thì mỗi người phải chịu án phí dân sự tương ứng với giá trị phần tài sản mà họ được chia;</p>
+                <p class="indent">d) Trường hợp đương sự tự thỏa thuận phân chia tài sản chung của vợ chồng và yêu cầu Tòa án ghi nhận trong bản án, quyết định trước khi Tòa án tiến hành hòa giải thì đương sự không phải chịu án phí dân sự sơ thẩm đối với việc phân chia tài sản chung;</p>
+                <p class="indent">đ) Trường hợp Tòa án đã tiến hành hòa giải, tại phiên hòa giải đương sự không thỏa thuận việc phân chia tài sản chung của vợ chồng nhưng đến trước khi mở phiên tòa các bên đương sự tự thỏa thuận phân chia tài sản chung của vợ, chồng và yêu cầu Tòa án ghi nhận trong bản án, quyết định thì được xem là các bên đương sự thỏa thuận được với nhau về việc giải quyết vụ án trong trường hợp Tòa án hòa giải trước khi mở phiên tòa và phải chịu 50% mức án phí dân sự sơ thẩm tương ứng với giá trị phần tài sản mà họ được chia;</p>
+                <p class="indent">e) Trường hợp các đương sự có tranh chấp về việc chia tài sản chung và nghĩa vụ về tài sản chung của vợ chồng, Tòa án tiến hành hòa giải, các đương sự thống nhất thỏa thuận được về việc phân chia một số tài sản chung và nghĩa vụ về tai sản chung, còn một số tài sản chung và nghĩa vụ về tài sản chung không thỏa thuận được thì các đương sự vẫn phải chịu án phí đối với việc chia toàn bộ tài sản chung và nghĩa vụ về tài sản chung của vợ chồng.</p>
+                <p><strong>6.</strong> Đối với vụ án liên quan đến nghĩa vụ cấp dưỡng thì nghĩa vụ chịu án phí dân sự sơ thẩm được xác định như sau:</p>
+                <p class="indent">a) Người có nghĩa vụ cấp dưỡng định kỳ hoặc một lần theo quyết định của Tòa án phải chịu án phí dân sự sơ thẩm như đối với trường hợp vụ án dân sự không có giá ngạch;</p>
+                <p class="indent">b) Trường hợp các đương sự thỏa thuận được với nhau về mức cấp dưỡng và phương thức cấp dưỡng trước khi mở phiên tòa nhưng có yêu cầu Tòa án ghi nhận trong bản án, quyết định thì người có nghĩa vụ cấp dưỡng phải chịu 50% mức án phí dân sự sơ thẩm như đối với trường hợp vụ án dân sự không có giá ngạch; trường hợp tại phiên tòa mới thỏa thuận được với nhau thì người có nghĩa vụ cấp dưỡng phải chịu mức án phí dân sự sơ thẩm như đối với trường hợp vụ án dân sự không có giá ngạch;</p>
+                <p class="indent">c) Trường hợp các đương sự thỏa thuận được với nhau về phương thức cấp dưỡng (kể cả một lần), nhưng không thỏa thuận được với nhau về mức cấp dưỡng thì người có nghĩa vụ cấp dưỡng phải chịu án phí dân sự sơ thẩm như đối với trường hợp vụ án dân sự không có giá ngạch;</p>
+                <p class="indent">d) Trường hợp các đương sự không thỏa thuận được với nhau về phương thức cấp dưỡng nhưng thỏa thuận được với nhau về mức cấp dưỡng thì người có nghĩa vụ cấp dưỡng phải chịu án phí dân sự sơ thẩm như đối với trường hợp vụ án dân sự không có giá ngạch;</p>
+                <p class="indent">đ) Trường hợp các đương sự có tranh chấp về cấp dưỡng (tranh chấp về mức cấp dưỡng và phương thức cấp dưỡng) và Tòa án quyết định mức cấp dưỡng và phương thức cấp dưỡng định, kỳ hàng tháng thì người có nghĩa vụ cấp dưỡng phải chịu án phí dân sự sơ thẩm như đối với trường hợp vụ án dân sự không có giá ngạch.</p>
+                <p><strong>7.</strong> Đối với vụ án liên quan đến chia tài sản chung, di sản thừa kế thì nghĩa vụ chịu án phí dân sự sơ thẩm được xác định như sau:</p>
+                <p class="indent">a) Khi các bên đương sự không xác định được phần tài sản của mình hoặc mỗi người xác định phần tài sản của mình trong khối tài sản chung, phần di sản của mình trong khối di sản thừa kế là khác nhau và có một trong các bên yêu cầu Tòa án giải quyết chia tài sản chung, di sản thừa kế đó thì mỗi bên đương sự phải chịu án phí dân sự sơ thẩm theo mức tương ứng với giá trị phần tài sản mà họ được chia, được hưởng trong khối tài sản chung hoặc trong khối di sản thừa kế. Đối với phần Tòa án bác đơn yêu cầu thì người yêu cầu chia tài sản chung, di sản thừa kế không phải chịu án phí dân sự sơ thẩm. Trường hợp Tòa án xác định tài sản chung, di sản thừa kế mà đương sự yêu cầu chia không phải là tài sản của họ thì đương sự phải chịu án phí dân sự sơ thẩm không có giá ngạch;</p>
+                <p class="indent">b) Trường hợp đương sự đề nghị chia tài sản chung, chia di sản thừa kế mà cần xem xét việc thực hiện nghĩa vụ về tài sản với bên thứ ba từ tài sản chung, di sản thừa kế đó thì:</p>
+                <p class="indent2">Đương sự phải chịu án phí dân sự sơ thẩm đối với phần tài sản họ được chia sau khi trừ đi giá trị tài sản thực hiện nghĩa vụ với bên thứ ba; các đương sự phải chịu một phần án phí ngang nhau đối với phần tài sản thực hiện nghĩa vụ với bên thứ ba theo quyết định của Tòa án.</p>
+                <p class="indent2">Người thứ ba là người có quyền lợi, nghĩa vụ liên quan không có yêu cầu độc lập hoặc có yêu cầu nhưng yêu cầu đó được Tòa án chấp nhận thì không phải chịu án phí đối với phần tài sản được nhận.</p>
+                <p class="indent2">Người thứ ba có yêu cầu độc lập nhưng yêu cầu đó không được Tòa án chấp nhận phải chịu án phí dân sự có giá ngạch đối với phần yêu cầu không được chấp nhận.</p>
+            </div>
+        </details>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 - Công cụ nghiệp vụ Kiểm sát nội bộ</p>
+    </footer>
+
+    <script>
+        function tinhAnPhi(event) {
+            event.preventDefault();
+
+            const loai = document.getElementById('loai_phi').value;
+            const giaTri = parseFloat(document.getElementById('gia_tri').value);
+            const giam50 = document.getElementById('giam_50').checked;
+
+            if (!giaTri || giaTri <= 0) {
+                alert('Vui lòng nhập giá trị tranh chấp hợp lệ.');
+                return;
+            }
+
+            let ketQua = 0;
+            let congThuc = '';
+
+            if (loai === 'ds_co_gia_ngach') {
+                if (giaTri <= 6000000) {
+                    ketQua = 300000;
+                    congThuc = 'Mức cố định: 300.000 đồng (từ 6.000.000 đồng trở xuống)';
+                } else if (giaTri <= 400000000) {
+                    ketQua = giaTri * 0.05;
+                    congThuc = '5% × ' + giaTri.toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 800000000) {
+                    ketQua = 20000000 + (giaTri - 400000000) * 0.04;
+                    congThuc = '20.000.000 + 4% × ' + (giaTri - 400000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 2000000000) {
+                    ketQua = 36000000 + (giaTri - 800000000) * 0.03;
+                    congThuc = '36.000.000 + 3% × ' + (giaTri - 800000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 4000000000) {
+                    ketQua = 72000000 + (giaTri - 2000000000) * 0.02;
+                    congThuc = '72.000.000 + 2% × ' + (giaTri - 2000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else {
+                    ketQua = 112000000 + (giaTri - 4000000000) * 0.001;
+                    congThuc = '112.000.000 + 0,1% × ' + (giaTri - 4000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                }
+            } else if (loai === 'kdtm_co_gia_ngach') {
+                if (giaTri <= 60000000) {
+                    ketQua = 3000000;
+                    congThuc = 'Mức cố định: 3.000.000 đồng (từ 60.000.000 đồng trở xuống)';
+                } else if (giaTri <= 400000000) {
+                    ketQua = giaTri * 0.05;
+                    congThuc = '5% × ' + giaTri.toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 800000000) {
+                    ketQua = 20000000 + (giaTri - 400000000) * 0.04;
+                    congThuc = '20.000.000 + 4% × ' + (giaTri - 400000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 2000000000) {
+                    ketQua = 36000000 + (giaTri - 800000000) * 0.03;
+                    congThuc = '36.000.000 + 3% × ' + (giaTri - 800000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else if (giaTri <= 4000000000) {
+                    ketQua = 72000000 + (giaTri - 2000000000) * 0.02;
+                    congThuc = '72.000.000 + 2% × ' + (giaTri - 2000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else {
+                    ketQua = 112000000 + (giaTri - 4000000000) * 0.001;
+                    congThuc = '112.000.000 + 0,1% × ' + (giaTri - 4000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                }
+            } else if (loai === 'lao_dong_co_gia_ngach') {
+                if (giaTri <= 6000000) {
+                    ketQua = 300000;
+                    congThuc = 'Mức cố định: 300.000 đồng (từ 6.000.000 đồng trở xuống)';
+                } else if (giaTri <= 400000000) {
+                    ketQua = Math.max(giaTri * 0.03, 300000);
+                    congThuc = '3% × ' + giaTri.toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng (không thấp hơn 300.000 đồng)';
+                } else if (giaTri <= 2000000000) {
+                    ketQua = 12000000 + (giaTri - 400000000) * 0.02;
+                    congThuc = '12.000.000 + 2% × ' + (giaTri - 400000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                } else {
+                    ketQua = 44000000 + (giaTri - 2000000000) * 0.001;
+                    congThuc = '44.000.000 + 0,1% × ' + (giaTri - 2000000000).toLocaleString('vi-VN') + ' = ' + ketQua.toLocaleString('vi-VN') + ' đồng';
+                }
+            }
+
+            // Lưu án phí gốc
+            const ketQuaGoc = ketQua;
+            let soGiam = 0;
+
+            // Áp dụng giảm 50% nếu checkbox được tích (Điều 27 NQ 326/2016)
+            if (giam50) {
+                soGiam = ketQua * 0.5;
+                ketQua = ketQua * 0.5;
+                congThuc += ' → Giảm 50% (Điều 27 NQ 326/2016)';
+            }
+
+            document.getElementById('receipt_gia_tri').innerText = giaTri.toLocaleString('vi-VN');
+            document.getElementById('receipt_cong_thuc').innerText = congThuc;
+            document.getElementById('receipt_ket_qua_goc').innerText = Math.round(ketQuaGoc).toLocaleString('vi-VN');
+            document.getElementById('receipt_ket_qua').innerText = Math.round(ketQua).toLocaleString('vi-VN');
+
+            if (giam50) {
+                document.getElementById('receipt_so_giam').innerText = Math.round(soGiam).toLocaleString('vi-VN');
+                document.getElementById('receipt_giam_row').style.display = 'block';
+            } else {
+                document.getElementById('receipt_giam_row').style.display = 'none';
+            }
+
+            document.getElementById('receiptBlock').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide hướng dẫn – Gắn nhãn chứng cứ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --sky: #5da9d9; --sky-dark: #1e5a8a; --bronze: #c9952e; --bronze-light: #e8c675;
+    --plum: #7b2d42; --text: #f8fafc; --muted: rgba(248,250,252,.68);
+    --panel: rgba(15,23,42,.78); --line: rgba(148,163,184,.22);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Be Vietnam Pro', Arial, sans-serif; color: var(--text);
+    background: linear-gradient(135deg, #0a1628 0%, #1a1a3e 55%, #0f172a 100%);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  /* Thanh mục lục */
+  .toc { display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto; border-bottom: 1px solid var(--line); flex: none; }
+  .toc button {
+    flex: none; border: 1px solid transparent; background: transparent; color: var(--muted);
+    font: 700 11px/1 inherit; font-family: inherit; letter-spacing: .5px; text-transform: uppercase;
+    padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  }
+  .toc button:hover { color: #fff; background: rgba(255,255,255,.06); }
+  .toc button.active { color: #fff; background: rgba(201,149,46,.2); border-color: rgba(201,149,46,.5); }
+  /* Slide */
+  .stage { flex: 1; min-height: 0; position: relative; }
+  .slide { position: absolute; inset: 0; padding: 22px 28px; display: none; overflow-y: auto; }
+  .slide.active { display: grid; animation: fadeIn .35s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .split { grid-template-columns: minmax(280px, 34%) 1fr; gap: 26px; align-items: center; }
+  .tag { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+         text-transform: uppercase; color: var(--bronze-light); background: rgba(201,149,46,.14); border: 1px solid rgba(201,149,46,.35); }
+  h2 { font-size: clamp(22px, 2.6vw, 34px); font-weight: 800; line-height: 1.25; margin: 12px 0 14px; }
+  h2 em { font-style: normal; color: var(--bronze-light); }
+  p.lead { color: var(--muted); line-height: 1.7; font-size: 15px; }
+  ol.steps { list-style: none; counter-reset: s; margin-top: 16px; display: grid; gap: 10px; }
+  ol.steps li { counter-increment: s; position: relative; padding: 10px 12px 10px 46px; background: var(--panel);
+                border: 1px solid var(--line); border-radius: 12px; line-height: 1.55; font-size: 14px; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 12px; top: 10px; width: 24px; height: 24px; border-radius: 50%;
+                        background: linear-gradient(135deg, var(--bronze), #e8a830); color: #fff; font-weight: 800; font-size: 12px;
+                        display: flex; align-items: center; justify-content: center; }
+  kbd { display: inline-block; min-width: 22px; padding: 1px 7px; margin: 0 1px; border-radius: 6px; font: 700 12px/20px Consolas, monospace;
+        text-align: center; color: #0f172a; background: #e2e8f0; box-shadow: inset 0 -2px 0 #94a3b8; }
+  .shot { background: #0b1220; border: 1px solid var(--line); border-radius: 14px; padding: 8px; box-shadow: 0 14px 40px rgba(0,0,0,.45); }
+  .shot img { width: 100%; display: block; border-radius: 8px; }
+  .shot figcaption { font-size: 12px; color: var(--muted); padding: 8px 4px 2px; text-align: center; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .note { margin-top: 14px; padding: 10px 14px; border-left: 3px solid var(--sky); background: rgba(93,169,217,.1); border-radius: 0 10px 10px 0;
+          font-size: 13.5px; line-height: 1.6; color: #dbeafe; }
+  /* Slide bìa */
+  .cover { place-items: center; text-align: center; }
+  .cover .inner { max-width: 980px; }
+  .cover h2 { font-size: clamp(26px, 3.6vw, 46px); }
+  .pills { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 22px 0; }
+  .pills span { padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(93,169,217,.5); color: #bfe0f7; font-weight: 600; font-size: 14px; }
+  .pills i { margin-right: 6px; color: var(--bronze-light); }
+  .cover .shot { max-width: 760px; margin: 8px auto 0; }
+  /* Bảng phím tắt */
+  .keys { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-content: start; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  .card h3 { font-size: 15px; margin-bottom: 10px; color: var(--bronze-light); }
+  .card h3 i { margin-right: 6px; }
+  .card table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .card td { padding: 5px 0; border-top: 1px solid rgba(148,163,184,.12); vertical-align: top; }
+  .card td:first-child { width: 42%; white-space: nowrap; }
+  .card ul { padding-left: 18px; line-height: 1.7; font-size: 13.5px; color: #e2e8f0; }
+  /* Điều hướng */
+  .nav { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px;
+         border-top: 1px solid var(--line); background: rgba(0,0,0,.2); }
+  .nav button { border: 1px solid var(--line); background: rgba(255,255,255,.06); color: #fff; font: 700 13px inherit; font-family: inherit;
+                padding: 9px 16px; border-radius: 10px; cursor: pointer; }
+  .nav button:hover:not(:disabled) { background: rgba(255,255,255,.12); }
+  .nav button:disabled { opacity: .35; cursor: default; }
+  .nav .count { color: var(--muted); font-size: 13px; font-weight: 600; }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.2); display: block; }
+  .dots i.on { background: var(--bronze); }
+  @media (max-width: 860px) {
+    .split, .pair { grid-template-columns: 1fr; }
+    .slide { padding: 16px; }
+    .dots { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="toc" id="toc"></nav>
+
+<main class="stage" id="stage">
+
+  <!-- 1. Tổng quan -->
+  <section class="slide cover" data-title="Tổng quan">
+    <div class="inner">
+      <span class="tag">Bộ công cụ nghiệp vụ Kiểm sát</span>
+      <h2>Gắn nhãn chứng cứ – <em>Trình chiếu tài liệu</em></h2>
+      <p class="lead">Gom chứng cứ cùng chủ đề trong hồ sơ vụ án bằng ghim và nhãn, tra cứu tức thì, trình chiếu ngay tại phiên tòa theo cơ chế hai màn hình như PowerPoint.</p>
+      <div class="pills">
+        <span><i class="fa-solid fa-plug-circle-xmark"></i>Chạy hoàn toàn ngoại tuyến</span>
+        <span><i class="fa-solid fa-file-shield"></i>Không sao chép, không sửa tài liệu gốc</span>
+        <span><i class="fa-solid fa-display"></i>Trình chiếu hai màn hình</span>
+        <span><i class="fa-solid fa-box-open"></i>Không cần cài đặt</span>
+      </div>
+      <figure class="shot"><img src="anh/01_bat_dau.jpg" alt="Màn hình bắt đầu" loading="lazy"><figcaption>Màn hình bắt đầu – chọn thư mục hồ sơ hoặc mở lại hồ sơ gần đây</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 2. Mở hồ sơ -->
+  <section class="slide split" data-title="Mở hồ sơ">
+    <div>
+      <span class="tag">Bước 1</span>
+      <h2>Mở hồ sơ <em>ngay trên máy</em></h2>
+      <ol class="steps">
+        <li>Bấm <b>Mở thư mục hồ sơ</b>, chọn thư mục chứa tài liệu vụ án: PDF, ảnh (JPG, PNG, TIFF), video, ghi âm.</li>
+        <li>Cây hồ sơ giữ nguyên thư mục con, sắp xếp đúng thứ tự tiếng Việt; tên có dấu, đường dẫn dài vẫn mở được.</li>
+        <li>Bấm một tài liệu để xem: <kbd>PageUp</kbd> <kbd>PageDown</kbd> lật trang, <kbd>Ctrl</kbd> + lăn chuột phóng to đúng vị trí con trỏ, kéo để dịch trang.</li>
+      </ol>
+      <div class="note"><i class="fa-solid fa-circle-info"></i> Nhãn, ghim, ghi chú lưu trong thư mục con <b>_GanNhan</b> của hồ sơ. Chép hồ sơ sang máy khác thì chép cả thư mục này.</div>
+    </div>
+    <figure class="shot"><img src="anh/02_ho_so.jpg" alt="Cây hồ sơ và trang tài liệu" loading="lazy"><figcaption>Cây hồ sơ bên trái, tài liệu ở giữa, thông tin trang/tài liệu bên phải</figcaption></figure>
+  </section>
+
+  <!-- 3. Thả ghim -->
+  <section class="slide split" data-title="Thả ghim">
+    <div>
+      <span class="tag">Bước 2</span>
+      <h2>Thả ghim, <em>gắn nhãn chứng cứ</em></h2>
+      <ol class="steps">
+        <li>Bấm <b>Thả ghim</b> (phím <kbd>P</kbd>) rồi bấm vào đúng dòng cần đánh dấu trên trang.</li>
+        <li>Gõ vài chữ, không cần dấu (ví dụ <i>nhan toi</i>), <kbd>Enter</kbd> để chọn nhãn. Một vị trí có thể mang nhiều nhãn; gõ tên chưa có để tạo nhãn mới.</li>
+        <li><b>Ghi chú riêng</b>: chỉ Kiểm sát viên thấy. <b>Chú thích</b>: hiện trên màn hình trình chiếu.</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Enter</kbd> để lưu. Chọn vị trí rồi <kbd>Enter</kbd> để sửa, <kbd>Delete</kbd> để xóa, kéo đầu ghim để dời.</li>
+      </ol>
+    </div>
+    <figure class="shot"><img src="anh/03_gan_nhan.jpg" alt="Hộp gắn nhãn" loading="lazy"><figcaption>Hộp gắn nhãn: nhãn dùng gần đây, nhãn đã chọn, ghi chú riêng, chú thích trình chiếu</figcaption></figure>
+  </section>
+
+  <!-- 4. Trang, nhiều tài liệu -->
+  <section class="slide split" data-title="Trang · nhiều file">
+    <div>
+      <span class="tag">Bước 3</span>
+      <h2>Gắn nhãn <em>cả trang, nhiều tài liệu</em></h2>
+      <ol class="steps">
+        <li>Gắn nhãn cả trang đang xem: phím <kbd>T</kbd> hoặc nút <b>Gắn nhãn trang</b>.</li>
+        <li>Giữ <kbd>Ctrl</kbd> (hoặc <kbd>Shift</kbd>) bấm chọn nhiều tài liệu ở tab <b>Hồ sơ</b>, bấm <b>Gắn nhãn</b> ở cuối danh sách.</li>
+        <li>Mỗi tài liệu hiện số vị trí đã gắn nhãn; hình thu nhỏ đánh dấu những trang có ghim.</li>
+      </ol>
+      <div class="note"><i class="fa-solid fa-lightbulb"></i> Hồ sơ không dùng bút lục: vị trí được xác định bằng <b>tên tài liệu + số trang</b>.</div>
+    </div>
+    <figure class="shot"><img src="anh/04_nhieu_file.jpg" alt="Gắn nhãn nhiều tài liệu" loading="lazy"><figcaption>Ba tài liệu tố tụng cùng mang nhãn "Quyết định, lệnh tố tụng"</figcaption></figure>
+  </section>
+
+  <!-- 5. Cây nhãn -->
+  <section class="slide split" data-title="Cây nhãn">
+    <div>
+      <span class="tag">Bước 4</span>
+      <h2>Cây nhãn – <em>tra cứu theo chủ đề</em></h2>
+      <ol class="steps">
+        <li>Tab <b>Nhãn</b>: bộ nhãn hình sự có sẵn (chứng cứ buộc tội, gỡ tội, tình tiết tăng nặng, giảm nhẹ, vật chứng…), mỗi nhãn đếm đủ vị trí trong nhánh.</li>
+        <li>Bấm một vị trí: mở đúng tài liệu, đúng trang, ghim nháy sáng.</li>
+        <li>Ô tìm kiếm không dấu tìm theo tên nhãn, ghi chú, tên tài liệu.</li>
+        <li>Kéo thả để đổi cấp, thứ tự; kéo vị trí thả vào nhãn khác để gắn thêm. Chuột phải vào nhãn: thêm nhãn con, đổi tên, đổi màu, xóa.</li>
+      </ol>
+    </div>
+    <div class="pair">
+      <figure class="shot"><img src="anh/05_cay_nhan.jpg" alt="Cây nhãn" loading="lazy"><figcaption>Bấm vị trí → mở đúng trang</figcaption></figure>
+      <figure class="shot"><img src="anh/05b_tim.jpg" alt="Tìm không dấu" loading="lazy"><figcaption>Tìm không dấu</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 6. Video -->
+  <section class="slide split" data-title="Video, ghi âm">
+    <div>
+      <span class="tag">Bước 5</span>
+      <h2>Đánh dấu <em>video camera, ghi âm</em></h2>
+      <ol class="steps">
+        <li>Một <b>mốc</b>: tua tới thời điểm cần, bấm <b>Đánh dấu mốc</b> (phím <kbd>M</kbd>).</li>
+        <li>Một <b>đoạn</b>: bấm <kbd>[</kbd> ở đầu đoạn, phát tới cuối, bấm <kbd>]</kbd> rồi gắn nhãn. <kbd>Esc</kbd> hủy đoạn đang đánh dấu dở.</li>
+        <li>Mốc, đoạn hiện thành vạch màu trên thanh thời gian, bấm vạch để tới ngay. <kbd>Space</kbd> phát/dừng, <kbd>←</kbd> <kbd>→</kbd> tua 5 giây.</li>
+      </ol>
+      <div class="note"><i class="fa-solid fa-film"></i> Phát được MP4 (H.264), WebM, MOV, MP3, M4A, WAV, OGG, FLAC. AVI, WMV, DAV (đầu ghi camera) cần chuyển sang MP4 trước.</div>
+    </div>
+    <figure class="shot"><img src="anh/06_video.jpg" alt="Đánh dấu video" loading="lazy"><figcaption>Mốc (đỏ) và đoạn (tím) trên thanh thời gian video camera</figcaption></figure>
+  </section>
+
+  <!-- 7. Trình chiếu -->
+  <section class="slide" data-title="Trình chiếu" style="align-content:start">
+    <div>
+      <span class="tag">Bước 6 · Tại phiên tòa</span>
+      <h2>Trình chiếu <em>hai màn hình</em></h2>
+      <p class="lead">Cắm TV/máy chiếu, bấm <kbd>Windows</kbd> + <kbd>P</kbd> chọn <b>Mở rộng (Extend)</b>, rồi bấm <b>Trình chiếu</b> và chọn màn hình phụ. Màn hình phụ chỉ hiện tài liệu và chú thích; ghim, nhãn, ghi chú riêng chỉ máy Kiểm sát viên thấy.</p>
+    </div>
+    <div class="pair" style="margin-top:16px">
+      <figure class="shot"><img src="anh/07_ksv.jpg" alt="Màn hình Kiểm sát viên" loading="lazy"><figcaption>Máy Kiểm sát viên: đủ ghim, nhãn, ghi chú, thanh bút</figcaption></figure>
+      <figure class="shot"><img src="anh/07_tv.jpg" alt="Màn hình trình chiếu" loading="lazy"><figcaption>Màn hình trình chiếu: tài liệu phóng to, nét tô, chú thích</figcaption></figure>
+    </div>
+    <div class="note"><kbd>G</kbd> giữ hình (tra cứu riêng, màn chiếu đứng yên) · <kbd>B</kbd> màn đen · <kbd>L</kbd> laser · <kbd>H</kbd> bút tô · <kbd>D</kbd> bút vẽ · <kbd>R</kbd> khung · <kbd>X</kbd> xóa nét · <kbd>Esc</kbd> về kéo trang. Nét vẽ không ghi vào file gốc; bấm <b>Lưu</b> trên thanh bút để giữ nét vẽ cho vị trí.</div>
+  </section>
+
+  <!-- 8. Chiếu lần lượt -->
+  <section class="slide split" data-title="Chiếu lần lượt">
+    <div>
+      <span class="tag">Bước 7</span>
+      <h2>Chiếu lần lượt <em>theo chủ đề</em></h2>
+      <ol class="steps">
+        <li>Chuột phải vào một nhãn → <b>Chiếu lần lượt các vị trí của nhãn này</b>.</li>
+        <li>Phím <kbd>←</kbd> <kbd>→</kbd> (hoặc bút trình chiếu) đi qua từng chứng cứ cùng chủ đề: trang tài liệu, ảnh, đoạn video.</li>
+        <li>Với video: bấm <kbd>Space</kbd>, màn hình chiếu phát đồng bộ có âm thanh (máy Kiểm sát viên tự tắt tiếng) và tự dừng ở cuối đoạn đã đánh dấu.</li>
+      </ol>
+    </div>
+    <figure class="shot"><img src="anh/08_lan_luot.jpg" alt="Chiếu lần lượt" loading="lazy"><figcaption>Chiếu lần lượt nhãn "Vật chứng" – vị trí 3/3 là đoạn video camera</figcaption></figure>
+  </section>
+
+  <!-- 9. Xuất nhãn -->
+  <section class="slide split" data-title="Xuất nhãn">
+    <div>
+      <span class="tag">Bước 8</span>
+      <h2>Xuất <em>danh sách nhãn</em></h2>
+      <ol class="steps">
+        <li>Bấm <b>Xuất nhãn</b> (hoặc chuột phải vào một nhãn → <b>Xuất danh sách nhãn này</b>).</li>
+        <li>Chọn <b>Xuất Word</b> hoặc <b>In</b>: danh sách tài liệu, trang/thời điểm, chú thích, ghi chú theo từng nhóm nhãn.</li>
+        <li>Bỏ chọn <b>ghi chú riêng</b> khi in cho người khác xem.</li>
+      </ol>
+    </div>
+    <figure class="shot"><img src="anh/09_xuat.jpg" alt="Bản in danh sách nhãn" loading="lazy"><figcaption>Bản in danh sách tài liệu, vị trí theo nhãn</figcaption></figure>
+  </section>
+
+  <!-- 10. Phím tắt -->
+  <section class="slide keys" data-title="Phím tắt · bảo mật">
+    <div class="card">
+      <h3><i class="fa-solid fa-tags"></i>Gắn nhãn</h3>
+      <table>
+        <tr><td><kbd>P</kbd></td><td>Thả ghim</td></tr>
+        <tr><td><kbd>T</kbd></td><td>Gắn nhãn cả trang</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Enter</kbd></td><td>Lưu hộp gắn nhãn</td></tr>
+        <tr><td><kbd>Enter</kbd> / <kbd>Delete</kbd></td><td>Sửa / xóa vị trí đang chọn</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd></td><td>Tìm trong tab đang mở</td></tr>
+        <tr><td><kbd>F5</kbd></td><td>Quét lại thư mục (nối lại nhãn khi đổi tên file)</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3><i class="fa-solid fa-display"></i>Trình chiếu</h3>
+      <table>
+        <tr><td><kbd>G</kbd></td><td>Giữ hình</td></tr>
+        <tr><td><kbd>B</kbd></td><td>Màn đen</td></tr>
+        <tr><td><kbd>L</kbd></td><td>Con trỏ laser</td></tr>
+        <tr><td><kbd>H</kbd> <kbd>D</kbd> <kbd>R</kbd></td><td>Bút tô · bút vẽ · khung</td></tr>
+        <tr><td><kbd>X</kbd> / <kbd>Esc</kbd></td><td>Xóa nét / về kéo trang</td></tr>
+        <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Vị trí trước/sau khi chiếu lần lượt</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3><i class="fa-solid fa-film"></i>Video, ghi âm</h3>
+      <table>
+        <tr><td><kbd>Space</kbd></td><td>Phát / dừng</td></tr>
+        <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Tua 5 giây (<kbd>Shift</kbd>: 1 giây)</td></tr>
+        <tr><td><kbd>M</kbd></td><td>Đánh dấu mốc</td></tr>
+        <tr><td><kbd>[</kbd> … <kbd>]</kbd></td><td>Đánh dấu đoạn</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3><i class="fa-solid fa-shield-halved"></i>Bảo mật, cài đặt</h3>
+      <ul>
+        <li>Chạy hoàn toàn trên máy, chặn mọi kết nối mạng; không gửi dữ liệu hồ sơ ra ngoài.</li>
+        <li>Chỉ đọc tài liệu: không sao chép, không sửa file gốc.</li>
+        <li>Không cần cài đặt: giải nén bản zip, chạy <b>GanNhanChungCu.exe</b>. Đã có sẵn trong bộ cài offline của Bộ công cụ.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="nav">
+  <button id="prev"><i class="fa-solid fa-chevron-left"></i> Trước</button>
+  <div class="dots" id="dots"></div>
+  <span class="count" id="count"></span>
+  <button id="next">Sau <i class="fa-solid fa-chevron-right"></i></button>
+</footer>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const toc = document.getElementById('toc');
+  const dots = document.getElementById('dots');
+  let cur = 0;
+  slides.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.textContent = (i + 1) + '. ' + s.dataset.title;
+    b.onclick = () => go(i);
+    toc.appendChild(b);
+    dots.appendChild(document.createElement('i'));
+  });
+  function go(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => s.classList.toggle('active', k === cur));
+    [...toc.children].forEach((b, k) => b.classList.toggle('active', k === cur));
+    [...dots.children].forEach((d, k) => d.classList.toggle('on', k === cur));
+    toc.children[cur].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    document.getElementById('count').textContent = (cur + 1) + ' / ' + slides.length;
+    document.getElementById('prev').disabled = cur === 0;
+    document.getElementById('next').disabled = cur === slides.length - 1;
+    slides[cur].scrollTop = 0;
+  }
+  document.getElementById('prev').onclick = () => go(cur - 1);
+  document.getElementById('next').onclick = () => go(cur + 1);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(cur + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur - 1); }
+  });
+  go(0);
+</script>
+</body>
+</html>

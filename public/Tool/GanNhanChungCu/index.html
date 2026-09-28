@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gắn nhãn chứng cứ – Trình chiếu tài liệu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #7b2d42;
+            --plum-dark: #5a1f30;
+            --plum-light: #a84560;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f7fc 0%, #faf5f0 50%, #fefcf5 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border-bottom: 3px solid var(--bronze);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--bronze), #e8a830);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(201, 149, 46, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header-title span {
+            color: var(--bronze-light);
+        }
+
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* INFO CARD */
+        .info-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            border: 1px solid rgba(93, 169, 217, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .info-card h2 {
+            font-size: 22px;
+            color: var(--sky-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card h2 i {
+            color: var(--bronze);
+        }
+
+        .info-card p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card ul li {
+            padding: 8px 0;
+            font-size: 15px;
+            color: #555;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-card ul li i {
+            color: var(--bronze);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* FEATURE GRID */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .feature-item {
+            background: #f8fafc;
+            border: 1px solid #e8ecf0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .feature-item i {
+            color: var(--bronze);
+            font-size: 18px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .feature-item strong {
+            color: #333;
+        }
+
+        /* LAUNCH BUTTON */
+        .launch-section {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 48px;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: inherit;
+            color: #fff;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(30, 90, 138, 0.35);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(30, 90, 138, 0.45);
+        }
+
+        .btn-launch:active {
+            transform: translateY(0);
+        }
+
+        .btn-launch i {
+            font-size: 24px;
+        }
+
+
+        .btn-launch.guide {
+            margin-top: 14px;
+            background: linear-gradient(135deg, #b45309, var(--bronze, #c9952e));
+            box-shadow: 0 6px 20px rgba(201, 149, 46, 0.35);
+        }
+
+        .btn-launch .sub-text {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.8;
+            letter-spacing: 0;
+        }
+
+        /* DEVELOPER INFO */
+        .dev-info {
+            background: linear-gradient(135deg, rgba(93, 169, 217, 0.08), rgba(123, 45, 66, 0.06));
+            border-radius: 12px;
+            padding: 20px 24px;
+            border-left: 4px solid var(--bronze);
+            margin-top: 20px;
+        }
+
+        .dev-info p {
+            font-size: 14px;
+            color: #666;
+            margin: 4px 0;
+        }
+
+        .dev-info i {
+            color: var(--bronze);
+            margin-right: 8px;
+        }
+
+        /* NOTE */
+        .note-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .note-box i {
+            color: #f9a825;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .note-box p {
+            font-size: 14px;
+            color: #6d4c00;
+            line-height: 1.6;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .header {
+                padding: 14px 16px;
+            }
+            .main-content {
+                padding: 20px 12px;
+            }
+            .info-card {
+                padding: 20px 16px;
+            }
+            .btn-launch {
+                padding: 14px 28px;
+                font-size: 17px;
+                width: 100%;
+                justify-content: center;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../../static/tool-page-theme.css">
+    <style>a.btn-launch, a.btn-launch:hover { text-decoration: none; color: #fff; }</style>
+</head>
+<body class="ks-tool-page">
+    <!-- HEADER -->
+    <div class="header">
+        <img class="ks-header-logo" src="../../static/logo_moi.png" alt="Logo ngành Kiểm sát nhân dân">
+        <div>
+            <div class="header-title">Gắn nhãn chứng cứ – <span>Trình chiếu tài liệu</span></div>
+            <div class="header-sub"><i class="fas fa-tags"></i> Nhóm chứng cứ theo chủ đề - Trình chiếu tại phiên tòa</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- GIỚI THIỆU -->
+        <div class="info-card">
+            <h2><i class="fas fa-info-circle"></i> Giới thiệu</h2>
+            <p>
+                Công cụ giúp Kiểm sát viên <strong>gắn nhãn theo chủ đề</strong> cho từng điểm, từng trang, từng file
+                hoặc nhiều file tài liệu PDF, ảnh của hồ sơ vụ án (ví dụ: chứng cứ buộc tội, chứng cứ gỡ tội, vật chứng
+                và xử lý vật chứng...), quản lý các nhãn bằng <strong>cây nhãn nhiều cấp</strong>, kèm ghi chú riêng cho
+                từng vị trí. Tại phiên tòa, Kiểm sát viên tìm nhanh các vị trí cùng chủ đề và <strong>trình chiếu lên
+                màn hình phụ</strong> (TV, máy chiếu) theo cơ chế hai màn hình giống PowerPoint.
+            </p>
+            <p style="font-weight:600;color:var(--sky-dark);">
+                <i class="fas fa-shield-halved" style="color:var(--bronze);"></i>
+                Chạy hoàn toàn ngoại tuyến – không kết nối mạng, không gửi bất kỳ dữ liệu hồ sơ nào ra ngoài.
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="fas fa-folder-tree"></i>
+                    <span><strong>Mở thư mục hồ sơ</strong><br>Đọc PDF, ảnh, TIFF ngay tại thư mục gốc; không sao chép, không sửa file</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-location-dot"></i>
+                    <span><strong>Thả ghim, gắn nhãn</strong><br>Cho một điểm, cả trang, cả file hoặc nhiều file cùng lúc</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-sitemap"></i>
+                    <span><strong>Cây nhãn nhiều cấp</strong><br>Bộ nhãn gợi ý hình sự sẵn có; gõ vài chữ là tìm ra nhãn</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-lock"></i>
+                    <span><strong>Ghi chú riêng</strong><br>Chỉ Kiểm sát viên thấy; chú thích công khai hiện trên màn chiếu</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-tv"></i>
+                    <span><strong>Trình chiếu hai màn hình</strong><br>Giữ hình, đen màn, con trỏ laser, bút tô – không sửa file gốc</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-film"></i>
+                    <span><strong>Video, âm thanh</strong><br>Gắn nhãn mốc hoặc đoạn thời gian của camera, ghi âm; chiếu đồng bộ, tự dừng cuối đoạn</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-print"></i>
+                    <span><strong>Xuất danh sách nhãn</strong><br>Ra Word hoặc in trực tiếp để nghiên cứu, chuẩn bị tranh luận</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KHỞI CHẠY -->
+        <div class="launch-section">
+            <a class="btn-launch" href="https://drive.google.com/drive/folders/1uvRqKyusbbbuVkBe-ucwYwP1ZPtqMVsF?usp=drive_link" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-google-drive"></i>
+                <span>
+                    MỞ THƯ MỤC TẢI GANNHANCHUNGCU.ZIP
+                    <span class="sub-text">Tải từ Google Drive — Giải nén, chạy GanNhanChungCu.exe (không cần cài đặt, không cần mạng)</span>
+                </span>
+            </a>
+            <br>
+            <a class="btn-launch guide" href="huong_dan/index.html">
+                <i class="fas fa-circle-play"></i>
+                <span>
+                    XEM VIDEO &amp; SLIDE HƯỚNG DẪN
+                    <span class="sub-text">Video giới thiệu có lời bình, thao tác thực tế trên hồ sơ mô phỏng · slide từng tính năng, phím tắt</span>
+                </span>
+            </a>
+        </div>
+
+        <!-- CÁCH SỬ DỤNG -->
+        <div class="info-card">
+            <h2><i class="fas fa-list-ol"></i> Cách sử dụng</h2>
+            <ul>
+                <li><i class="fas fa-1"></i> <span><strong>Bước 1:</strong> Tải <strong>GanNhanChungCu.zip</strong>, giải nén toàn bộ rồi chép sang máy làm việc (có thể chép bằng USB sang máy không nối mạng)</span></li>
+                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Mở thư mục <strong>GanNhanChungCu</strong>, chạy <strong>GanNhanChungCu.exe</strong>, bấm <strong>Mở thư mục hồ sơ</strong> và chọn thư mục chứa các file PDF, ảnh của vụ án</span></li>
+                <li><i class="fas fa-3"></i> <span><strong>Bước 3:</strong> Chọn tài liệu, bấm <strong>Thả ghim</strong> (phím P) rồi bấm vào điểm cần đánh dấu, hoặc <strong>Gắn nhãn trang</strong> (phím T); gõ tên nhãn, Enter để chọn, thêm ghi chú nếu cần</span></li>
+                <li><i class="fas fa-4"></i> <span><strong>Bước 4:</strong> Xem lại theo chủ đề ở tab <strong>Nhãn</strong>; kéo thả để sắp xếp nhãn, thứ tự trình chiếu</span></li>
+                <li><i class="fas fa-5"></i> <span><strong>Bước 5:</strong> Cắm TV/máy chiếu ở chế độ <strong>Mở rộng</strong> (Windows + P), bấm <strong>Trình chiếu</strong> và chọn màn hình; dùng phím ← → để chiếu lần lượt các vị trí của một nhãn</span></li>
+            </ul>
+
+            <div class="note-box">
+                <i class="fas fa-lightbulb"></i>
+                <p>
+                    <strong>Lưu ý:</strong> Nhãn và ghi chú được lưu trong thư mục con <strong>_GanNhan</strong> của thư mục hồ sơ.
+                    Khi chép hồ sơ sang máy khác, hãy chép cả thư mục này để giữ nguyên các nhãn đã gắn.
+                    Không chạy tệp trực tiếp khi còn nằm trong file ZIP.
+                </p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="fas fa-keyboard"></i> Phím tắt khi trình chiếu</h2>
+            <div class="dev-info">
+                <p><i class="fas fa-arrows-left-right"></i> <strong>← →</strong> vị trí trước/sau trong nhãn · <strong>PageUp/PageDown</strong> lật trang</p>
+                <p><i class="fas fa-pause"></i> <strong>G</strong> giữ hình trên màn chiếu · <strong>B</strong> đen màn · <strong>L</strong> con trỏ laser</p>
+                <p><i class="fas fa-film"></i> Video/âm thanh: <strong>Space</strong> phát/dừng · <strong>M</strong> đánh dấu mốc · <strong>[</strong> <strong>]</strong> đánh dấu đoạn</p>
+                <p><i class="fas fa-highlighter"></i> <strong>H</strong> bút tô · <strong>D</strong> bút vẽ · <strong>R</strong> khung · <strong>X</strong> xóa nét · <strong>Esc</strong> trở về kéo trang</p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="fas fa-circle-info"></i> Thông tin công cụ</h2>
+            <div class="dev-info">
+                <p><i class="fas fa-shield-alt"></i> Bảo mật: <strong>Ngoại tuyến hoàn toàn</strong> - chặn mọi kết nối mạng của trình duyệt nhúng; chỉ đọc file, không sửa file gốc</p>
+                <p><i class="fas fa-file-pdf"></i> Định dạng: <strong>PDF (kể cả có mật khẩu), JPG, PNG, TIFF nhiều trang, BMP, GIF, WEBP; video MP4, WebM, MOV; âm thanh MP3, M4A, WAV, OGG, FLAC</strong></p>
+                <p><i class="fas fa-desktop"></i> Yêu cầu: <strong>Windows 10/11 64-bit</strong> - đã kèm sẵn mọi thư viện cần thiết</p>
+                <p><i class="fas fa-tools"></i> Phiên bản: <strong>0.2.1</strong></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ tự động che thông tin trong văn bản</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #7b2d42;
+            --plum-dark: #5a1f30;
+            --plum-light: #a84560;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f7fc 0%, #faf5f0 50%, #fefcf5 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border-bottom: 3px solid var(--bronze);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--bronze), #e8a830);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(201, 149, 46, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header-title span {
+            color: var(--bronze-light);
+        }
+
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* INFO CARD */
+        .info-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            border: 1px solid rgba(93, 169, 217, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .info-card h2 {
+            font-size: 22px;
+            color: var(--sky-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card h2 i {
+            color: var(--bronze);
+        }
+
+        .info-card p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card ul li {
+            padding: 8px 0;
+            font-size: 15px;
+            color: #555;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-card ul li i {
+            color: var(--bronze);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* LAUNCH BUTTON */
+        .launch-section {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 48px;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: inherit;
+            color: #fff;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(30, 90, 138, 0.35);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(30, 90, 138, 0.45);
+        }
+
+        .btn-launch:active {
+            transform: translateY(0);
+        }
+
+        .btn-launch i {
+            font-size: 24px;
+        }
+
+        .btn-launch .sub-text {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.8;
+            letter-spacing: 0;
+        }
+
+        /* DEVELOPER INFO */
+        .dev-info {
+            background: linear-gradient(135deg, rgba(93, 169, 217, 0.08), rgba(123, 45, 66, 0.06));
+            border-radius: 12px;
+            padding: 20px 24px;
+            border-left: 4px solid var(--bronze);
+            margin-top: 20px;
+        }
+
+        .dev-info p {
+            font-size: 14px;
+            color: #666;
+            margin: 4px 0;
+        }
+
+        .dev-info i {
+            color: var(--bronze);
+            margin-right: 8px;
+        }
+
+        /* NOTE */
+        .note-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .note-box i {
+            color: #f9a825;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .note-box p {
+            font-size: 14px;
+            color: #6d4c00;
+            line-height: 1.6;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .header {
+                padding: 14px 16px;
+            }
+            .main-content {
+                padding: 20px 12px;
+            }
+            .info-card {
+                padding: 20px 16px;
+            }
+            .btn-launch {
+                padding: 14px 28px;
+                font-size: 17px;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    
+        .btn-launch.guide {
+            margin-top: 14px;
+            text-decoration: none;
+            background: linear-gradient(135deg, #b45309, #c9952e);
+            box-shadow: 0 6px 20px rgba(201, 149, 46, 0.35);
+        }
+    </style>
+    <link rel="stylesheet" href="../../static/tool-page-theme.css">
+</head>
+<body class="ks-tool-page">
+    <!-- HEADER -->
+    <div class="header">
+        <img class="ks-header-logo" src="../../static/logo_moi.png" alt="Logo ngành Kiểm sát nhân dân">
+        <div>
+            <div class="header-title">Công cụ tự động <span>che thông tin</span> trong văn bản</div>
+            <div class="header-sub"><i class="fas fa-shield-alt"></i> Bảo vệ thông tin cá nhân - Tự động hóa</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- GIỚI THIỆU -->
+        <div class="info-card">
+            <h2><i class="fas fa-info-circle"></i> Giới thiệu</h2>
+            <p>
+                Công cụ <strong>tự động che thông tin trong văn bản</strong> giúp bạn nhanh chóng 
+                phát hiện và che giấu các thông tin nhạy cảm như: họ tên, số điện thoại,
+                số CMND/CCCD và địa chỉ trong văn bản. Bạn cũng có thể tự thêm bất kỳ
+                cụm thông tin nào còn thiếu trước khi xuất file.
+            </p>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> Hỗ trợ định dạng văn bản: .docx</li>
+                <li><i class="fas fa-check-circle"></i> Tự động nhận diện thông tin cần che không cần mạng internet</li>
+                <li><i class="fas fa-check-circle"></i> Giao diện trực quan, dễ sử dụng</li>
+                <li><i class="fas fa-check-circle"></i> Xử lý nhanh chóng, chính xác</li>
+                <li><i class="fas fa-check-circle"></i> Bảo mật tuyệt đối - xử lý hoàn toàn trên máy offline, không gửi dữ liệu lên mạng, tự xóa file sau khi tắt phần mềm</li>
+            </ul>
+        </div>
+
+        <!-- TẢI XUỐNG -->
+        <div class="launch-section">
+            <button class="btn-launch" onclick="downloadTool()">
+                <i class="fas fa-download"></i>
+                <span>
+                    TẢI XUỐNG CÔNG CỤ
+                    <span class="sub-text">Tải AnDanhTool.zip về máy</span>
+                </span>
+            </button>
+            <br>
+            <a class="btn-launch guide" href="huong_dan/index.html">
+                <i class="fas fa-circle-play"></i>
+                <span>
+                    XEM VIDEO &amp; SLIDE HƯỚNG DẪN
+                    <span class="sub-text">Video có lời bình, thao tác thực tế trên văn bản mô phỏng · slide từng bước</span>
+                </span>
+            </a>
+        </div>
+
+        <div class="info-card">
+            <div class="note-box">
+                <i class="fas fa-lightbulb"></i>
+                <p>
+                    <strong>Lưu ý:</strong> Sau khi nhấn "Tải xuống công cụ", trình duyệt sẽ tải xuống
+                    tệp <strong>AnDanhTool.zip</strong>. Vui lòng giải nén và chạy tệp 
+                    <strong>AnDanhTool.exe</strong> bên trong để sử dụng công cụ.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function downloadTool() {
+            // Tạo một thông báo hướng dẫn người dùng
+            var confirmed = confirm(
+                'Bạn sắp tải công cụ AnDanhTool về máy.\n\n' +
+                'Vui lòng làm theo hướng dẫn:\n' +
+                '1. Nhấn OK để tải tệp AnDanhTool.zip\n' +
+                '2. Giải nén tệp vừa tải xuống\n' +
+                '3. Chạy tệp AnDanhTool.exe bên trong để sử dụng'
+            );
+
+            if (confirmed) {
+                // Tạo một link tải xuống file zip (tránh bị chặn tải .exe)
+                var link = document.createElement('a');
+                // Dùng đường dẫn tương đối tới chính trang Pages, không qua domain
+                // raw của GitHub (bị chặn truy cập công khai khi repo ở chế độ riêng tư).
+                // Tham số phiên bản buộc trình duyệt lấy đúng gói phát hành mới,
+                // không dùng lại AnDanhTool.zip cũ trong bộ nhớ đệm.
+                link.href = 'AnDanhTool.zip?v=20260917-1';
+                link.download = 'AnDanhTool.zip';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Hiển thị thông báo hướng dẫn thêm
+                setTimeout(function() {
+                    alert(
+                        '✅ Tệp AnDanhTool.zip đã được tải xuống.\n\n' +
+                        '👉 Vui lòng giải nén và chạy tệp AnDanhTool.exe để sử dụng công cụ.'
+                    );
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide hướng dẫn – Tự động đổi tên file</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --sky: #5da9d9; --sky-dark: #1e5a8a; --bronze: #c9952e; --bronze-light: #e8c675;
+    --plum: #7b2d42; --text: #f8fafc; --muted: rgba(248,250,252,.68);
+    --panel: rgba(15,23,42,.78); --line: rgba(148,163,184,.22);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Be Vietnam Pro', Arial, sans-serif; color: var(--text);
+    background: linear-gradient(135deg, #0a1628 0%, #1a1a3e 55%, #0f172a 100%);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  /* Thanh mục lục */
+  .toc { display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto; border-bottom: 1px solid var(--line); flex: none; }
+  .toc button {
+    flex: none; border: 1px solid transparent; background: transparent; color: var(--muted);
+    font: 700 11px/1 inherit; font-family: inherit; letter-spacing: .5px; text-transform: uppercase;
+    padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  }
+  .toc button:hover { color: #fff; background: rgba(255,255,255,.06); }
+  .toc button.active { color: #fff; background: rgba(201,149,46,.2); border-color: rgba(201,149,46,.5); }
+  /* Slide */
+  .stage { flex: 1; min-height: 0; position: relative; }
+  .slide { position: absolute; inset: 0; padding: 22px 28px; display: none; overflow-y: auto; }
+  .slide.active { display: grid; animation: fadeIn .35s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .split { grid-template-columns: minmax(280px, 34%) 1fr; gap: 26px; align-items: center; }
+  .tag { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+         text-transform: uppercase; color: var(--bronze-light); background: rgba(201,149,46,.14); border: 1px solid rgba(201,149,46,.35); }
+  h2 { font-size: clamp(22px, 2.6vw, 34px); font-weight: 800; line-height: 1.25; margin: 12px 0 14px; }
+  h2 em { font-style: normal; color: var(--bronze-light); }
+  p.lead { color: var(--muted); line-height: 1.7; font-size: 15px; }
+  ol.steps { list-style: none; counter-reset: s; margin-top: 16px; display: grid; gap: 10px; }
+  ol.steps li { counter-increment: s; position: relative; padding: 10px 12px 10px 46px; background: var(--panel);
+                border: 1px solid var(--line); border-radius: 12px; line-height: 1.55; font-size: 14px; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 12px; top: 10px; width: 24px; height: 24px; border-radius: 50%;
+                        background: linear-gradient(135deg, var(--bronze), #e8a830); color: #fff; font-weight: 800; font-size: 12px;
+                        display: flex; align-items: center; justify-content: center; }
+  kbd { display: inline-block; min-width: 22px; padding: 1px 7px; margin: 0 1px; border-radius: 6px; font: 700 12px/20px Consolas, monospace;
+        text-align: center; color: #0f172a; background: #e2e8f0; box-shadow: inset 0 -2px 0 #94a3b8; }
+  .shot { background: #0b1220; border: 1px solid var(--line); border-radius: 14px; padding: 8px; box-shadow: 0 14px 40px rgba(0,0,0,.45); }
+  .shot img { width: 100%; display: block; border-radius: 8px; }
+  .shot figcaption { font-size: 12px; color: var(--muted); padding: 8px 4px 2px; text-align: center; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .note { margin-top: 14px; padding: 10px 14px; border-left: 3px solid var(--sky); background: rgba(93,169,217,.1); border-radius: 0 10px 10px 0;
+          font-size: 13.5px; line-height: 1.6; color: #dbeafe; }
+  /* Slide bìa */
+  .cover { place-items: center; text-align: center; }
+  .cover .inner { max-width: 980px; }
+  .cover h2 { font-size: clamp(26px, 3.6vw, 46px); }
+  .pills { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 22px 0; }
+  .pills span { padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(93,169,217,.5); color: #bfe0f7; font-weight: 600; font-size: 14px; }
+  .pills i { margin-right: 6px; color: var(--bronze-light); }
+  .cover .shot { max-width: 760px; margin: 8px auto 0; }
+  /* Bảng phím tắt */
+  .keys { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-content: start; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  .card h3 { font-size: 15px; margin-bottom: 10px; color: var(--bronze-light); }
+  .card h3 i { margin-right: 6px; }
+  .card table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .card td { padding: 5px 0; border-top: 1px solid rgba(148,163,184,.12); vertical-align: top; }
+  .card td:first-child { width: 42%; white-space: nowrap; }
+  .card ul { padding-left: 18px; line-height: 1.7; font-size: 13.5px; color: #e2e8f0; }
+  /* Điều hướng */
+  .nav { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px;
+         border-top: 1px solid var(--line); background: rgba(0,0,0,.2); }
+  .nav button { border: 1px solid var(--line); background: rgba(255,255,255,.06); color: #fff; font: 700 13px inherit; font-family: inherit;
+                padding: 9px 16px; border-radius: 10px; cursor: pointer; }
+  .nav button:hover:not(:disabled) { background: rgba(255,255,255,.12); }
+  .nav button:disabled { opacity: .35; cursor: default; }
+  .nav .count { color: var(--muted); font-size: 13px; font-weight: 600; }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.2); display: block; }
+  .dots i.on { background: var(--bronze); }
+  @media (max-width: 860px) {
+    .split, .pair { grid-template-columns: 1fr; }
+    .slide { padding: 16px; }
+    .dots { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="toc" id="toc"></nav>
+
+<main class="stage" id="stage">
+
+  <section class="slide cover" data-title="Tổng quan">
+    <div class="inner">
+      <span class="tag">Bộ công cụ nghiệp vụ Kiểm sát</span>
+      <h2>Tự động <em>đổi tên file</em></h2>
+      <p class="lead">Chuẩn hóa tên tệp hàng loạt: bỏ dấu tiếng Việt, xử lý ký tự đặc biệt, rút gọn tên quá dài, để nén, sao chép, tải lên hệ thống hoặc đưa vào trí tuệ nhân tạo không bị lỗi.</p>
+      <div class="pills"><span><i class="fa-solid fa-plug-circle-xmark"></i>Chạy hoàn toàn ngoại tuyến</span><span><i class="fa-solid fa-eye"></i>Xem trước khi đổi</span><span><i class="fa-solid fa-pen-to-square"></i>Tự đặt tên theo ý</span><span><i class="fa-solid fa-box-open"></i>Không cần cài đặt</span></div>
+      <figure class="shot"><img src="anh/01_giao_dien.jpg" alt="Giao diện công cụ mở ngay trên trình duyệt của máy" loading="lazy"><figcaption>Giao diện công cụ mở ngay trên trình duyệt của máy</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="slide split" data-title="Chọn thư mục, quét">
+    <div>
+      <span class="tag">Bước 1</span>
+      <h2>Quét thư mục, <em>đề xuất tên chuẩn</em></h2>
+      <ol class="steps">
+        <li>Giải nén <b>FileRenamer.zip</b>, chạy <b>FileRenamerPortable.exe</b>; giao diện tự mở trên trình duyệt.</li>
+        <li>Bấm <b>Chọn thư mục</b> (hoặc dán đường dẫn) rồi bấm <b>Quét ngay</b>; công cụ quét cả thư mục con.</li>
+        <li>Chỉ những tệp có tên cần sửa được liệt kê, kèm tên đề xuất và lý do: có dấu tiếng Việt, quá dài (trên 60 ký tự), ký tự đặc biệt, khoảng trắng hoặc gạch dưới liên tiếp.</li>
+      </ol>
+    </div>
+    <figure class="shot"><img src="anh/02_ket_qua_quet.jpg" alt="Cây thư mục với tên cũ → tên đề xuất và lý do" loading="lazy"><figcaption>Cây thư mục với tên cũ → tên đề xuất và lý do</figcaption></figure>
+  </section>
+
+  <section class="slide split" data-title="Xem nhanh, đặt tên">
+    <div>
+      <span class="tag">Bước 2</span>
+      <h2>Xem nhanh, <em>tự đặt tên, chọn tệp</em></h2>
+      <ol class="steps">
+        <li>Bấm biểu tượng <i class="fa-solid fa-eye"></i> để xem nhanh nội dung tệp (ảnh, văn bản) — chỉ đọc, không sửa.</li>
+        <li>Bấm vào ô tên mới (màu xanh) để tự đặt tên, ví dụ thêm số bút lục <b>BL05_</b> ở đầu; nút <i class="fa-solid fa-undo"></i> trả lại tên đề xuất.</li>
+        <li>Bỏ tích tệp muốn giữ nguyên tên; tích/bỏ tích ở dòng thư mục để chọn cả thư mục.</li>
+      </ol>
+    </div>
+    <div class="pair"><figure class="shot"><img src="anh/03_xem_nhanh.jpg" alt="Xem nhanh tệp ảnh" loading="lazy"><figcaption>Xem nhanh tệp ảnh</figcaption></figure><figure class="shot"><img src="anh/04_dat_ten.jpg" alt="Tên tùy chỉnh và tệp bỏ chọn" loading="lazy"><figcaption>Tên tùy chỉnh và tệp bỏ chọn</figcaption></figure></div>
+  </section>
+
+  <section class="slide split" data-title="Thực thi">
+    <div>
+      <span class="tag">Bước 3</span>
+      <h2>Thực thi <em>đổi tên hàng loạt</em></h2>
+      <ol class="steps">
+        <li>Kiểm tra lại số tệp được chọn và số tên tùy chỉnh ở dòng thống kê.</li>
+        <li>Bấm <b>Thực thi đổi tên</b> và xác nhận; công cụ chỉ đổi các tệp được tích chọn và báo kết quả từng tệp.</li>
+      </ol>
+      <div class="note"><i class="fa-solid fa-triangle-exclamation"></i> Đổi tên không thể hoàn tác tự động — sao lưu trước khi làm với dữ liệu quan trọng.</div>
+    </div>
+    <figure class="shot"><img src="anh/05_ket_qua.jpg" alt="Kết quả thực thi: số tệp đã đổi, tên tùy chỉnh đã dùng" loading="lazy"><figcaption>Kết quả thực thi: số tệp đã đổi, tên tùy chỉnh đã dùng</figcaption></figure>
+  </section>
+
+  <section class="slide keys" data-title="Lưu ý">
+    <div class="card">
+      <h3><i class="fa-solid fa-download"></i>Cài đặt</h3>
+      <ul><li>Giải nén toàn bộ FileRenamer.zip rồi chạy FileRenamerPortable.exe; không chạy trực tiếp trong tệp zip.</li><li>Không cần Python, không cần Internet.</li><li>Giữ cửa sổ dòng lệnh mở trong lúc dùng; đóng cửa sổ này để thoát.</li></ul>
+    </div>
+    <div class="card">
+      <h3><i class="fa-solid fa-wand-magic-sparkles"></i>Quy tắc đặt tên</h3>
+      <ul><li>Bỏ dấu tiếng Việt, chuẩn hóa Unicode.</li><li>Thay ký tự đặc biệt, gộp khoảng trắng, gạch dưới liên tiếp.</li><li>Viết tắt cụm từ nghiệp vụ và rút gọn tên dài quá 60 ký tự.</li></ul>
+    </div>
+    <div class="card">
+      <h3><i class="fa-solid fa-shield-halved"></i>An toàn</h3>
+      <ul><li>Luôn xem trước danh sách trước khi thực thi.</li><li>Chỉ đổi tệp được tích chọn.</li><li>Sao lưu dữ liệu quan trọng trước khi đổi.</li></ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="nav">
+  <button id="prev"><i class="fa-solid fa-chevron-left"></i> Trước</button>
+  <div class="dots" id="dots"></div>
+  <span class="count" id="count"></span>
+  <button id="next">Sau <i class="fa-solid fa-chevron-right"></i></button>
+</footer>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const toc = document.getElementById('toc');
+  const dots = document.getElementById('dots');
+  let cur = 0;
+  slides.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.textContent = (i + 1) + '. ' + s.dataset.title;
+    b.onclick = () => go(i);
+    toc.appendChild(b);
+    dots.appendChild(document.createElement('i'));
+  });
+  function go(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => s.classList.toggle('active', k === cur));
+    [...toc.children].forEach((b, k) => b.classList.toggle('active', k === cur));
+    [...dots.children].forEach((d, k) => d.classList.toggle('on', k === cur));
+    toc.children[cur].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    document.getElementById('count').textContent = (cur + 1) + ' / ' + slides.length;
+    document.getElementById('prev').disabled = cur === 0;
+    document.getElementById('next').disabled = cur === slides.length - 1;
+    slides[cur].scrollTop = 0;
+  }
+  document.getElementById('prev').onclick = () => go(cur - 1);
+  document.getElementById('next').onclick = () => go(cur + 1);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(cur + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur - 1); }
+  });
+  go(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ chuyển đổi PDF thành chữ (markdown, docx, txt)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #7b2d42;
+            --plum-dark: #5a1f30;
+            --plum-light: #a84560;
+            --green: #2e7d32;
+            --green-light: #e8f5e9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f7fc 0%, #faf5f0 50%, #fefcf5 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border-bottom: 3px solid var(--bronze);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--bronze), #e8a830);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(201, 149, 46, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header-title span {
+            color: var(--bronze-light);
+        }
+
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* INFO CARD */
+        .info-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 35px 30px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            border: 1px solid rgba(93, 169, 217, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .info-card h2 {
+            font-size: 22px;
+            color: var(--sky-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card h2 i {
+            color: var(--bronze);
+        }
+
+        .info-card p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card ul li {
+            padding: 8px 0;
+            font-size: 15px;
+            color: #555;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-card ul li i {
+            color: var(--bronze);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        /* FEATURE GRID */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .feature-item {
+            background: #f8fafc;
+            border: 1px solid #e8ecf0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .feature-item i {
+            color: var(--bronze);
+            font-size: 18px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .feature-item strong {
+            color: #333;
+        }
+
+        /* LAUNCH BUTTON */
+        .launch-section {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .btn-launch {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 48px;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: inherit;
+            color: #fff;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(30, 90, 138, 0.35);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(30, 90, 138, 0.45);
+        }
+
+        .btn-launch:active {
+            transform: translateY(0);
+        }
+
+        .btn-launch i {
+            font-size: 24px;
+        }
+
+        .btn-launch .sub-text {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.8;
+            letter-spacing: 0;
+        }
+
+        /* DEVELOPER INFO */
+        .dev-info {
+            background: linear-gradient(135deg, rgba(93, 169, 217, 0.08), rgba(123, 45, 66, 0.06));
+            border-radius: 12px;
+            padding: 20px 24px;
+            border-left: 4px solid var(--bronze);
+            margin-top: 20px;
+        }
+
+        .dev-info p {
+            font-size: 14px;
+            color: #666;
+            margin: 4px 0;
+        }
+
+        .dev-info i {
+            color: var(--bronze);
+            margin-right: 8px;
+        }
+
+        /* NOTE */
+        .note-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .note-box i {
+            color: #f9a825;
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .note-box p {
+            font-size: 14px;
+            color: #6d4c00;
+            line-height: 1.6;
+        }
+
+        /* REQUIREMENTS */
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .req-item {
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.06), rgba(93, 169, 217, 0.06));
+            border: 1px solid #e0e8e0;
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .req-item i.fa-circle-check {
+            color: var(--green);
+            font-size: 16px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .req-item i.fa-triangle-exclamation {
+            color: #f9a825;
+            font-size: 16px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        /* OFFLINE BADGE */
+        .offline-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--green);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .header {
+                padding: 14px 16px;
+            }
+            .main-content {
+                padding: 20px 12px;
+            }
+            .info-card {
+                padding: 20px 16px;
+            }
+            .btn-launch {
+                padding: 14px 28px;
+                font-size: 17px;
+                width: 100%;
+                justify-content: center;
+            }
+            .feature-grid,
+            .requirements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    
+        .btn-launch.guide {
+            margin-top: 14px;
+            text-decoration: none;
+            background: linear-gradient(135deg, #b45309, #c9952e);
+            box-shadow: 0 6px 20px rgba(201, 149, 46, 0.35);
+        }
+    </style>
+    <link rel="stylesheet" href="../../static/tool-page-theme.css">
+</head>
+<body class="ks-tool-page">
+    <!-- HEADER -->
+    <div class="header">
+        <img class="ks-header-logo" src="../../static/logo_moi.png" alt="Logo ngành Kiểm sát nhân dân">
+        <div>
+            <div class="header-title">Công cụ <span>chuyển đổi PDF</span> thành chữ (markdown, docx, txt)</div>
+            <div class="header-sub"><i class="fas fa-wifi-slash"></i> Hoạt động hoàn toàn OFFLINE — Không cần Internet</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- GIỚI THIỆU -->
+        <div class="info-card">
+            <h2><i class="fas fa-info-circle"></i> Giới thiệu</h2>
+            <p>
+                <span class="offline-badge"><i class="fas fa-shield-alt"></i> OFFLINE 100%</span>
+            </p>
+            <p>
+                <strong>Công cụ chuyển đổi PDF thành chữ</strong> giúp bạn trích xuất văn bản từ file 
+                <strong>PDF dạng ảnh quét</strong> (scan) sang các định dạng có thể chỉnh sửa: 
+                <strong>Markdown (.md)</strong>, <strong>Word (.docx)</strong> và <strong>văn bản (.txt)</strong>.
+            </p>
+            <p>
+                Công cụ sử dụng engine <strong>Tesseract OCR</strong> (phiên bản 5) kết hợp với 
+                <strong>PyMuPDF</strong> để xử lý PDF và <strong>Pillow</strong> để tiền xử lý ảnh, 
+                hỗ trợ nhận dạng <strong>tiếng Việt</strong> và <strong>tiếng Anh</strong> với độ chính xác cao.
+            </p>
+            <p style="font-weight:600;color:var(--sky-dark);">
+                <i class="fas fa-star" style="color:var(--bronze);"></i> 
+                Điểm nổi bật: Hoạt động <strong>hoàn toàn offline</strong> — Không cần Internet — 
+                Nhận dạng tiếng Việt — Xuất Markdown, DOCX, TXT — Giao diện kéo thả trực quan!
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span><strong>Kéo & thả file PDF</strong><br>Tải lên một hoặc nhiều file PDF ảnh quét qua giao diện web</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-language"></i>
+                    <span><strong>OCR tiếng Việt & tiếng Anh</strong><br>Nhận dạng chính xác văn bản tiếng Việt có dấu và tiếng Anh</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-layer-group"></i>
+                    <span><strong>Xử lý hàng loạt</strong><br>OCR nhiều file PDF cùng lúc, tải về toàn bộ dưới dạng file ZIP</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-file-export"></i>
+                    <span><strong>Xuất Markdown / DOCX / TXT</strong><br>Kết quả OCR hiển thị theo từng trang, xuất ra nhiều định dạng</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- YÊU CẦU HỆ THỐNG -->
+        <div class="info-card">
+            <h2><i class="fas fa-desktop"></i> Yêu cầu hệ thống</h2>
+            <div class="requirements-grid">
+                <div class="req-item">
+                    <i class="fas fa-circle-check"></i>
+                    <span><strong>Windows 10/11</strong><br>Hệ điều hành Windows 64-bit</span>
+                </div>
+                <div class="req-item">
+                    <i class="fas fa-circle-check"></i>
+                    <span><strong>Chạy hoàn toàn OFFLINE</strong><br>Không cần kết nối Internet. Tesseract OCR & Python đã tích hợp sẵn</span>
+                </div>
+                <div class="req-item">
+                    <i class="fas fa-circle-check"></i>
+                    <span><strong>Không cần cài đặt</strong><br>Tất cả thư viện (Tesseract, PyMuPDF, Pillow, Flask) đã đóng gói trong .exe</span>
+                </div>
+                <div class="req-item">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    <span><strong>Lưu ý</strong><br>Công cụ hoạt động tốt nhất với PDF dạng ảnh quét. PDF có sẵn text vẫn xử lý được.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KHỞI CHẠY -->
+        <div class="launch-section">
+            <a class="btn-launch" href="https://drive.google.com/drive/folders/1uvRqKyusbbbuVkBe-ucwYwP1ZPtqMVsF?usp=drive_link" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-google-drive"></i>
+                <span>
+                    MỞ THƯ MỤC TẢI OCR_PDF_TOOL.ZIP
+                    <span class="sub-text">Tải OCR_PDF_Tool.zip từ Google Drive — Giải nén, chạy OCR_PDF_Tool.exe</span>
+                </span>
+            </a>
+            <br>
+            <a class="btn-launch guide" href="huong_dan/index.html">
+                <i class="fas fa-circle-play"></i>
+                <span>
+                    XEM VIDEO &amp; SLIDE HƯỚNG DẪN
+                    <span class="sub-text">Video có lời bình, thao tác thực tế trên bản quét mô phỏng · slide từng bước</span>
+                </span>
+            </a>
+        </div>
+
+        <!-- CÁCH SỬ DỤNG -->
+        <div class="info-card">
+            <h2><i class="fas fa-list-ol"></i> Cách sử dụng</h2>
+            <ul>
+                <li><i class="fas fa-1"></i> <span><strong>Bước 1:</strong> Tải file <strong>OCR_PDF_Tool.zip</strong> về máy và giải nén vào một thư mục</span></li>
+                <li><i class="fas fa-2"></i> <span><strong>Bước 2:</strong> Mở thư mục <strong>OCR_PDF_Tool</strong> rồi nhấp đúp vào <strong>OCR_PDF_Tool.exe</strong></span></li>
+                <li><i class="fas fa-3"></i> <span><strong>Bước 3:</strong> Trình duyệt tự mở giao diện web. Kéo thả file PDF vào vùng upload (có thể chọn nhiều file cùng lúc)</span></li>
+                <li><i class="fas fa-4"></i> <span><strong>Bước 4:</strong> Chọn ngôn ngữ (tiếng Việt / tiếng Anh) và định dạng đầu ra mong muốn (Markdown / DOCX / TXT)</span></li>
+                <li><i class="fas fa-5"></i> <span><strong>Bước 5:</strong> Nhấn <strong>"OCR 1 FILE ĐƠN"</strong> (xử lý từng file) hoặc <strong>"OCR HÀNG LOẠT"</strong> (xử lý nhiều file)</span></li>
+                <li><i class="fas fa-6"></i> <span><strong>Bước 6:</strong> Xem kết quả hiển thị theo từng trang. Có thể <strong>copy</strong> trực tiếp hoặc <strong>tải về</strong> file kết quả.</span></li>
+            </ul>
+
+            <div class="note-box">
+                <i class="fas fa-lightbulb"></i>
+                <p>
+                    <strong>Mẹo sử dụng:</strong> Công cụ chạy <strong>hoàn toàn offline</strong>, không cần Internet. 
+                    Với file PDF nhiều trang, kết quả được hiển thị riêng biệt cho từng trang, có phân cách rõ ràng. 
+                    Ở chế độ hàng loạt, tất cả kết quả được đóng gói vào file ZIP để tiện tải về. 
+                    <strong>Không cần cài đặt Python, Tesseract hay bất kỳ thư viện nào!</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- CÔNG NGHỆ SỬ DỤNG -->
+        <div class="info-card">
+            <h2><i class="fas fa-microchip"></i> Công nghệ sử dụng</h2>
+            <div class="dev-info">
+                <p><i class="fas fa-cog"></i> Engine OCR: <strong>Tesseract OCR 5 + Leptonica</strong> — Nhận dạng ký tự quang học từ ảnh</p>
+                <p><i class="fas fa-file-pdf"></i> Xử lý PDF: <strong>PyMuPDF (fitz)</strong> — Trích xuất từng trang PDF thành ảnh để OCR</p>
+                <p><i class="fas fa-image"></i> Xử lý ảnh: <strong>Pillow (PIL)</strong> — Tiền xử lý ảnh trước khi nhận dạng</p>
+                <p><i class="fas fa-language"></i> Ngôn ngữ hỗ trợ: <strong>Tiếng Việt (vie) + Tiếng Anh (eng)</strong> — Có thể mở rộng thêm</p>
+                <p><i class="fas fa-network-wired"></i> Giao diện: <strong>Flask + HTML/CSS/JS</strong> — Giao diện web kéo thả, chạy trên localhost</p>
+                <p><i class="fas fa-file-export"></i> Định dạng xuất: <strong>Markdown (.md) + DOCX (.docx) + TXT (.txt)</strong></p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="fas fa-circle-info"></i> Thông tin công cụ</h2>
+            <div class="dev-info">
+                <p><i class="fas fa-wifi-slash"></i> <strong>Hoạt động hoàn toàn OFFLINE</strong> — Không cần Internet, không gửi dữ liệu ra ngoài</p>
+                <p><i class="fas fa-shield-alt"></i> An toàn: <strong>Dữ liệu được xử lý cục bộ</strong> — File PDF không bị upload lên bất kỳ máy chủ nào</p>
+                <p><i class="fas fa-box"></i> Đóng gói: <strong>PyInstaller</strong> — Tất cả thư viện tích hợp trong 1 file .exe duy nhất</p>
+                <p><i class="fas fa-tools"></i> Phiên bản: <strong>1.0</strong></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

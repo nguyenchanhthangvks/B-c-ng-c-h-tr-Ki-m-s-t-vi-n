@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính tiền bồi thường thiệt hại ngoài hợp đồng</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --sky: #5da9d9;
+            --sky-light: #a8d4f0;
+            --sky-dark: #1e5a8a;
+            --bronze: #c9952e;
+            --bronze-light: #e8c675;
+            --plum: #315d7d;
+            --plum-dark: #244b69;
+            --plum-light: #6fa6c8;
+            --green-dark: #1a7a4c;
+            --green-light: #a8e6c1;
+            --red-warning: #dc2626;
+            --red-light: #fca5a5;
+            --yellow-warning: #d97706;
+            --yellow-light: #fde68a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Be Vietnam Pro', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f7fc 0%, #faf5f0 50%, #fefcf5 100%);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border-bottom: 3px solid var(--bronze);
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-title {
+            font-size: clamp(18px, 2.5vw, 26px);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .header-title span { color: var(--bronze-light); }
+        .header-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        .professional-advisory {
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            border-left: 4px solid var(--bronze);
+            border-radius: 10px;
+            background: #fff8e1;
+            color: #665203;
+            font-size: 13.5px;
+            line-height: 1.55;
+            box-shadow: 0 2px 10px rgba(201, 149, 46, 0.08);
+        }
+
+        .salary-config-bar {
+            margin-bottom: 28px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: rgba(30, 90, 138, 0.06);
+            border: 1.5px solid rgba(30, 90, 138, 0.18);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px 18px;
+        }
+        .salary-config-bar label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--plum-dark);
+            white-space: nowrap;
+        }
+        .salary-config-bar input {
+            width: 160px;
+        }
+        .salary-config-bar .note {
+            font-size: 12px;
+            color: #7a6a30;
+            font-weight: 600;
+            flex: 1 1 260px;
+        }
+
+        /* FIELDSET */
+        .fieldset-section { margin-bottom: 32px; border-radius: 16px; padding: 0; overflow: hidden; }
+        .fieldset-section fieldset {
+            border: 2px solid var(--plum-light);
+            border-radius: 16px;
+            padding: 24px 24px 28px;
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            backdrop-filter: blur(8px);
+        }
+        .fieldset-section fieldset legend {
+            font-size: 17px;
+            font-weight: 800;
+            padding: 6px 18px;
+            border-radius: 30px;
+            color: #fff;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            border: 1px solid var(--sky-light);
+        }
+        .fieldset-section fieldset legend i { font-size: 15px; }
+        .fieldset-section fieldset legend .art-tag {
+            font-size: 11px;
+            font-weight: 700;
+            opacity: 0.85;
+        }
+
+        /* LEGAL NOTE */
+        .legal-note {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+            background: rgba(49, 93, 125, 0.07);
+            border: 1px solid rgba(49, 93, 125, 0.2);
+            color: var(--plum-dark);
+        }
+        .legal-note.collapsed > :not(.legal-toggle) { display: none !important; }
+        .legal-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; border:0; background:transparent; color:inherit; font:inherit; font-weight:700; cursor:pointer; padding:2px 0; }
+        .legal-toggle::after { content:"Mở ▾"; font-size:12px; }
+        .legal-note:not(.collapsed) .legal-toggle::after { content:"Thu gọn ▴"; }
+        .legal-note i { font-size: 16px; margin-top: 2px; flex-shrink: 0; color: var(--plum-dark); }
+
+        /* FORM */
+        .form-section { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media (max-width: 900px) { .form-section { grid-template-columns: 1fr; } }
+        .form-card { background: transparent; border: none; padding: 0; }
+        .card-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--sky-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--sky-light);
+            padding-bottom: 10px;
+        }
+        .card-title i { color: var(--bronze); font-size: 17px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12.5px; font-weight: 700; color: #555; margin-bottom: 5px; }
+        .form-group label .optional { font-weight: 400; color: #999; font-size: 11px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        @media (max-width: 500px) { .form-row-3 { grid-template-columns: 1fr 1fr; } }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid rgba(30, 90, 138, 0.2);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #333;
+            background: #fff;
+            transition: all 0.25s ease;
+            outline: none;
+            -moz-appearance: textfield;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input:focus, select:focus { border-color: var(--sky); box-shadow: 0 0 0 3px rgba(93, 169, 217, 0.15); }
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 13px 24px;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--sky-dark), var(--plum-dark));
+            box-shadow: 0 4px 16px rgba(30, 90, 138, 0.3);
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+        .btn-calculate:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(30, 90, 138, 0.4); }
+        .btn-calculate:active { transform: translateY(0); }
+        .btn-calculate i { margin-right: 8px; }
+
+        .btn-inline {
+            padding: 6px 14px;
+            border: 1px solid rgba(30,90,138,0.25);
+            border-radius: 8px;
+            background: transparent;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--sky-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-inline:hover { background: rgba(93,169,217,0.08); }
+
+        /* RESULT */
+        .result-section { display: none; animation: slideUp 0.4s ease-out; }
+        .result-section.visible { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .result-card {
+            margin-top: 20px;
+            background: linear-gradient(135deg, rgba(30, 90, 138, 0.06), rgba(49, 93, 125, 0.06));
+            border: 2px solid var(--bronze-light);
+            border-radius: 16px;
+            padding: 26px 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+        .result-header { text-align: center; margin-bottom: 18px; }
+        .result-header h2 { font-size: 18px; color: var(--sky-dark); font-weight: 800; }
+        .result-header h2 i { color: var(--bronze); margin-right: 8px; }
+
+        .breakdown-list { background: #fff; border-radius: 12px; border: 1px solid rgba(30,90,138,0.1); overflow: hidden; }
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            padding: 10px 16px;
+            font-size: 13.5px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .breakdown-row:last-child { border-bottom: none; }
+        .breakdown-row .lbl { color: #555; font-weight: 600; }
+        .breakdown-row .val { color: var(--plum-dark); font-weight: 700; white-space: nowrap; }
+        .breakdown-row.sub { background: rgba(30,90,138,0.04); }
+        .breakdown-row.total {
+            background: rgba(201, 149, 46, 0.1);
+            padding: 14px 16px;
+        }
+        .breakdown-row.total .lbl { font-size: 15px; font-weight: 800; color: var(--plum-dark); }
+        .breakdown-row.total .val { font-size: 20px; font-weight: 800; color: var(--bronze); }
+        .breakdown-row .note-small { display: block; font-size: 11px; color: #999; font-weight: 500; margin-top: 2px; }
+
+        .warn-banner {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .warn-banner.caution { background: rgba(217,119,6,0.08); border: 1.5px solid rgba(217,119,6,0.25); color: #8a5a05; }
+        .warn-banner i { margin-top: 2px; }
+
+        /* CẤP DƯỠNG DYNAMIC ROWS */
+        .capduong-row {
+            position: relative;
+            border: 1.5px solid rgba(30,90,138,0.18);
+            border-radius: 12px;
+            padding: 16px 44px 16px 16px;
+            margin-bottom: 14px;
+            background: rgba(255,255,255,0.7);
+        }
+        .capduong-row .cd-remove {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(220,38,38,0.1);
+            color: var(--red-warning);
+            font-weight: 800;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .capduong-row .cd-remove:hover { background: rgba(220,38,38,0.2); }
+        .capduong-add-btn {
+            padding: 8px 18px;
+            border: 1.5px dashed rgba(30,90,138,0.35);
+            border-radius: 20px;
+            background: rgba(93,169,217,0.06);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--sky-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .capduong-add-btn:hover { background: rgba(93,169,217,0.15); }
+        .cd-hint { font-size: 12px; color: #888; margin: 6px 0 14px; line-height: 1.5; }
+
+        /* SUMMARY */
+        .summary-fieldset { border-color: var(--bronze-light) !important; }
+        .summary-fieldset legend { background: linear-gradient(135deg, var(--bronze), #e8a830) !important; border-color: var(--bronze-light) !important; }
+
+        /* INFO SECTION */
+        .info-section { margin-top: 30px; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+        .info-item {
+            background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(30, 90, 138, 0.1);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .info-item i { font-size: 20px; color: var(--bronze); margin-top: 2px; flex-shrink: 0; }
+        .info-item p { font-size: 13px; color: #666; line-height: 1.6; }
+        .info-item p strong { color: var(--sky-dark); }
+
+        @media (max-width: 600px) {
+            .header { padding: 14px 16px; }
+            .main-content { padding: 20px 14px; }
+            .fieldset-section fieldset { padding: 16px 14px; }
+            .breakdown-row { flex-direction: column; }
+            .breakdown-row .val { align-self: flex-end; }
+        }
+    </style>
+    <link rel="stylesheet" href="../static/tool-page-theme.css">
+</head>
+<body class="ks-tool-page ks-calculator-page">
+
+    <!-- HEADER -->
+    <header class="header">
+        <img class="ks-header-logo" src="../static/logo_moi.png" alt="Logo ngành Kiểm sát nhân dân">
+        <div>
+            <div class="header-title">TÍNH TIỀN <span>BỒI THƯỜNG THIỆT HẠI NGOÀI HỢP ĐỒNG</span></div>
+            <div class="header-sub"><i class="fa-solid fa-scale-balanced"></i> Công cụ tính toán bồi thường dân sự theo Bộ luật Dân sự</div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <div class="professional-advisory" role="note">
+            ⚠️ <strong>Khuyến cáo:</strong> Kết quả tính toán trên phần mềm chỉ mang tính chất tham khảo nghiệp vụ dựa trên các điều khoản của Bộ luật Dân sự về bồi thường thiệt hại ngoài hợp đồng, không thay thế cho các quyết định, bản án của cơ quan có thẩm quyền. Mức thiệt hại thực tế cần căn cứ hồ sơ, chứng cứ, kết luận giám định và sự thỏa thuận của các bên.
+        </div>
+
+        <!-- CẤU HÌNH CHUNG: MỨC LƯƠNG CƠ SỞ -->
+        <div class="salary-config-bar">
+            <label for="luong-co-so"><i class="fa-solid fa-sliders"></i> Mức lương cơ sở áp dụng</label>
+            <input type="number" id="luong-co-so" min="0" step="10000" value="2530000">
+            <span class="note">Mặc định 2.530.000đ/tháng theo Nghị định 161/2026/NĐ-CP (hiệu lực 01/7/2026) — dùng làm căn cứ tính trần bồi thường tổn thất tinh thần. Vui lòng kiểm tra, cập nhật lại nếu đã có Nghị định mới hơn.</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PHẦN 1: THIỆT HẠI DO TÀI SẢN BỊ XÂM PHẠM (Điều 589 BLDS) -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset>
+                <legend><i class="fa-solid fa-box-open"></i> THIỆT HẠI DO TÀI SẢN BỊ XÂM PHẠM <span class="art-tag">(Điều 589 BLDS)</span></legend>
+
+                <div class="form-section">
+                    <div class="form-card">
+                        <div class="card-title"><i class="fa-solid fa-coins"></i> Các khoản thiệt hại</div>
+
+                        <div class="form-group">
+                            <label>Tài sản bị mất, bị hủy hoại hoặc bị hư hỏng (đồng)</label>
+                            <input type="number" id="as-tai-san" min="0" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Lợi ích gắn liền với việc sử dụng, khai thác tài sản bị mất, giảm sút (đồng)</label>
+                            <input type="number" id="as-loi-ich" min="0" placeholder="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-card">
+                        <div class="card-title"><i class="fa-solid fa-shield-halved"></i> Chi phí khắc phục</div>
+
+                        <div class="form-group">
+                            <label>Chi phí hợp lý để ngăn chặn, hạn chế và khắc phục thiệt hại (đồng)</label>
+                            <input type="number" id="as-ngan-chan" min="0" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Thiệt hại khác <span class="optional">(nếu có)</span></label>
+                            <input type="number" id="as-khac" min="0" placeholder="0" value="0">
+                        </div>
+
+                        <button class="btn-calculate" onclick="calculateAsset()"><i class="fa-solid fa-calculator"></i> TÍNH THIỆT HẠI TÀI SẢN</button>
+                    </div>
+                </div>
+
+                <div class="result-section" id="as-result-section">
+                    <div class="result-card">
+                        <div class="result-header"><h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ THIỆT HẠI TÀI SẢN</h2></div>
+                        <div id="as-result-content"></div>
+                    </div>
+                </div>
+
+                <div class="legal-note collapsed" style="max-height:280px;overflow-y:auto;">
+                    <button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <div>
+                        <strong style="font-size:15px;display:block;margin-bottom:8px;">Điều 589. Thiệt hại do tài sản bị xâm phạm</strong>
+                        <p>Thiệt hại do tài sản bị xâm phạm bao gồm:</p>
+                        <p>1. Tài sản bị mất, bị hủy hoại hoặc bị hư hỏng.</p>
+                        <p>2. Lợi ích gắn liền với việc sử dụng, khai thác tài sản bị mất, bị giảm sút.</p>
+                        <p>3. Chi phí hợp lý để ngăn chặn, hạn chế và khắc phục thiệt hại.</p>
+                        <p>4. Thiệt hại khác do luật quy định.</p>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PHẦN 2: THIỆT HẠI DO SỨC KHỎE BỊ XÂM PHẠM (Điều 590 BLDS) -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset>
+                <legend><i class="fa-solid fa-notes-medical"></i> THIỆT HẠI DO SỨC KHỎE BỊ XÂM PHẠM <span class="art-tag">(Điều 590 BLDS)</span></legend>
+
+                <div class="form-section">
+                    <div class="form-card">
+                        <div class="card-title"><i class="fa-solid fa-hand-holding-medical"></i> Chi phí và thu nhập bị mất</div>
+
+                        <div class="form-group">
+                            <label>Chi phí hợp lý cứu chữa, bồi dưỡng, phục hồi sức khỏe và chức năng bị mất, giảm sút (đồng)</label>
+                            <input type="number" id="hs-cuu-chua" min="0" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Thu nhập thực tế bị mất hoặc bị giảm sút của người bị thiệt hại (đồng)</label>
+                            <input type="number" id="hs-thu-nhap" min="0" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Chi phí hợp lý và thu nhập thực tế bị mất của người chăm sóc (đồng)</label>
+                            <input type="number" id="hs-cham-soc" min="0" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Thiệt hại khác <span class="optional">(nếu có)</span></label>
+                            <input type="number" id="hs-khac" min="0" placeholder="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-card">
+                        <div class="card-title"><i class="fa-solid fa-heart-crack"></i> Tổn thất tinh thần</div>
+
+                        <div class="form-group">
+                            <label>Khoản tiền bù đắp tổn thất về tinh thần (đồng)</label>
+                            <input type="number" id="hs-tinh-than" min="0" placeholder="0" value="0">
+                            <div style="margin-top:8px;text-align:right;">
+                                <button class="btn-inline" onclick="fillMaxSpirit('hs-tinh-than', 50)"><i class="fa-solid fa-wand-magic-sparkles"></i> Điền mức tối đa (50 lần lương cơ sở)</button>
+                            </div>
+                        </div>
+
+                        <button class="btn-calculate" onclick="calculateHealth()"><i class="fa-solid fa-calculator"></i> TÍNH THIỆT HẠI SỨC KHỎE</button>
+                    </div>
+                </div>
+
+                <div class="result-section" id="hs-result-section">
+                    <div class="result-card">
+                        <div class="result-header"><h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ THIỆT HẠI SỨC KHỎE</h2></div>
+                        <div id="hs-result-content"></div>
+                    </div>
+                </div>
+
+                <div class="legal-note collapsed" style="max-height:340px;overflow-y:auto;">
+                    <button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <div>
+                        <strong style="font-size:15px;display:block;margin-bottom:8px;">Điều 590. Thiệt hại do sức khỏe bị xâm phạm</strong>
+                        <p>1. Thiệt hại do sức khỏe bị xâm phạm bao gồm:</p>
+                        <p>a) Chi phí hợp lý cho việc cứu chữa, bồi dưỡng, phục hồi sức khỏe và chức năng bị mất, bị giảm sút của người bị thiệt hại;</p>
+                        <p>b) Thu nhập thực tế bị mất hoặc bị giảm sút của người bị thiệt hại; nếu thu nhập thực tế của người bị thiệt hại không ổn định và không thể xác định được thì áp dụng mức thu nhập trung bình của lao động cùng loại;</p>
+                        <p>c) Chi phí hợp lý và phần thu nhập thực tế bị mất của người chăm sóc người bị thiệt hại trong thời gian điều trị; nếu người bị thiệt hại mất khả năng lao động và cần phải có người thường xuyên chăm sóc thì thiệt hại bao gồm cả chi phí hợp lý cho việc chăm sóc người bị thiệt hại;</p>
+                        <p>d) Thiệt hại khác do luật quy định.</p>
+                        <p style="margin-top:8px;">2. Người chịu trách nhiệm bồi thường trong trường hợp sức khỏe của người khác bị xâm phạm phải bồi thường thiệt hại theo quy định tại khoản 1 Điều này và một khoản tiền khác để bù đắp tổn thất về tinh thần mà người đó gánh chịu. Mức bồi thường bù đắp tổn thất về tinh thần do các bên thỏa thuận; nếu không thỏa thuận được thì mức tối đa cho một người có sức khỏe bị xâm phạm không quá năm mươi lần mức lương cơ sở do Nhà nước quy định.</p>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PHẦN 3: THIỆT HẠI DO TÍNH MẠNG BỊ XÂM PHẠM (Điều 591 BLDS) -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset>
+                <legend><i class="fa-solid fa-cross"></i> THIỆT HẠI DO TÍNH MẠNG BỊ XÂM PHẠM <span class="art-tag">(Điều 591 BLDS)</span></legend>
+
+                <div class="form-section">
+                    <div class="form-card">
+                        <div class="card-title"><i class="fa-solid fa-house-medical-flag"></i> Chi phí trước khi chết &amp; mai táng</div>
+
+                        <div class="form-group">
+                            <label>Chi phí cứu chữa, bồi dưỡng, chăm sóc trước khi chết (theo Điều 590, đồng)</label>
+                            <input type="number" id="tm-cuu-chua" min="0" placeholder="0" value="0">
+                            <div style="margin-top:8px;text-align:right;">
+                                <button class="btn-inline" onclick="copyFromHealth()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Lấy từ Phần 2 (phần vật chất)</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Chi phí hợp lý cho việc mai táng (đồng)</label>
+                            <input type="number" id="tm-mai-tang" min="0" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Thiệt hại khác <span class="optional">(nếu có)</span></label>
+                            <input type="number" id="tm-khac" min="0" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Khoản tiền bù đắp tổn thất tinh thần cho thân nhân (đồng)</label>
+                            <input type="number" id="tm-tinh-than" min="0" placeholder="0" value="0">
+                            <div style="margin-top:8px;text-align:right;">
+                                <button class="btn-inline" onclick="fillMaxSpirit('tm-tinh-than', 100)"><i class="fa-solid fa-wand-magic-sparkles"></i> Điền mức tối đa (100 lần lương cơ sở)</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-card">
+                        <div class="card-title"><i class="fa-solid fa-people-roof"></i> Tiền cấp dưỡng</div>
+
+                        <div class="form-group">
+                            <label>Ngày bắt đầu tính cấp dưỡng <span class="optional">(thường là ngày phát sinh trách nhiệm bồi thường)</span></label>
+                            <div class="form-row-3">
+                                <div><input type="number" id="tm-ngay-day" min="1" max="31" placeholder="Ngày" value="1"></div>
+                                <div><input type="number" id="tm-ngay-month" min="1" max="12" placeholder="Tháng" value="1"></div>
+                                <div><input type="number" id="tm-ngay-year" min="1" max="9999" placeholder="Năm" value="2026"></div>
+                            </div>
+                            <div style="margin-top:8px;text-align:right;">
+                                <button class="btn-inline" onclick="fillTodayTM()"><i class="fa-regular fa-clock"></i> Lấy ngày hiện tại</button>
+                            </div>
+                        </div>
+
+                        <p class="cd-hint"><i class="fa-solid fa-circle-info"></i> Chỉ tự động tính cho diện "con chưa thành niên" (Điều 593 khoản 2 điểm a). Các diện cấp dưỡng khác (cha mẹ già yếu, vợ/chồng mất khả năng lao động...) vui lòng chọn "Khác" và tự nhập số tháng.</p>
+
+                        <div id="capduong-rows"></div>
+                        <button type="button" class="capduong-add-btn" onclick="addCapDuongRow()"><i class="fa-solid fa-plus"></i> Thêm người được cấp dưỡng</button>
+
+                        <button class="btn-calculate" onclick="calculateLife()" style="margin-top:16px;"><i class="fa-solid fa-calculator"></i> TÍNH THIỆT HẠI TÍNH MẠNG</button>
+                    </div>
+                </div>
+
+                <div class="result-section" id="tm-result-section">
+                    <div class="result-card">
+                        <div class="result-header"><h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ THIỆT HẠI TÍNH MẠNG</h2></div>
+                        <div id="tm-result-content"></div>
+                    </div>
+                </div>
+
+                <div class="legal-note collapsed" style="max-height:420px;overflow-y:auto;">
+                    <button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <div>
+                        <strong style="font-size:15px;display:block;margin-bottom:8px;">Điều 591. Thiệt hại do tính mạng bị xâm phạm</strong>
+                        <p>1. Thiệt hại do tính mạng bị xâm phạm bao gồm:</p>
+                        <p>a) Thiệt hại do sức khỏe bị xâm phạm theo quy định tại Điều 590 của Bộ luật này;</p>
+                        <p>b) Chi phí hợp lý cho việc mai táng;</p>
+                        <p>c) Tiền cấp dưỡng cho những người mà người bị thiệt hại có nghĩa vụ cấp dưỡng;</p>
+                        <p>d) Thiệt hại khác do luật quy định.</p>
+                        <p style="margin-top:8px;">2. Người chịu trách nhiệm bồi thường trong trường hợp tính mạng của người khác bị xâm phạm phải bồi thường thiệt hại theo quy định tại khoản 1 Điều này và một khoản tiền khác để bù đắp tổn thất về tinh thần cho những người thân thích thuộc hàng thừa kế thứ nhất của người bị thiệt hại, nếu không có những người này thì người mà người bị thiệt hại đã trực tiếp nuôi dưỡng, người đã trực tiếp nuôi dưỡng người bị thiệt hại được hưởng khoản tiền này. Mức bồi thường bù đắp tổn thất về tinh thần do các bên thỏa thuận; nếu không thỏa thuận được thì mức tối đa cho một người có tính mạng bị xâm phạm không quá một trăm lần mức lương cơ sở do Nhà nước quy định.</p>
+
+                        <p style="margin-top:10px;padding:10px;background:rgba(49,93,125,0.06);border-radius:8px;border-left:3px solid var(--plum);">
+                            <strong>Điều 593 (trích) — Thời hạn hưởng bồi thường:</strong> Người chưa thành niên hoặc người đã thành thai là con của người chết và còn sống sau khi sinh ra được hưởng tiền cấp dưỡng cho đến khi đủ mười tám tuổi, trừ trường hợp người từ đủ mười lăm tuổi đến chưa đủ mười tám tuổi đã tham gia lao động và có thu nhập đủ nuôi sống bản thân. Người thành niên nhưng không có khả năng lao động được hưởng tiền cấp dưỡng cho đến khi chết.
+                        </p>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PHẦN 4: THIỆT HẠI DO DANH DỰ, NHÂN PHẨM, UY TÍN BỊ XÂM PHẠM (Điều 592 BLDS) -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset>
+                <legend><i class="fa-solid fa-user-shield"></i> THIỆT HẠI DO DANH DỰ, NHÂN PHẨM, UY TÍN BỊ XÂM PHẠM <span class="art-tag">(Điều 592 BLDS)</span></legend>
+
+                <div class="form-section">
+                    <div class="form-card">
+                        <div class="card-title"><i class="fa-solid fa-file-invoice-dollar"></i> Chi phí và thu nhập bị mất</div>
+
+                        <div class="form-group">
+                            <label>Chi phí hợp lý để hạn chế, khắc phục thiệt hại (đồng)</label>
+                            <input type="number" id="dd-chi-phi" min="0" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Thu nhập thực tế bị mất hoặc bị giảm sút (đồng)</label>
+                            <input type="number" id="dd-thu-nhap" min="0" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Thiệt hại khác <span class="optional">(nếu có)</span></label>
+                            <input type="number" id="dd-khac" min="0" placeholder="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-card">
+                        <div class="card-title"><i class="fa-solid fa-heart-crack"></i> Tổn thất tinh thần</div>
+
+                        <div class="form-group">
+                            <label>Khoản tiền bù đắp tổn thất về tinh thần (đồng)</label>
+                            <input type="number" id="dd-tinh-than" min="0" placeholder="0" value="0">
+                            <div style="margin-top:8px;text-align:right;">
+                                <button class="btn-inline" onclick="fillMaxSpirit('dd-tinh-than', 10)"><i class="fa-solid fa-wand-magic-sparkles"></i> Điền mức tối đa (10 lần lương cơ sở)</button>
+                            </div>
+                        </div>
+
+                        <button class="btn-calculate" onclick="calculateHonor()"><i class="fa-solid fa-calculator"></i> TÍNH THIỆT HẠI DANH DỰ, NHÂN PHẨM, UY TÍN</button>
+                    </div>
+                </div>
+
+                <div class="result-section" id="dd-result-section">
+                    <div class="result-card">
+                        <div class="result-header"><h2><i class="fa-solid fa-check-circle"></i> KẾT QUẢ THIỆT HẠI DANH DỰ, NHÂN PHẨM, UY TÍN</h2></div>
+                        <div id="dd-result-content"></div>
+                    </div>
+                </div>
+
+                <div class="legal-note collapsed" style="max-height:320px;overflow-y:auto;">
+                    <button type="button" class="legal-toggle" onclick="toggleLegalNote(this)">⚖ Căn cứ pháp lý</button>
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <div>
+                        <strong style="font-size:15px;display:block;margin-bottom:8px;">Điều 592. Thiệt hại do danh dự, nhân phẩm, uy tín bị xâm phạm</strong>
+                        <p>1. Thiệt hại do danh dự, nhân phẩm, uy tín bị xâm phạm bao gồm:</p>
+                        <p>a) Chi phí hợp lý để hạn chế, khắc phục thiệt hại;</p>
+                        <p>b) Thu nhập thực tế bị mất hoặc bị giảm sút;</p>
+                        <p>c) Thiệt hại khác do luật quy định.</p>
+                        <p style="margin-top:8px;">2. Người chịu trách nhiệm bồi thường trong trường hợp danh dự, nhân phẩm, uy tín của người khác bị xâm phạm phải bồi thường thiệt hại theo quy định tại khoản 1 Điều này và một khoản tiền khác để bù đắp tổn thất về tinh thần mà người đó gánh chịu. Mức bồi thường bù đắp tổn thất về tinh thần do các bên thỏa thuận; nếu không thỏa thuận được thì mức tối đa cho một người có danh dự, nhân phẩm, uy tín bị xâm phạm không quá mười lần mức lương cơ sở do Nhà nước quy định.</p>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PHẦN 5: TỔNG HỢP BỒI THƯỜNG -->
+        <!-- ============================================================ -->
+        <div class="fieldset-section">
+            <fieldset class="summary-fieldset">
+                <legend><i class="fa-solid fa-calculator"></i> TỔNG HỢP BỒI THƯỜNG</legend>
+                <p style="font-size:13px;color:#666;margin-bottom:14px;">Tổng hợp số tiền của các phần đã tính ở trên. Phần nào chưa bấm nút tính sẽ hiển thị "chưa tính" và không được cộng vào tổng.</p>
+                <div id="summary-content"></div>
+                <button class="btn-calculate" onclick="renderSummary()" style="background:linear-gradient(135deg, var(--bronze), #e8a830);"><i class="fa-solid fa-rotate"></i> TÍNH TỔNG HỢP</button>
+            </fieldset>
+        </div>
+
+        <!-- INFO SECTION -->
+        <div class="info-section">
+            <div class="info-grid">
+                <div class="info-item">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <p><strong>Cách sử dụng:</strong> Điền số liệu vào từng phần thiệt hại tương ứng (tài sản, sức khỏe, tính mạng, danh dự - nhân phẩm - uy tín), bấm "Tính" ở mỗi phần rồi xem tổng hợp ở cuối trang.</p>
+                </div>
+                <div class="info-item">
+                    <i class="fa-solid fa-sliders"></i>
+                    <p><strong>Mức lương cơ sở:</strong> Dùng để tính trần bồi thường tổn thất tinh thần khi các bên không thỏa thuận được (50/100/10 lần lương cơ sở). Hãy cập nhật đúng mức đang áp dụng tại thời điểm tính.</p>
+                </div>
+                <div class="info-item">
+                    <i class="fa-solid fa-child-reaching"></i>
+                    <p><strong>Cấp dưỡng tự động:</strong> Với con chưa thành niên, công cụ tự tính số tháng còn lại đến khi đủ 18 tuổi (tính đủ theo lịch dương, có quy đổi phần ngày lẻ) để nhân với mức cấp dưỡng/tháng.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleLegalNote(button) { button.closest('.legal-note').classList.toggle('collapsed'); }
+
+        function pad(n) { return String(n).padStart(2, '0'); }
+        function num(id) { return parseFloat(document.getElementById(id).value) || 0; }
+        function formatVND(v) {
+            v = Math.round(Number(v) || 0);
+            return v.toLocaleString('vi-VN') + ' đồng';
+        }
+
+        function isLeapYear(year) { return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0); }
+        function getDaysInMonth(year, month) {
+            var daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (month === 2 && isLeapYear(year)) return 29;
+            return daysInMonths[month - 1];
+        }
+        function isValidDate(year, month, day) {
+            if (!year || month < 1 || month > 12) return false;
+            var maxDay = getDaysInMonth(year, month);
+            return day >= 1 && day <= maxDay;
+        }
+        function addMonthsClamped(year, month, day, deltaMonths) {
+            var totalMonths = (year * 12 + (month - 1)) + deltaMonths;
+            var newYear = Math.floor(totalMonths / 12);
+            var newMonth = totalMonths - newYear * 12 + 1;
+            var maxDay = getDaysInMonth(newYear, newMonth);
+            return { year: newYear, month: newMonth, day: Math.min(day, maxDay) };
+        }
+        // Chênh lệch (năm, tháng, ngày) theo lịch, giả định mốc đầu <= mốc sau.
+        function diffYMD(startY, startM, startD, endY, endM, endD) {
+            var endDate = new Date(endY, endM - 1, endD);
+            var totalMonths = (endY - startY) * 12 + (endM - startM);
+            var t = addMonthsClamped(startY, startM, startD, totalMonths);
+            var tDate = new Date(t.year, t.month - 1, t.day);
+            if (tDate > endDate) {
+                totalMonths -= 1;
+                t = addMonthsClamped(startY, startM, startD, totalMonths);
+                tDate = new Date(t.year, t.month - 1, t.day);
+            }
+            var years = Math.floor(totalMonths / 12);
+            var months = totalMonths - years * 12;
+            var days = Math.round((endDate.getTime() - tDate.getTime()) / (24 * 60 * 60 * 1000));
+            return { years: years, months: months, days: days };
+        }
+        // Số tháng còn lại từ mốc (fromY/M/D) đến sinh nhật lần thứ 18 của người sinh (birthY/M/D).
+        function remainingMonthsTo18(fromY, fromM, fromD, birthY, birthM, birthD) {
+            var targetY = birthY + 18;
+            var targetDay = Math.min(birthD, getDaysInMonth(targetY, birthM));
+            var fromDate = new Date(fromY, fromM - 1, fromD);
+            var targetDate = new Date(targetY, birthM - 1, targetDay);
+            if (fromDate >= targetDate) return { over: true, months: 0 };
+            var diff = diffYMD(fromY, fromM, fromD, targetY, birthM, targetDay);
+            var totalMonths = diff.years * 12 + diff.months + diff.days / 30;
+            return { over: false, months: totalMonths, ymd: diff };
+        }
+
+        function fillMaxSpirit(inputId, boiSo) {
+            var luong = num('luong-co-so');
+            document.getElementById(inputId).value = Math.round(luong * boiSo);
+        }
+
+        function breakdownRow(label, value, cls) {
+            return '<div class="breakdown-row' + (cls ? ' ' + cls : '') + '"><span class="lbl">' + label + '</span><span class="val">' + formatVND(value) + '</span></div>';
+        }
+
+        function checkSpiritCap(tinhThan, boiSo) {
+            var luong = num('luong-co-so');
+            var tran = luong * boiSo;
+            if (tinhThan > tran && tran > 0) {
+                return '<div class="warn-banner caution"><i class="fa-solid fa-triangle-exclamation"></i><span>Khoản tổn thất tinh thần bạn nhập (' + formatVND(tinhThan) + ') cao hơn mức trần mặc định (' + boiSo + ' lần lương cơ sở = ' + formatVND(tran) + '). Mức trần này chỉ áp dụng khi các bên <strong>không thỏa thuận được</strong>; nếu đã có thỏa thuận mức cao hơn thì vẫn hợp lệ, nếu không cần điều chỉnh lại cho phù hợp.</span></div>';
+            }
+            return '';
+        }
+
+        // ============================================================
+        // PHẦN 1: TÀI SẢN
+        // ============================================================
+        var tongTaiSan = 0, taiSanDaTinh = false;
+
+        function calculateAsset() {
+            var a = num('as-tai-san'), b = num('as-loi-ich'), c = num('as-ngan-chan'), d = num('as-khac');
+            var tong = a + b + c + d;
+            tongTaiSan = tong; taiSanDaTinh = true;
+
+            var html = '<div class="breakdown-list">';
+            html += breakdownRow('Tài sản bị mất, hủy hoại, hư hỏng', a);
+            html += breakdownRow('Lợi ích gắn liền việc sử dụng, khai thác bị mất, giảm sút', b);
+            html += breakdownRow('Chi phí ngăn chặn, hạn chế, khắc phục thiệt hại', c);
+            if (d > 0) html += breakdownRow('Thiệt hại khác', d);
+            html += breakdownRow('TỔNG CỘNG', tong, 'total');
+            html += '</div>';
+
+            document.getElementById('as-result-content').innerHTML = html;
+            var section = document.getElementById('as-result-section');
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            renderSummary();
+        }
+
+        // ============================================================
+        // PHẦN 2: SỨC KHỎE
+        // ============================================================
+        var tongSucKhoe = 0, vatChatSucKhoe = 0, sucKhoeDaTinh = false;
+
+        function calculateHealth() {
+            var a = num('hs-cuu-chua'), b = num('hs-thu-nhap'), c = num('hs-cham-soc'), d = num('hs-khac');
+            var tt = num('hs-tinh-than');
+            var vatChat = a + b + c + d;
+            var tong = vatChat + tt;
+            vatChatSucKhoe = vatChat; tongSucKhoe = tong; sucKhoeDaTinh = true;
+
+            var html = '<div class="breakdown-list">';
+            html += breakdownRow('Chi phí cứu chữa, bồi dưỡng, phục hồi sức khỏe', a);
+            html += breakdownRow('Thu nhập thực tế bị mất, giảm sút của người bị thiệt hại', b);
+            html += breakdownRow('Chi phí và thu nhập bị mất của người chăm sóc', c);
+            if (d > 0) html += breakdownRow('Thiệt hại khác', d);
+            html += breakdownRow('Thiệt hại vật chất (a+b+c+d)', vatChat, 'sub');
+            html += breakdownRow('Tổn thất tinh thần', tt);
+            html += breakdownRow('TỔNG CỘNG', tong, 'total');
+            html += '</div>';
+            html += checkSpiritCap(tt, 50);
+
+            document.getElementById('hs-result-content').innerHTML = html;
+            var section = document.getElementById('hs-result-section');
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            renderSummary();
+        }
+
+        // ============================================================
+        // PHẦN 3: TÍNH MẠNG (+ CẤP DƯỠNG ĐỘNG)
+        // ============================================================
+        var tongTinhMang = 0, tinhMangDaTinh = false;
+        var capDuongSeq = 0;
+
+        function fillTodayTM() {
+            var now = new Date();
+            document.getElementById('tm-ngay-day').value = now.getDate();
+            document.getElementById('tm-ngay-month').value = now.getMonth() + 1;
+            document.getElementById('tm-ngay-year').value = now.getFullYear();
+        }
+
+        function copyFromHealth() {
+            if (!sucKhoeDaTinh) { alert('Vui lòng bấm "TÍNH THIỆT HẠI SỨC KHỎE" ở Phần 2 trước.'); return; }
+            document.getElementById('tm-cuu-chua').value = Math.round(vatChatSucKhoe);
+        }
+
+        function addCapDuongRow() {
+            capDuongSeq++;
+            var wrap = document.createElement('div');
+            wrap.className = 'capduong-row';
+            wrap.innerHTML =
+                '<button type="button" class="cd-remove" onclick="this.closest(\'.capduong-row\').remove()">&times;</button>' +
+                '<div class="form-group">' +
+                    '<label>Họ tên người được cấp dưỡng <span class="optional">(để ghi chú, không bắt buộc)</span></label>' +
+                    '<input type="text" class="cd-ten" placeholder="VD: Cháu Nguyễn Văn B">' +
+                '</div>' +
+                '<div class="form-group">' +
+                    '<label>Diện cấp dưỡng</label>' +
+                    '<select class="cd-loai" onchange="toggleCapDuongType(this)">' +
+                        '<option value="tu-dong">Con chưa thành niên (tự động tính đến 18 tuổi)</option>' +
+                        '<option value="khac">Khác (tự nhập số tháng)</option>' +
+                    '</select>' +
+                '</div>' +
+                '<div class="cd-auto-fields">' +
+                    '<div class="form-group">' +
+                        '<label>Ngày sinh</label>' +
+                        '<div class="form-row-3">' +
+                            '<div><input type="number" class="cd-ns-day" min="1" max="31" placeholder="Ngày"></div>' +
+                            '<div><input type="number" class="cd-ns-month" min="1" max="12" placeholder="Tháng"></div>' +
+                            '<div><input type="number" class="cd-ns-year" min="1" max="9999" placeholder="Năm"></div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="cd-manual-fields" style="display:none;">' +
+                    '<div class="form-group">' +
+                        '<label>Số tháng cấp dưỡng</label>' +
+                        '<input type="number" class="cd-thang-thucong" min="0" placeholder="0">' +
+                    '</div>' +
+                '</div>' +
+                '<div class="form-group" style="margin-bottom:0;">' +
+                    '<label>Mức cấp dưỡng / tháng (đồng)</label>' +
+                    '<input type="number" class="cd-muc" min="0" placeholder="0">' +
+                '</div>';
+            document.getElementById('capduong-rows').appendChild(wrap);
+        }
+
+        function toggleCapDuongType(sel) {
+            var row = sel.closest('.capduong-row');
+            var auto = row.querySelector('.cd-auto-fields');
+            var manual = row.querySelector('.cd-manual-fields');
+            if (sel.value === 'tu-dong') { auto.style.display = ''; manual.style.display = 'none'; }
+            else { auto.style.display = 'none'; manual.style.display = ''; }
+        }
+
+        function calculateLife() {
+            var a = num('tm-cuu-chua'), b = num('tm-mai-tang'), d = num('tm-khac'), tt = num('tm-tinh-than');
+
+            var tmY = parseInt(document.getElementById('tm-ngay-year').value) || 0;
+            var tmM = parseInt(document.getElementById('tm-ngay-month').value) || 0;
+            var tmD = parseInt(document.getElementById('tm-ngay-day').value) || 0;
+            if (!isValidDate(tmY, tmM, tmD)) { alert('Ngày bắt đầu tính cấp dưỡng không hợp lệ!'); return; }
+
+            var rows = document.querySelectorAll('#capduong-rows .capduong-row');
+            var tongCapDuong = 0;
+            var detailHtml = '';
+
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var ten = row.querySelector('.cd-ten').value.trim() || '(không ghi tên)';
+                var loai = row.querySelector('.cd-loai').value;
+                var muc = parseFloat(row.querySelector('.cd-muc').value) || 0;
+                var soThang = 0, ghiChu = '';
+
+                if (loai === 'tu-dong') {
+                    var bY = parseInt(row.querySelector('.cd-ns-year').value) || 0;
+                    var bM = parseInt(row.querySelector('.cd-ns-month').value) || 0;
+                    var bD = parseInt(row.querySelector('.cd-ns-day').value) || 0;
+                    if (!isValidDate(bY, bM, bD)) { alert('Ngày sinh không hợp lệ ở dòng "' + ten + '".'); return; }
+                    var r = remainingMonthsTo18(tmY, tmM, tmD, bY, bM, bD);
+                    if (r.over) {
+                        soThang = 0;
+                        ghiChu = 'Đã đủ 18 tuổi tại ngày tính — không tự động tính cấp dưỡng diện con chưa thành niên.';
+                    } else {
+                        soThang = r.months;
+                        ghiChu = 'Còn ' + r.ymd.years + ' năm ' + r.ymd.months + ' tháng ' + r.ymd.days + ' ngày đến khi đủ 18 tuổi (≈ ' + soThang.toFixed(1) + ' tháng)';
+                    }
+                } else {
+                    soThang = parseFloat(row.querySelector('.cd-thang-thucong').value) || 0;
+                    ghiChu = 'Số tháng nhập thủ công';
+                }
+
+                var tien = soThang * muc;
+                tongCapDuong += tien;
+                detailHtml += '<div class="breakdown-row"><span class="lbl">' + ten + '<span class="note-small">' + ghiChu + '</span></span><span class="val">' + formatVND(tien) + '</span></div>';
+            }
+
+            var tong = a + b + d + tongCapDuong + tt;
+            tongTinhMang = tong; tinhMangDaTinh = true;
+
+            var html = '<div class="breakdown-list">';
+            html += breakdownRow('Chi phí cứu chữa, chăm sóc trước khi chết', a);
+            html += breakdownRow('Chi phí mai táng', b);
+            if (d > 0) html += breakdownRow('Thiệt hại khác', d);
+            if (detailHtml) {
+                html += detailHtml;
+                html += breakdownRow('Tổng tiền cấp dưỡng', tongCapDuong, 'sub');
+            } else {
+                html += '<div class="breakdown-row"><span class="lbl">Tiền cấp dưỡng</span><span class="val">Chưa có người được cấp dưỡng</span></div>';
+            }
+            html += breakdownRow('Tổn thất tinh thần cho thân nhân', tt);
+            html += breakdownRow('TỔNG CỘNG', tong, 'total');
+            html += '</div>';
+            html += checkSpiritCap(tt, 100);
+
+            document.getElementById('tm-result-content').innerHTML = html;
+            var section = document.getElementById('tm-result-section');
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            renderSummary();
+        }
+
+        // ============================================================
+        // PHẦN 4: DANH DỰ, NHÂN PHẨM, UY TÍN
+        // ============================================================
+        var tongDanhDu = 0, danhDuDaTinh = false;
+
+        function calculateHonor() {
+            var a = num('dd-chi-phi'), b = num('dd-thu-nhap'), c = num('dd-khac'), tt = num('dd-tinh-than');
+            var tong = a + b + c + tt;
+            tongDanhDu = tong; danhDuDaTinh = true;
+
+            var html = '<div class="breakdown-list">';
+            html += breakdownRow('Chi phí hợp lý để hạn chế, khắc phục thiệt hại', a);
+            html += breakdownRow('Thu nhập thực tế bị mất, giảm sút', b);
+            if (c > 0) html += breakdownRow('Thiệt hại khác', c);
+            html += breakdownRow('Tổn thất tinh thần', tt);
+            html += breakdownRow('TỔNG CỘNG', tong, 'total');
+            html += '</div>';
+            html += checkSpiritCap(tt, 10);
+
+            document.getElementById('dd-result-content').innerHTML = html;
+            var section = document.getElementById('dd-result-section');
+            section.classList.add('visible');
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            renderSummary();
+        }
+
+        // ============================================================
+        // PHẦN 5: TỔNG HỢP
+        // ============================================================
+        function renderSummary() {
+            var items = [
+                { label: 'Thiệt hại tài sản (Điều 589)', done: taiSanDaTinh, val: tongTaiSan },
+                { label: 'Thiệt hại sức khỏe (Điều 590)', done: sucKhoeDaTinh, val: tongSucKhoe },
+                { label: 'Thiệt hại tính mạng (Điều 591)', done: tinhMangDaTinh, val: tongTinhMang },
+                { label: 'Thiệt hại danh dự, nhân phẩm, uy tín (Điều 592)', done: danhDuDaTinh, val: tongDanhDu }
+            ];
+            var grand = 0;
+            var html = '<div class="breakdown-list">';
+            for (var i = 0; i < items.length; i++) {
+                var it = items[i];
+                if (it.done) {
+                    grand += it.val;
+                    html += breakdownRow(it.label, it.val);
+                } else {
+                    html += '<div class="breakdown-row"><span class="lbl">' + it.label + '</span><span class="val" style="color:#aaa;">(chưa tính)</span></div>';
+                }
+            }
+            html += breakdownRow('TỔNG CỘNG BỒI THƯỜNG', grand, 'total');
+            html += '</div>';
+            document.getElementById('summary-content').innerHTML = html;
+        }
+
+        (function init() {
+            document.getElementById('tm-ngay-year').value = new Date().getFullYear();
+            fillTodayTM();
+            renderSummary();
+        })();
+    </script>
+
+</body>
+</html>
