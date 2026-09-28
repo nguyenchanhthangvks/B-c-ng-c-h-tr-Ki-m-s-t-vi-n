@@ -37,8 +37,8 @@ export const getAssetUrl = (path: string) => {
 };
 
 const LOGO_SRC = getAssetUrl('static/logo_moi.png');
-const LOTUS_WEBP_SRC = getAssetUrl('static/lotus.webp');
-const LOTUS_PNG_SRC = getAssetUrl('static/lotus.png');
+const OFFICE_BG_SRC = getAssetUrl('static/office_bg.jpg');
+const DASHBOARD_BG_SRC = getAssetUrl('static/digital_dashboard_bg.jpg');
 const ZIP_DOWNLOAD_SRC = getAssetUrl('bo-cong-cu-kiem-sat.zip');
 
 type ViewMode = 'landing' | 'dashboard' | 'tool';
@@ -192,35 +192,31 @@ export default function App() {
           className="relative flex items-center justify-center min-h-screen h-[100dvh] w-full overflow-hidden select-none transition-opacity duration-500"
           style={{ opacity: 1 }}
         >
-          {/* Lotus Background */}
-          <picture className="lotus-picture">
-            <source srcSet={LOTUS_WEBP_SRC} type="image/webp" />
-            <img
-              className="landing-lotus-bg"
-              src={LOTUS_PNG_SRC}
-              width="2560"
-              height="958"
-              alt=""
-              aria-hidden="true"
-              decoding="async"
-              fetchPriority="high"
-            />
-          </picture>
+          {/* Executive Judicial Office Background */}
+          <img
+            className="landing-office-bg"
+            src={OFFICE_BG_SRC}
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+            fetchPriority="high"
+          />
+          <div className="landing-office-overlay" aria-hidden="true"></div>
 
           {/* Center Stage */}
           <div className="landing-stage relative z-10 flex flex-col items-center justify-center p-4">
-            {/* Logo with concentric pulsing water rings */}
+            {/* Logo with concentric pulsing halo rings */}
             <div
               className="landing-logo-trigger relative flex items-center justify-center cursor-pointer group z-10"
               onClick={() => setViewMode('dashboard')}
-              title="Bấm để truy cập Bộ công cụ"
+              title="Bấm để truy cập Hệ thống"
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') setViewMode('dashboard');
               }}
             >
-              {/* Concentric Water Wave Rings */}
+              {/* Concentric Halo Rings */}
               <div className="water-ring"></div>
               <div className="water-ring"></div>
               <div className="water-ring"></div>
@@ -240,22 +236,33 @@ export default function App() {
             </div>
 
             {/* Title & Copy */}
-            <div className="landing-copy text-center mt-3 space-y-2">
-              <h2 className="font-bold text-slate-500 uppercase tracking-widest text-xs md:text-sm">
-                Viện Kiểm Sát Nhân Dân
-              </h2>
-              <h1 className="font-extrabold tracking-wide text-slate-800 text-2xl sm:text-3xl md:text-4xl">
-                BỘ CÔNG CỤ{' '}
-                <span className="bg-gradient-to-r from-[#1d4ed8] via-[#0284c7] to-[#06b6d4] bg-clip-text text-transparent">
-                  NGHIỆP VỤ
+            <div className="landing-copy text-center mt-5 space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 font-bold uppercase tracking-[0.22em] text-[11px] md:text-xs backdrop-blur-md shadow-xs">
+                <span>✦</span>
+                <span>VIỆN KIỂM SÁT NHÂN DÂN</span>
+                <span>✦</span>
+              </div>
+              <h1 className="font-black tracking-wide text-white text-2xl sm:text-3xl md:text-4xl leading-tight drop-shadow-md">
+                HỆ THỐNG CÔNG CỤ{' '}
+                <span className="bg-gradient-to-r from-amber-300 via-sky-300 to-teal-200 bg-clip-text text-transparent">
+                  HỖ TRỢ KIỂM SÁT VIÊN
                 </span>
               </h1>
-              <p
-                className="landing-enter-hint font-bold text-sky-600 uppercase animate-pulse pt-2 text-xs md:text-sm tracking-wider cursor-pointer hover:text-sky-700 transition-colors"
-                onClick={() => setViewMode('dashboard')}
-              >
-                — BẤM VÀO LOGO ĐỂ TRUY CẬP —
+              <p className="text-slate-300 text-xs sm:text-sm font-medium max-w-xl mx-auto leading-relaxed">
+                Hệ thống tiện ích nghiệp vụ hỗ trợ công tác thực hành quyền công tố và kiểm sát hoạt động tư pháp
               </p>
+
+              {/* Enter Button CTA */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('dashboard')}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-teal-600 hover:from-blue-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-sky-950/60 hover:shadow-sky-900/80 border border-sky-400/30 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                >
+                  <span>Truy cập Hệ thống</span>
+                  <ChevronLeft className="w-4 h-4 rotate-180" />
+                </button>
+              </div>
 
               {/* Official Link Badge */}
               <div className="pt-2 flex items-center justify-center flex-wrap gap-2">
@@ -263,20 +270,20 @@ export default function App() {
                   href={OFFICIAL_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 hover:bg-white text-slate-700 hover:text-blue-700 border border-slate-300 text-xs font-mono shadow-sm transition-all backdrop-blur-sm"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/60 hover:bg-slate-900/80 text-sky-200 hover:text-white border border-sky-500/30 text-xs font-mono shadow-sm transition-all backdrop-blur-md"
                   title="Mở đường link chính thức"
                 >
-                  <Globe className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                  <Globe className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
                   <span>https://nguyenchanhthang.github.io/</span>
                 </a>
                 <button
                   type="button"
                   onClick={copyOfficialLink}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-sky-600/80 hover:bg-sky-600 text-white text-xs font-semibold shadow-sm transition-all cursor-pointer backdrop-blur-md border border-sky-400/30"
                   title="Sao chép đường link"
                 >
                   {copied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copied ? 'Đã chép link' : 'Sao chép link'}</span>
+                  <span>{copied ? 'Đã sao chép' : 'Sao chép link'}</span>
                 </button>
               </div>
             </div>
@@ -293,21 +300,16 @@ export default function App() {
           className="visible-layout flex flex-col min-h-screen px-4 py-5 md:px-8 max-w-7xl mx-auto relative transition-opacity duration-500"
           style={{ display: 'flex', opacity: 1 }}
         >
-          {/* Background Lotus Watermark */}
-          <picture className="lotus-picture">
-            <source srcSet={LOTUS_WEBP_SRC} type="image/webp" />
-            <img
-              className="dashboard-lotus-bg"
-              src={LOTUS_PNG_SRC}
-              width="2560"
-              height="958"
-              alt=""
-              aria-hidden="true"
-              loading="lazy"
-              decoding="async"
-              fetchPriority="low"
-            />
-          </picture>
+          {/* Background Digital Transformation Judicial Network Watermark */}
+          <img
+            className="dashboard-digital-bg"
+            src={DASHBOARD_BG_SRC}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            decoding="async"
+          />
+          <div className="dashboard-digital-grid" aria-hidden="true"></div>
 
           {/* Top Header Banner */}
           <header className="header">
@@ -321,7 +323,7 @@ export default function App() {
               />
               <div className="header-copy">
                 <p className="header-kicker">Hệ thống tiện ích nghiệp vụ</p>
-                <h1>BỘ CÔNG CỤ HỖ TRỢ NGHIỆP VỤ KIỂM SÁT</h1>
+                <h1>HỆ THỐNG CÔNG CỤ HỖ TRỢ KIỂM SÁT VIÊN</h1>
                 <div className="header-underline" aria-hidden="true">
                   <svg viewBox="0 0 280 24" preserveAspectRatio="none">
                     <path
@@ -631,8 +633,8 @@ export default function App() {
             </div>
 
             <p className="footer-contact">
-              <span>Bộ công cụ đang trong giai đoạn phát triển và liên tục được cập nhật hoàn thiện.</span>
-              <span>Liên hệ báo lỗi, góp ý hoàn thiện Bộ công cụ qua email: nguyenchanhthang.77@gmail.com</span>
+              <span>Hệ thống công cụ đang trong giai đoạn phát triển và liên tục được cập nhật hoàn thiện.</span>
+              <span>Liên hệ báo lỗi, góp ý hoàn thiện hệ thống qua email: nguyenchanhthang.77@gmail.com</span>
             </p>
           </footer>
         </div>
